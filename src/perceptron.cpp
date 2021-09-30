@@ -32,5 +32,9 @@ Perceptron::Perceptron(std::vector<std::vector<float>> weights, float bias, std:
 {
     SetWeights(weights);
     SetBias(bias);
-
+    // initialize perceptron data
+    // TODO: test if it rejects 'empty vectors'
+    data.SetActivationFct(activation);
+    data.SetRows(weights.size());
+    data.SetCols(weights[0].size());
 }

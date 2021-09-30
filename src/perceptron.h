@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "activation.h"
+
 class PerceptronData
 /*
 Class which determines the shape of the weight matrix of a perceptron
@@ -13,22 +15,24 @@ and its activation function.
 private:
     int _numberOfRows;
     int _numberOfCols;
-    std::string _activationFct; // TODO: might change to ActivationFct class
+    std::string _activation; // TODO: might change to ActivationFct class
 
 public:
     // (default) constructor
-    PerceptronData(int rows=1, int cols=1, std::string="ReLu");
+    PerceptronData(int rows=1, int cols=1, std::string="relu");
 
     // setters & getters
     void SetRows(int);
     int Rows() { return _numberOfRows; }
     void SetCols(int cols);
     int Cols() { return _numberOfCols; }
-    void SetActivationFct(std::string activation)
+    void SetActivation(std::string activation)
     {
-        _activationFct = activation;  // TODO: include check!
+        _activation = activation;  // TODO: include check!
     }
-    // TODO: GetActivationFct when types are clear
+    std::string Activation() {
+        return _activation;
+    }
 };
 
 class Perceptron
@@ -36,13 +40,17 @@ class Perceptron
 private:
     std::vector<std::vector<float>> _weights;
     float _bias;
+    // perceptron data
+    PerceptronData _data;
+    // activation
+    Activation::ActivationFct _activationFct;
 
 public:
     // constructor
-    Perceptron(std::vector<std::vector<float>>, float, std::string);
-
-    // perceptron data
-    PerceptronData data;
+    Perceptron(std::vector<std::vector<float>> weights, float bias, std::string fct)
+        : _weights(weights), _bias(bias), _activationFct Activation:ActivationFct(fct)
+    {
+    }
 
     // setters & getters
     void SetWeights(std::vector<std::vector<float>> weight_matrix) {
@@ -53,9 +61,16 @@ public:
     float Bias() { return _bias; }
 
     // simplify getters from data
-    int Rows() { return data.Rows(); }
-    int Cols() { return data.Cols(); }
-    // TODO: get activiation funct when types are clear
+    int Rows() { return _data.Rows(); }
+    int Cols() { return _data.Cols(); }
+    int Activation() { return _data.Activation(); }
+
+    // setters & getters for activation function
+
+    void SetActivationFct(std::string fct) {
+        _activationFct = Activation:ActivationFct(fct);
+    }
+    Activation::ActivationFct ActivationFct() { return _activationFct; }
 }
 
 #endif // PERCEPTRON_H_

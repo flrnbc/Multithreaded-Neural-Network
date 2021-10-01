@@ -36,6 +36,9 @@ Activation::ActivationFct(std::string fct_name) {
     else if (fct_name == "sigmoid") {
         &activation_fct = Activation::sigmoid;
     }
+    else if (fct_name == "tanh") {
+        &activation_fct = tanh;
+    }
     else throw std::invalid_argument("Not a valid activation function.")
 }
 

@@ -1,6 +1,7 @@
 #include <random>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "perceptron.h"
 
@@ -26,13 +27,48 @@ PerceptronData::PerceptronData(int rows, int cols, std::string activation) {
 }
 
 
-Perceptron Perceptron::Initialize() {
+Perceptron PerceptronData::Initialize() {
+    // random initialization
     std::random_device rd;
     std::mt19937 gen(rd());
+    // 'quasi-linear' activation functions use different random initialization
+    std::string quasiLinear [] = {"id", "sigmoid", "tanh"};
+    // TODO #A: relu (and possibly prelu) now have the same initialization as heaviside which might not be ideal
 
-    if (strcmp(this->Activation(), "sigmoid")) {
+    // perceptron data
+    int cols = this->Cols();
+    int rows = this->Rows();    
+    std::vector<std::vector<double>> weights;
 
+    if (std::find(std::begin(quasiLinear), std::end(quasiLinear), this->Activation()) != std::end(quasiLinear)) {
+        // use normalized Xavier weight initialization
+        // TODO #A: give reference
+        int inputPlusOutputSize = cols + rows;
+        // NOTE: uniform_real_distribution(a, b) generates for [a, b) (half-open interval)
+        std::uniform_real_distribution<> dis(-(sqrt(6)/sqrt(inputPlusOutputSize)), sqrt(6)/sqrt(inputPlusOutputSize));
+
+        // randomly initialize weights
+        // NOTE: be careful with cache-friendliness (outer loop over rows)
+        // NOTE: seems to be an issue with dis if we put this for-loop after the else-block (which would be better)
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                weights[i][j] = dis(gen); 
+            }
+        }
+    } 
+    else {
+        // use He weight initialization
+        // TODO #A: give reference
+        std::normal_distribution<> dis(0.0, sqrt(2/cols));
+
+        // randomly initialize weights
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                weights[i][j] = dis(gen); 
+            }
+        }
     }
+ 
 
 }
 

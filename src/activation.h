@@ -15,18 +15,19 @@ double sigmoid(double);
 
 class ActivationFct{
 private:
-    // do not allow changing the name or function pointer
-    const std::string _name;
-    const double (*activation_fct)(double);
+    std::string _name;
+    double (*activation_fct)(double); // TODO #A: really need function pointer?
 
 public:
-    // (default) constructor
-    ActivationFct(std::string="relu"); // TODO #B: add possibility to add custom activation functions
+    // default constructor
+    ActivationFct();
+    // constructor
+    ActivationFct(std::string fct_name); // TODO #B: add possibility to add custom activation functions
     // methods
     std::vector<double> compute(std::vector<double>); // TODO #A: better pass by reference?
-    std::string ActivationFct() {
-        return name; // TODO #A: better to return the value pointed at?
+    std::string Name() {
+        return _name; 
     }
-}
+};
 
 #endif // ACTIVATION_H_

@@ -38,8 +38,10 @@ Perceptron PerceptronData::Initialize() {
     // perceptron data
     int cols = this->Cols();
     int rows = this->Rows();    
-    std::vector<std::vector<double>> weights;
+    std::vector< std::vector<double> > weights;
+    double bias;
 
+    // initialize weights
     if (std::find(std::begin(quasiLinear), std::end(quasiLinear), this->Activation()) != std::end(quasiLinear)) {
         // use normalized Xavier weight initialization
         // TODO #A: give reference
@@ -49,12 +51,14 @@ Perceptron PerceptronData::Initialize() {
 
         // randomly initialize weights
         // NOTE: be careful with cache-friendliness (outer loop over rows)
-        // NOTE: seems to be an issue with dis if we put this for-loop after the else-block (which would be better)
+        // TODO #A: would be nicer to put this for-loop after the else-block (but then would have to declare dis before; but as what?)
         for (int i=0; i<rows; i++) {
             for (int j=0; j<cols; j++) {
                 weights[i][j] = dis(gen); 
             }
         }
+        // initialize bias
+        bias = dis(gen);
     } 
     else {
         // use He weight initialization
@@ -67,13 +71,15 @@ Perceptron PerceptronData::Initialize() {
                 weights[i][j] = dis(gen); 
             }
         }
+        // initialize bias
+        bias = dis(gen);
     }
  
-
+    return Perceptron(weights, bias, this->Activation());
 }
 
 
-Perceptron::Perceptron(std::vector<std::vector<float>> weights, float bias, std::string activation) {
+Perceptron::Perceptron(std::vector<std::vector<double> > weights, double bias, std::string activation) {
     SetWeights(weights);
     SetBias(bias);
     // initialize perceptron data

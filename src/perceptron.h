@@ -39,8 +39,8 @@ public:
 class Perceptron
 {
 private:
-    std::vector<std::vector<float>> _weights;
-    float _bias;
+    std::vector<std::vector<double> > _weights;
+    double _bias;
     // perceptron data
     PerceptronData _data;
     // activation
@@ -48,18 +48,18 @@ private:
 
 public:
     // constructor
-    Perceptron(std::vector<std::vector<float>> weights, float bias, std::string fct)
+    Perceptron(std::vector<std::vector<double> > weights, double bias, std::string fct)
         : _weights(weights), _bias(bias), _activationFct(ActivationFct(fct))
     {
     }
 
     // setters & getters
-    void SetWeights(std::vector<std::vector<float>> weight_matrix) {
+    void SetWeights(std::vector<std::vector<double> > weight_matrix) {
         _weights = weight_matrix;
     }
-    std::vector<std::vector<float>> Weights() { return _weights; }
-    void SetBias(float bias) { _bias = bias; }
-    float Bias() { return _bias; }
+    std::vector< std::vector<double> > Weights() { return _weights; }
+    void SetBias(double bias) { _bias = bias; }
+    double Bias() { return _bias; }
 
     // simplify getters from data
     int Rows() { return _data.Rows(); }

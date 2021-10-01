@@ -1,51 +1,51 @@
-#include <math>
+#include <cmath>
 #include <stdexcept>
 
 #include "activation.h"
 
-double Activation::heaviside(double x) {
+double heaviside(double x) {
     if (x < 0) { return 0; }
     return 1;
 }
 
-double Activation::prelu(double x, double a) {
+double prelu(double x, double a) {
     if (x <= 0) { return a*x; }
     return x;
 }
 
-double Activiation::relu(double x) {
+double relu(double x) {
     return prelu(x, 0);
 }
 
-double Activiation::sigmoid(double x) {
+double sigmoid(double x) {
     return 1/(1 + exp(-x));
 }
 
 
-Activation::ActivationFct(std::string fct_name) {
+ActivationFct::ActivationFct(std::string fct_name) {
     if (fct_name == "heaviside") {
-        &activation_fct = Activation::heaviside;
+        activation_fct = heaviside;
     }
     else if (fct_name == "id") {
-        &activation_fct = Activation::id;
+        activation_fct = id;
     }
     // TODO #B: to simplify, only offer relu and not prelu at the moment
     else if (fct_name == "relu") {
-        &activation_fct = Activation::relu;
+        activation_fct = relu;
     }
     else if (fct_name == "sigmoid") {
-        &activation_fct = Activation::sigmoid;
+        activation_fct = sigmoid;
     }
     else if (fct_name == "tanh") {
-        &activation_fct = tanh;
+        activation_fct = tanh;
     }
-    else throw std::invalid_argument("Not a valid activation function.")
+    else throw std::invalid_argument("Not a valid activation function.");
 }
 
 
-std::vector<double> Activation::compute(std::vector<double> v) {
+std::vector<double> ActivationFct::compute(std::vector<double> v) {
     // TODO #A: optimize vectorization! (OpenMP?)
-    for (d double: v) {
+    for (double d: v) {
         d = activation_fct(d);
     }
 

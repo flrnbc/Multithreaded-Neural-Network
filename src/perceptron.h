@@ -33,6 +33,7 @@ public:
     std::string Activation() {
         return _activation;
     }
+    Perceptron Initialize();
 };
 
 class Perceptron
@@ -43,12 +44,12 @@ private:
     // perceptron data
     PerceptronData _data;
     // activation
-    Activation::ActivationFct _activationFct;
+    ActivationFct _activationFct;
 
 public:
     // constructor
     Perceptron(std::vector<std::vector<float>> weights, float bias, std::string fct)
-        : _weights(weights), _bias(bias), _activationFct Activation:ActivationFct(fct)
+        : _weights(weights), _bias(bias), _activationFct(ActivationFct(fct))
     {
     }
 
@@ -63,14 +64,14 @@ public:
     // simplify getters from data
     int Rows() { return _data.Rows(); }
     int Cols() { return _data.Cols(); }
-    int Activation() { return _data.Activation(); }
+    std::string Activation() { return _data.Activation(); }
 
     // setters & getters for activation function
 
     void SetActivationFct(std::string fct) {
-        _activationFct = Activation:ActivationFct(fct);
+        _activationFct = ActivationFct(fct);
     }
-    Activation::ActivationFct ActivationFct() { return _activationFct; }
-}
+    ActivationFct GetActivationFct() { return _activationFct; }
+};
 
 #endif // PERCEPTRON_H_

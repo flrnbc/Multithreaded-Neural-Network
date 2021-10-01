@@ -1,3 +1,4 @@
+#include <random>
 #include <stdexcept>
 #include <string>
 
@@ -22,6 +23,17 @@ PerceptronData::PerceptronData(int rows, int cols, std::string activation) {
     SetCols(cols);
     // TODO: add check for activation function
     SetActivation(activation);
+}
+
+
+Perceptron Perceptron::Initialize() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    if (strcmp(this->Activation(), "sigmoid")) {
+
+    }
+
 }
 
 

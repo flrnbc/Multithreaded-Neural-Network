@@ -36,6 +36,7 @@ public:
     Perceptron Initialize();
 };
 
+
 class Perceptron
 {
 private:
@@ -67,11 +68,13 @@ public:
     std::string Activation() { return _data.Activation(); }
 
     // setters & getters for activation function
-
     void SetActivationFct(std::string fct) {
         _activationFct = ActivationFct(fct);
     }
     ActivationFct GetActivationFct() { return _activationFct; }
+
+    // evaluate on a vector
+    std::vector<double> Evaluate(std::vector<double>);
 };
 
 #endif // PERCEPTRON_H_

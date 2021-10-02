@@ -88,3 +88,21 @@ Perceptron::Perceptron(std::vector<std::vector<double> > weights, double bias, s
     _data.SetRows(weights.size());
     _data.SetCols(weights[0].size());
 }
+
+
+std::vector<double> Perceptron::Evaluate(std::vector<double> inputVector) {
+    std::vector<std::vector<double> > weights = this->Weights();
+    std::vector<double> outputVector;
+    double bias = this->Bias();
+
+    for (int i=0; i < this->Rows(); i++) {
+        // matrix multiplication weights*inputVector
+        for (int j=0; j < this->Cols(); j++) {
+            outputVector[i] += weights[i][j]*inputVector[j];
+        }
+        // add bias 
+        outputVector[i] += bias;
+    }
+
+    return outputVector;
+}

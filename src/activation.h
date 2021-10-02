@@ -24,7 +24,7 @@ public:
     // constructor
     ActivationFct(std::string fct_name); // TODO #B: add possibility to add custom activation functions
     // methods
-    std::vector<double> compute(std::vector<double>); // TODO #A: better pass by reference?
+    std::vector<double> evaluate(std::vector<double>); // TODO #A: better pass by reference?
     std::string Name() {
         return _name; 
     }

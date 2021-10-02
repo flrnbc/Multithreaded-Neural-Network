@@ -43,7 +43,7 @@ ActivationFct::ActivationFct(std::string fct_name) {
 }
 
 
-std::vector<double> ActivationFct::compute(std::vector<double> v) {
+std::vector<double> ActivationFct::evaluate(std::vector<double> v) {
     // TODO #A: optimize vectorization! (OpenMP?)
     for (double d: v) {
         d = activation_fct(d);

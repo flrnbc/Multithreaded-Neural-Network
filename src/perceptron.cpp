@@ -79,15 +79,15 @@ Perceptron PerceptronData::Initialize() {
 }
 
 
-Perceptron::Perceptron(std::vector<std::vector<double> > weights, double bias, std::string activation) {
-    SetWeights(weights);
-    SetBias(bias);
-    // initialize perceptron data
-    // TODO: test if it rejects 'empty vectors'
-    _data.SetActivation(activation);
-    _data.SetRows(weights.size());
-    _data.SetCols(weights[0].size());
-}
+// Perceptron::Perceptron(std::vector<std::vector<double> > weights, double bias, std::string activation) {
+//     SetWeights(weights);
+//     SetBias(bias);
+//     // initialize perceptron data
+//     // TODO: test if it rejects 'empty vectors'
+//     _data.SetActivation(activation);
+//     _data.SetRows(weights.size());
+//     _data.SetCols(weights[0].size());
+// }
 
 
 std::vector<double> Perceptron::Evaluate(std::vector<double> inputVector) {

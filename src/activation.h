@@ -6,7 +6,7 @@
 
 // collect activation functions
 double heaviside(double);
-double id(double x) { return x; }
+double identity(double); 
 double prelu(double, double);
 double relu(double);
 double sigmoid(double);

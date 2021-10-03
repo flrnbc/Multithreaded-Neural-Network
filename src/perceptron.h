@@ -6,6 +6,8 @@
 
 #include "activation.h"
 
+class Perceptron;
+
 class PerceptronData
 /*
 Class which determines the shape of the weight matrix of a perceptron
@@ -15,7 +17,7 @@ and its activation function.
 private:
     int _numberOfRows;
     int _numberOfCols;
-    std::string _activation; // TODO: might change to ActivationFct class
+    std::string _activation;
 
 public:
     // (default) constructor
@@ -28,7 +30,7 @@ public:
     int Cols() { return _numberOfCols; }
     void SetActivation(std::string activation)
     {
-        _activation = activation;  // TODO: include check!
+        _activation = activation;  // TODO: include check?!
     }
     std::string Activation() {
         return _activation;
@@ -49,8 +51,11 @@ private:
 
 public:
     // constructor
+    // TODO #A: move to cpp-file?
     Perceptron(std::vector<std::vector<double> > weights, double bias, std::string fct)
-        : _weights(weights), _bias(bias), _activationFct(ActivationFct(fct))
+        : _weights(weights), _bias(bias), _data(weights.size(), weights[0].size(), fct), 
+        _activationFct(ActivationFct(fct))  
+        
     {
     }
 

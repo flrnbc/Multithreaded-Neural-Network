@@ -19,14 +19,16 @@ private:
     double (*activation_fct)(double); // TODO #A: really need function pointer?
 
 public:
-    // default constructor
-    ActivationFct();
-    // constructor
+    // (default) constructor
     ActivationFct(std::string fct_name); // TODO #B: add possibility to add custom activation functions
     // methods
-    std::vector<double> evaluate(std::vector<double>); // TODO #A: better pass by reference?
+    std::vector<double> Evaluate(std::vector<double> &); // TODO #A: better pass by reference?
+    // setters/getters
     std::string Name() {
         return _name; 
+    }
+    void SetName(std::string fct_name) {
+        _name = fct_name;
     }
 };
 

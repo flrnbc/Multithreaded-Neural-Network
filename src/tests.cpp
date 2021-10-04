@@ -40,7 +40,7 @@ void test_ActivationFct() {
     ActivationFct actFctTanh = ActivationFct("tanh");
     //ActivationFct actWrong = ActivationFct("fantasy");
 
-    std::vector<double> input {-2, -1, 0, 1, 2, 3};
+    std::vector<double> input{-2.0, -1.0, 0.0, 1.0, 2.0, 3.0};
 
     std::cout << actFctId.Name() << std::endl;
     for (double d: actFctId.Evaluate(input)) {
@@ -71,16 +71,15 @@ void test_ActivationFct() {
 
 
 void test_Perceptron() {
-    std::vector<std::vector<double> > weights {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    std::vector<std::vector<double> > weights{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
     double bias = 5.0;
     Perceptron per(weights, bias, "sigmoid");
-    std::vector<double> input {-1, 0, 1};
+    std::vector<double> input{-1, 0, 1};
 
-    for (double d: per.Evaluate(input)) {
-        std::cout << d << std::endl;
-    }
+    //for (double d: per.Evaluate(input)) {
+    //    std::cout << d << std::endl;
+    //}
 }
-
 
 
 int main() {

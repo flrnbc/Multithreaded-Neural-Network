@@ -6,21 +6,17 @@
 #include "perceptron.h"
 
 
-// simplify getters from data
-int Perceptron::Rows() { return (*_data).Rows(); }
-int Perceptron::Cols() { return (*_data).Cols(); }
-std::string Perceptron::Activation() { return (*_data).Activation(); }
-
-
 Perceptron::Perceptron(std::vector<std::vector<double> > weights, double bias, std::string activation) {
     SetWeights(weights);
     SetBias(bias);
     // initialize perceptron data
     // TODO: test if it rejects 'empty vectors'
-    (*_data) = PerceptronData(weights.size(), weights[0].size(), activation);
-    // (*_data).SetActivation(activation);
-    // (*_data).SetRows(weights.size());
-    // (*_data).SetCols(weights[0].size());
+    SetRows(weights.size());
+    SetCols(weights[0].size());
+    SetActivationFct(activation);
+
+    // NOTE: using PerceptronData did not work...
+    //(*_data) = PerceptronData(weights.size(), weights[0].size(), activation);
 }
 
 

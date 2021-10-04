@@ -76,9 +76,10 @@ void test_Perceptron() {
     Perceptron per(weights, bias, "sigmoid");
     std::vector<double> input{-1, 0, 1};
 
-    //for (double d: per.Evaluate(input)) {
-    //    std::cout << d << std::endl;
-    //}
+    //per.Evaluate(input);
+    for (double d: per.Evaluate(input)) {
+        std::cout << d << std::endl;
+    }
 }
 
 

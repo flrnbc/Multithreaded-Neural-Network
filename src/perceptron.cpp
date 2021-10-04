@@ -22,12 +22,14 @@ Perceptron::Perceptron(std::vector<std::vector<double> > weights, double bias, s
 
 std::vector<double> Perceptron::Evaluate(std::vector<double> inputVector) {
     std::vector<std::vector<double> > weights = this->Weights();
-    std::vector<double> outputVector;
+    std::vector<double> outputVector(weights.size(), 0);
     double bias = this->Bias();
+    int rows = this->Rows();
+    int cols = this->Cols();
 
-    for (int i=0; i < this->Rows(); i++) {
+    for (int i=0; i < rows; i++) {
         // matrix multiplication weights*inputVector
-        for (int j=0; j < this->Cols(); j++) {
+        for (int j=0; j < cols; j++) {
             outputVector[i] += weights[i][j]*inputVector[j];
         }
         // add bias 

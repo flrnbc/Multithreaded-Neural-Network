@@ -12,18 +12,21 @@ and its activation function.
 */
 {
 private:
-    int _numberOfRows;
-    int _numberOfCols;
-    std::string _activation;
+    int _numberOfRows = 1;
+    int _numberOfCols = 1;
+    std::string _activation = "identity";
 
 public:
-    // (default) constructor
-    PerceptronData(int rows=1, int cols=1, std::string="identity");
+    // default constructor
+    PerceptronData() = default;
+
+    // constructor
+    PerceptronData(int rows, int cols, std::string);
 
     // setters & getters
     void SetRows(int);
     int Rows() { return _numberOfRows; }
-    void SetCols(int cols);
+    void SetCols(int);
     int Cols() { return _numberOfCols; }
     void SetActivation(std::string activation)
     {
@@ -32,7 +35,7 @@ public:
     std::string Activation() {
         return _activation;
     }
-    Perceptron Initialize();
+    //Perceptron Initialize();
 };
 
 

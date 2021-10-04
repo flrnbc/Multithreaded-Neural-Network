@@ -9,6 +9,7 @@
 void test_PerceptronData() {
     PerceptronData pd = PerceptronData(2, 2, "relu");
     PerceptronData pd2;
+    PerceptronData pd3 = PerceptronData(3, 3, "sigmoid");
     
     // testing 'Activation part'
     std::cout << pd.Activation() << std::endl;
@@ -35,6 +36,8 @@ void test_PerceptronData() {
             std::cout << "weight[" << i << "][" << j << "]: " << weights[i][j] << std::endl;
         }
     }
+
+    Perceptron per3 = pd3.Initialize();
 }
 
 

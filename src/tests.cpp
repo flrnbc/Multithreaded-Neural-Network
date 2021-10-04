@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "activation.h"
+#include "perceptron.h"
 #include "perceptron_data.h"
 
 void test_PerceptronData() {
@@ -19,8 +20,21 @@ void test_PerceptronData() {
     std::cout << pd.Rows() << std::endl;
     std::cout << pd.Cols() << std::endl;
     std::cout << pd2.Rows() << std::endl;
-    pd.SetCols(0);
-    pd.SetRows(0);
+    //pd.SetCols(0);
+    //pd.SetRows(0);
+
+    // testing PerceptronData::Initialize
+    Perceptron per = pd.Initialize();
+    int perRows = per.Rows();
+    int perCols = per.Cols();
+    std::vector<std::vector<double> > weights = per.Weights();
+
+    for (int i = 0; i < perRows; i++) {
+        for (int j = 0; j < perCols; j++) {
+            // TODO #A: better formatting?
+            std::cout << "weight[" << i << "][" << j << "]: " << weights[i][j] << std::endl;
+        }
+    }
 }
 
 
@@ -84,10 +98,10 @@ void test_Perceptron() {
 
 
 int main() {
-    //test_PerceptronData();
+    test_PerceptronData();
     //test_activationFcts();
     //test_ActivationFct();
-    test_Perceptron();
+    //test_Perceptron();
 
     return 0;
 }

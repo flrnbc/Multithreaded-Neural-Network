@@ -20,7 +20,7 @@ int Perceptron::Rows() { return _data->Rows(); }
 int Perceptron::Cols() { return _data->Cols(); }
 std::string Perceptron::Activation() { return _data->Activation(); }
 
-
+// evaluation method
 std::vector<double> Perceptron::Evaluate(std::vector<double> inputVector) {
     std::vector<std::vector<double> > weights = this->Weights();
     std::vector<double> outputVector(weights.size(), 0);

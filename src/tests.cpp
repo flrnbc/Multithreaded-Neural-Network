@@ -15,8 +15,6 @@ void test_PerceptronData() {
     std::cout << pd.Activation() << std::endl;
     std::cout << pd2.Activation() << std::endl;
 
-
-
     // testing Rows and Cols
     std::cout << pd.Rows() << std::endl;
     std::cout << pd.Cols() << std::endl;
@@ -25,25 +23,24 @@ void test_PerceptronData() {
     pd.SetRows(0);
 }
 
-void test_ActivationFct() {
-    
+
+void test_activationFcts() {
     std::cout << "heaviside(2.0) = " << heaviside(2.0) << std::endl;
     std::cout << "relu(2.0) = " << relu(2.0) << std::endl;
     std::cout << "sigmoid(2.0) = " << sigmoid(2.0) << std::endl;
     std::cout << "tanh(2.0) = " << tanh(2.0) << std::endl;
+}
 
 
+void test_ActivationFct() {
     ActivationFct actFctId = ActivationFct("identity");
-    std::cout << actFctId.Name() << std::endl;
-
-
     ActivationFct actFctHeaviside = ActivationFct("heaviside");
     ActivationFct actFctRelu = ActivationFct("relu");
     ActivationFct actFctSigmoid = ActivationFct("sigmoid");
     ActivationFct actFctTanh = ActivationFct("tanh");
     //ActivationFct actWrong = ActivationFct("fantasy");
 
-    std::vector<double> input {1, 1, 1, 2};
+    std::vector<double> input {-2, -1, 0, 1, 2, 3};
 
     std::cout << actFctId.Name() << std::endl;
     for (double d: actFctId.Evaluate(input)) {
@@ -73,10 +70,24 @@ void test_ActivationFct() {
 }
 
 
+void test_Perceptron() {
+    std::vector<std::vector<double> > weights {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    double bias = 5.0;
+    Perceptron per(weights, bias, "sigmoid");
+    std::vector<double> input {-1, 0, 1};
+
+    for (double d: per.Evaluate(input)) {
+        std::cout << d << std::endl;
+    }
+}
+
+
 
 int main() {
     //test_PerceptronData();
-    test_ActivationFct();
+    //test_activationFcts();
+    //test_ActivationFct();
+    test_Perceptron();
 
     return 0;
 }

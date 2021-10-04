@@ -50,10 +50,10 @@ ActivationFct::ActivationFct(std::string fct_name) {
 }
 
 
-std::vector<double> ActivationFct::Evaluate(std::vector<double> &v) {
+std::vector<double> ActivationFct::Evaluate(std::vector<double> v) {
     // TODO #A: optimize vectorization! (OpenMP?)
-    for (double d: v) {
-        d = activation_fct(d);
+    for (int i = 0; i < v.size(); i++) {
+        v[i] = activation_fct(v[i]); // NOTE: range-based did not modify the values (even when using &)?!
     }
 
     return v;

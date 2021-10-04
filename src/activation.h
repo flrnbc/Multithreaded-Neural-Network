@@ -20,9 +20,9 @@ private:
 
 public:
     // (default) constructor
-    ActivationFct(std::string fct_name); // TODO #B: add possibility to add custom activation functions
+    ActivationFct(std::string fct_name="identity"); // TODO #B: add possibility to add custom activation functions
     // methods
-    std::vector<double> Evaluate(std::vector<double> &); // TODO #A: better pass by reference?
+    std::vector<double> Evaluate(std::vector<double>); // TODO #A: better pass by reference?
     // setters/getters
     std::string Name() {
         return _name; 

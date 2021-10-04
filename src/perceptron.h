@@ -5,8 +5,9 @@
 #include <vector>
 
 #include "activation.h"
-#include "perceptron_data.h"
+//#include "perceptron_data.h"
 
+class PerceptronData;
 
 class Perceptron
 {
@@ -14,19 +15,19 @@ private:
     std::vector<std::vector<double> > _weights;
     double _bias;
     // perceptron data
-    PerceptronData _data;
+    PerceptronData* _data;
     // activation
     ActivationFct _activationFct;
 
 public:
     // constructor
     // TODO #A: move to cpp-file?
-    Perceptron(std::vector<std::vector<double> > weights, double bias, std::string fct)
-        : _weights(weights), _bias(bias), _data(weights.size(), weights[0].size(), fct), 
-        _activationFct(ActivationFct(fct))  
+    Perceptron(std::vector<std::vector<double> > weights, double bias, std::string fct);
+        //: _weights(weights), _bias(bias), _data(weights.size(), weights[0].size(), fct), 
+        //_activationFct(ActivationFct(fct))  
         
-    {
-    }
+    //{
+    //}
 
     // setters & getters
     void SetWeights(std::vector<std::vector<double> > weight_matrix) {
@@ -37,9 +38,9 @@ public:
     double Bias() { return _bias; }
 
     // simplify getters from data
-    int Rows() { return _data.Rows(); }
-    int Cols() { return _data.Cols(); }
-    std::string Activation() { return _data.Activation(); }
+    int Rows();// { return (&_data).Rows(); }
+    int Cols();// { return _data.Cols(); }
+    std::string Activation();// { return _data.Activation(); }
 
     // setters & getters for activation function
     void SetActivationFct(std::string fct) {

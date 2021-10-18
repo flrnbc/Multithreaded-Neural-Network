@@ -24,28 +24,32 @@ private:
     std::vector<double> _output_delta;
 
 public:
+    // TODO: default constructor
+
     // constructor 
-    // TODO !!! 
+    LayerBase(int, int, std::string);
 
     // setters & getters (TODO: too much boilerplate?)
-    std::vector<double> InputData() { return _input_data; }
-    void SetInputData(std::vector<double> input) {
-        _input_data = input;
-    }
-    std::vector<double> OutputData() { return _output_data; }
-    void SetOutputData(std::vector<double> output) {
-        _output_data = output;
-    }
-    std::vector<double> InputDelta() { return _input_delta; }
-    void SetInputDelta(std::vector<double> input_delta) {
-        _input_delta = input_delta;
-    }
-    std::vector<double> OutputDelta() { return _output_delta; }
-    void SetOutputDelta(std::vector<double> output_delta) {
-        _output_delta = output;
-    }
-    // TODO #A: what about perceptron data?
-}
+    // input and output data
+    std::vector<double> InputData(); 
+    void SetInputData(std::vector<double>); 
+
+    std::vector<double> OutputData(); 
+    void SetOutputData(std::vector<double>); 
+
+    std::vector<double> InputDelta(); 
+    void SetInputDelta(std::vector<double>);
+
+    std::vector<double> OutputDelta(); 
+    void SetOutputDelta(std::vector<double>);
+
+    // perceptron data
+    int Rows() { return _perceptron->Rows(); }
+    int Cols() { return _perceptron->Cols(); }
+    std::vector<std::vector<double> > Weights() { return _perceptron->Weights(); }
+    std::vector<double> Bias() { return _perceptron->Bias(); }
+
+};
 
 
 class Layer : public LayerBase
@@ -77,7 +81,7 @@ class Layer : public LayerBase
         void SetNext(LayerBase next) { _next = next; }
         LayerBase Previous() { return _previous; }
         void SetNext(LayerBase previous) { _previous = previous; }
-}
+};
 
 
 

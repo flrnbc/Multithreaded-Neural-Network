@@ -36,7 +36,8 @@ Perceptron PerceptronData::Initialize() {
     int cols = this->Cols();
     int rows = this->Rows();    
     std::vector<std::vector<double> > weights(rows, std::vector<double>(cols, 0));
-    double bias;
+    // TODO: we initialize the bias to a zero vector here which might not be optimal
+    std::vector<double> bias(rows, 0);
 
     // initialize weights
     if (std::find(std::begin(quasiLinear), std::end(quasiLinear), this->Activation()) != std::end(quasiLinear)) {
@@ -54,8 +55,6 @@ Perceptron PerceptronData::Initialize() {
                 weights[i][j] = dis(gen); 
             }
         }
-        // initialize bias
-        bias = dis(gen);
     } 
     else {
         // use He weight initialization
@@ -68,8 +67,6 @@ Perceptron PerceptronData::Initialize() {
                 weights[i][j] = dis(gen); 
             }
         }
-        // initialize bias
-        bias = dis(gen);
     }
  
     return Perceptron(weights, bias, this->Activation());

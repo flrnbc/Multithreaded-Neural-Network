@@ -15,7 +15,7 @@ class Perceptron
 {
 private:
     std::vector<std::vector<double> > _weights;
-    double _bias;
+    std::vector<double> _bias;
     // perceptron data
     std::unique_ptr<PerceptronData> _data;
     // activation
@@ -23,7 +23,7 @@ private:
 
 public:
     // (default) constructor
-    Perceptron(std::vector<std::vector<double> > weights, double bias, std::string fct);
+    Perceptron(std::vector<std::vector<double> > weights, std::vector<double> bias, std::string fct);
     // constructor using random initialization of weights
     Perceptron(int rows, int cols, std::string fct);
     
@@ -32,8 +32,8 @@ public:
     void SetWeights(std::vector<std::vector<double> > weight_matrix) {
         _weights = weight_matrix;
     }
-    double Bias() { return _bias; }
-    void SetBias(double bias) { _bias = bias; }
+    std::vector<double> Bias() { return _bias; }
+    void SetBias(std::vector<double> bias) { _bias = bias; }
     int Rows(); 
     int Cols(); 
     std::string Activation();

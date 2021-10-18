@@ -31,16 +31,16 @@ public:
 
     // setters & getters (TODO: too much boilerplate?)
     // input and output data
-    std::vector<double> InputData(); 
+    std::vector<double> InputData() { return _input_data; } 
     void SetInputData(std::vector<double>); 
-
-    std::vector<double> OutputData(); 
+    
+    std::vector<double> OutputData() { return _output_data; }
     void SetOutputData(std::vector<double>); 
 
-    std::vector<double> InputDelta(); 
+    std::vector<double> InputDelta() { return _input_delta; }
     void SetInputDelta(std::vector<double>);
 
-    std::vector<double> OutputDelta(); 
+    std::vector<double> OutputDelta() { return _output_delta; }
     void SetOutputDelta(std::vector<double>);
 
     // perceptron data
@@ -48,7 +48,6 @@ public:
     int Cols() { return _perceptron->Cols(); }
     std::vector<std::vector<double> > Weights() { return _perceptron->Weights(); }
     std::vector<double> Bias() { return _perceptron->Bias(); }
-
 };
 
 
@@ -62,25 +61,31 @@ class Layer : public LayerBase
 */
 {
     private:
-        LayerBase _layer_base;
-
         // NOTE: even though we only implement sequential NNs, we need shared
         // pointers because a hidden layer is pointed at twice (as _next and
-        // _previous).
+        // _previous). Also note that smart pointers are initialized to nullptr
+        // by default.
+
         // next layer
-        std::shared_ptr<Layer> _next(nullptr); 
+        std::shared_ptr<LayerBase> _next; 
         // previous layer
-        std::shared_ptr<Layer> _previous(nullptr);
+        std::shared_ptr<LayerBase> _previous;
 
     public:
         // constructor
-        // TODO !!!
+        Layer(int rows, int cols, std::string activation) : LayerBase(rows, cols, activation) {}
 
         // setters & getters
         std::shared_ptr<LayerBase> Next() { return _next; }
-        void SetNext(LayerBase next) { _next = next; }
-        LayerBase Previous() { return _previous; }
-        void SetNext(LayerBase previous) { _previous = previous; }
+        void SetNext(LayerBase next); 
+        std::shared_ptr<LayerBase> Previous() { return _previous; }
+        void SetPrevious(LayerBase previous);
+
+        // forward pass
+        void UpdateInput(); 
+        void Forward();
+
+        // backward pass
 };
 
 

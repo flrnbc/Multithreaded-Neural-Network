@@ -22,8 +22,10 @@ private:
     std::unique_ptr<ActivationFct> _activationFct;
 
 public:
-    // constructor
+    // (default) constructor
     Perceptron(std::vector<std::vector<double> > weights, double bias, std::string fct);
+    // constructor using random initialization of weights
+    Perceptron(int rows, int cols, std::string fct);
     
     // setters & getters for perceptron data
     std::vector< std::vector<double> > Weights() { return _weights; }

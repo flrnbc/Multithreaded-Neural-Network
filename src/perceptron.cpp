@@ -5,7 +5,7 @@
 #include "perceptron_data.h"
 #include "perceptron.h"
 
-
+// (default) constructor
 Perceptron::Perceptron(std::vector<std::vector<double> > weights, double bias, std::string activation) {
     SetWeights(weights);
     SetBias(bias);
@@ -13,6 +13,20 @@ Perceptron::Perceptron(std::vector<std::vector<double> > weights, double bias, s
     // TODO: test if it rejects 'empty vectors'
     this->_data = std::unique_ptr<PerceptronData> (new PerceptronData(weights.size(), weights[0].size(), activation));
     this->_activationFct = std::unique_ptr<ActivationFct> (new ActivationFct(activation));
+}
+
+// constructor using random initialization
+// TODO #A: how to improve, i.e. directly using the perceptron without copying?
+Perceptron::Perceptron(int rows, int cols, std::string activation) {
+    this->_data = std::unique_ptr<PerceptronData> (new PerceptronData(rows, cols, activation));
+    this->_activationFct = std::unique_ptr<ActivationFct> (new ActivationFct(activation));
+    
+    // TODO #A: actually need copy constructor?
+    // randomly initialize perceptron from _data
+    Perceptron per = _data->Initialize();
+    
+    SetWeights(per.Weights());
+    SetBias(per.Bias());
 }
     
 // simplify getters & setters for PerceptronData

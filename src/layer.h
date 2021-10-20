@@ -2,6 +2,7 @@
 #define LAYER_H_
 
 #include <memory>
+#include <string>
 #include <vector>
 
 class Perceptron;
@@ -53,6 +54,9 @@ public:
     // int Cols() { return _perceptron->Cols(); }
     // std::vector<std::vector<double> > Weights() { return _perceptron->Weights(); }
     // std::vector<double> Bias() { return _perceptron->Bias(); }
+
+    // summary
+    std::string Summary();
 };
 
 
@@ -91,6 +95,7 @@ class Layer : public LayerBase
         void Forward(); // in particular updates output
 
         // backward pass
+        // TODO #A: ADD!!!
 };
 
 

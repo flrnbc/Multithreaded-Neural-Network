@@ -31,6 +31,11 @@ LayerBase::LayerBase(int rows, int cols, std::string activation) {
         SetOutputDelta(output);
 }
 
+// summary
+std::string LayerBase::Summary() {
+        return _perceptron->Summary();
+}
+
 
 // Layer //
 // setters & getters for Layer
@@ -59,4 +64,7 @@ void Layer::UpdateInput() {
 void Layer::Forward() {
         SetOutputData(Perceptron()->Evaluate(InputData()));
 }
+
+// backward pass
+// TODO #A: ADD!!!
 

@@ -11,6 +11,12 @@
   PerceptronData is 'pure data' whereas Perceptron contains the actual
   functions as well.
 
+# PerceptronData and Perceptron
+  We decided to compose Perceptron from PerceptronData. However, this 
+  led to some boilerplate code since we wanted to faciliate the access
+  to the perceptron data (e.g. Rows(), Cols()). So some other design
+  might be more elegant.
+
 # LayerBase vs Perceptron
   The class LayerBase simply adds additional data to a Perceptron. 
   It is not strictly needed. We mainly use it to solve the problem 

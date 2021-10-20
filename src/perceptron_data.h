@@ -35,7 +35,12 @@ public:
     std::string Activation() {
         return _activation;
     }
+
+    // initialize to a perceptron
     Perceptron Initialize();
+
+    // summary
+    std::string Summary();
 };
 
 

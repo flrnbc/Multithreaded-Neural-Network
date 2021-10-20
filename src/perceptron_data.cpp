@@ -71,3 +71,12 @@ Perceptron PerceptronData::Initialize() {
  
     return Perceptron(weights, bias, this->Activation());
 }
+
+// summary
+std::string PerceptronData::Summary() {
+    std::string rows = std::to_string(Rows());
+    std::string cols = std::to_string(Cols());
+    std::string size = "(" + rows + ", " + cols + ")";
+
+    return "size: " + size + '\t' + " activation: " + Activation();
+}

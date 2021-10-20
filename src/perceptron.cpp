@@ -51,3 +51,8 @@ std::vector<double> Perceptron::Evaluate(std::vector<double> inputVector) {
     // apply activation function
    return _activationFct->Evaluate(outputVector);
 }
+
+// summary
+std::string Perceptron::Summary() {
+    return _data->Summary();
+}

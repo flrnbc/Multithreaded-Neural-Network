@@ -43,6 +43,9 @@ public:
 
     // evaluate on a vector
     std::vector<double> Evaluate(std::vector<double>);
+
+    // summary
+    std::string Summary();
 };
 
 #endif // PERCEPTRON_H_

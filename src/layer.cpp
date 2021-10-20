@@ -1,10 +1,11 @@
+#include <string>
 #include <vector>
 #include "layer.h"
 #include "perceptron_data.h"
 #include "perceptron.h"
 
-
-// setters & getters
+// LayerBase //
+// setters & getters for LayerBase
 void LayerBase::SetInputData(std::vector<double> input) {
         _input_data = input;
 }
@@ -18,10 +19,9 @@ void LayerBase::SetOutputDelta(std::vector<double> output_delta) {
         _output_delta = output_delta;
 }
 
-
 // constructor for LayerBase
 LayerBase::LayerBase(int rows, int cols, std::string activation) {
-        this->_perceptron = std::unique_ptr<Perceptron> (new Perceptron(rows, cols, activation));
+        this->_perceptron = std::shared_ptr<Perceptron::Perceptron> (new Perceptron::Perceptron(rows, cols, activation));
         // TODO #A: should we use move semantics here?
         std::vector<double> input(this->_perceptron->Cols(), 0);
         std::vector<double> output(this->_perceptron->Rows(), 0);
@@ -32,6 +32,8 @@ LayerBase::LayerBase(int rows, int cols, std::string activation) {
 }
 
 
+// Layer //
+// setters & getters for Layer
 void Layer::SetNext(LayerBase next) {
         *_next = next; 
 }
@@ -40,8 +42,21 @@ void Layer::SetPrevious(LayerBase previous) {
         *_previous = previous; 
 }
 
-
+// constructor for Layer
+Layer::Layer(int rows, int cols, std::string activation) : 
+        LayerBase(rows, cols, activation), 
+        _next(nullptr),
+        _previous(nullptr) {}
 
 // forward pass
-//void Layer::UpdateInput() 
+// NOTE: no need to update for input layer (need to set input though)
+void Layer::UpdateInput() {
+        if (Previous() != nullptr) {
+                SetInputData(Previous()->OutputData());
+        }
+}
+
+void Layer::Forward() {
+        SetOutputData(Perceptron()->Evaluate(InputData()));
+}
 

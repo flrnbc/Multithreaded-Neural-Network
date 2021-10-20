@@ -15,7 +15,11 @@ class LayerBase
 {
 private:
     // perceptron of layer
-    std::unique_ptr<Perceptron> _perceptron;
+    // NOTE: a perceptron is obviously (uniquely) tied to an object of LayerBase.
+    // however, we need to copy (assign) objects of LayerBase when creating 
+    // neural networks and therefore need shared pointers.
+    // TODO: is there a better way?
+    std::shared_ptr<Perceptron> _perceptron;
     // data for forward propagation
     std::vector<double> _input_data;
     std::vector<double> _output_data;
@@ -43,11 +47,12 @@ public:
     std::vector<double> OutputDelta() { return _output_delta; }
     void SetOutputDelta(std::vector<double>);
 
-    // perceptron data
-    int Rows() { return _perceptron->Rows(); }
-    int Cols() { return _perceptron->Cols(); }
-    std::vector<std::vector<double> > Weights() { return _perceptron->Weights(); }
-    std::vector<double> Bias() { return _perceptron->Bias(); }
+    // perceptron 
+    std::shared_ptr<Perceptron> Perceptron() { return _perceptron; }
+    // int Rows() { return _perceptron->Rows(); }
+    // int Cols() { return _perceptron->Cols(); }
+    // std::vector<std::vector<double> > Weights() { return _perceptron->Weights(); }
+    // std::vector<double> Bias() { return _perceptron->Bias(); }
 };
 
 
@@ -73,7 +78,7 @@ class Layer : public LayerBase
 
     public:
         // constructor
-        Layer(int rows, int cols, std::string activation) : LayerBase(rows, cols, activation) {}
+        Layer(int rows, int cols, std::string activation);
 
         // setters & getters
         std::shared_ptr<LayerBase> Next() { return _next; }
@@ -83,7 +88,7 @@ class Layer : public LayerBase
 
         // forward pass
         void UpdateInput(); 
-        void Forward();
+        void Forward(); // in particular updates output
 
         // backward pass
 };

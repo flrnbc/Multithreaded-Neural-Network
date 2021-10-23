@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "activation.h"
+#include "layer.h"
 #include "perceptron.h"
 #include "perceptron_data.h"
 
@@ -89,7 +90,7 @@ void test_ActivationFct() {
 
 void test_Perceptron() {
     std::vector<std::vector<double> > weights{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-    double bias = 5.0;
+    std::vector<double> bias{5.0, 5.0, 5.0};
     Perceptron per(weights, bias, "sigmoid");
     std::vector<double> input{-1, 0, 1};
 
@@ -100,11 +101,23 @@ void test_Perceptron() {
 }
 
 
+void test_Layer() {
+    auto layer1 = Layer(10, 3, "relu");
+    auto layer2 = Layer(3, 1, "sigmoid");
+
+    std::cout << layer1.Summary() << std::endl;
+    std::cout << layer2.Summary() << std::endl;
+
+    layer1.SetNext(layer2);
+
+}
+
 int main() {
-    test_PerceptronData();
+    //test_PerceptronData();
     //test_activationFcts();
     //test_ActivationFct();
     //test_Perceptron();
+    test_Layer();
 
     return 0;
 }

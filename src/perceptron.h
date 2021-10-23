@@ -26,7 +26,17 @@ public:
     Perceptron(std::vector<std::vector<double> > weights, std::vector<double> bias, std::string fct);
     // constructor using random initialization of weights
     Perceptron(int rows, int cols, std::string fct);
-    
+
+    // destructor
+    // TODO #A: issue with empty destructor?
+    ~Perceptron();
+
+    // copy constructor
+    Perceptron(const Perceptron&);
+
+    // copy assignment
+    Perceptron& operator=(const Perceptron&);
+
     // setters & getters for perceptron data
     std::vector< std::vector<double> > Weights() { return _weights; }
     void SetWeights(std::vector<std::vector<double> > weight_matrix) {

@@ -17,9 +17,8 @@ class LayerBase
 private:
     // perceptron of layer
     // NOTE: a perceptron is obviously (uniquely) tied to an object of LayerBase.
-    // however, we need to copy (assign) objects of LayerBase when creating 
-    // neural networks and therefore need shared pointers.
-    // TODO: is there a better way?
+    // however, when we built neural networks from Layer/LayerBase, the perceptron
+    // is shared by connected layers. hence we use a shared_ptr.
     std::shared_ptr<Perceptron> _perceptron;
     // data for forward propagation
     std::vector<double> _input_data;

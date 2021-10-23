@@ -17,9 +17,6 @@ class SequentialNN
     public: 
         SequentialNN(std::vector<Layer>);       
         std::string Summary(); 
-
 };
-
-
 
 #endif // SEQUENTIAL_NN_H_

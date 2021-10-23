@@ -21,7 +21,7 @@ std::string SequentialNN::Summary() {
     std::string summary = "Summary of sequential neural network: " + '\n';
 
     for (int i=0; i++; i < (*_layers_ptr).size()) {
-        summary += "Layer " + std::to_string(i) + ": " + (*_layers_ptr)[i].Summary();
+        summary += "Layer " + std::to_string(i) + ": " + (*_layers_ptr)[i].Summary() + '\n';
     }
 
     return summary;

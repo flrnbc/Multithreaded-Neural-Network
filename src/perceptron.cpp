@@ -1,8 +1,12 @@
+#include <iostream>
+#include <memory>
+#include <random>
 #include <string>
 #include <vector>
 
 #include "activation.h"
 #include "perceptron_data.h"
+//#include "perceptron_data.cpp" // to include perceptron_data namespace; correct way?
 #include "perceptron.h"
 
 // (default) constructor
@@ -11,23 +15,21 @@ Perceptron::Perceptron(std::vector<std::vector<double> > weights, std::vector<do
     SetBias(bias);
     // initialize perceptron data
     // TODO: test if it rejects 'empty vectors'
-    // TODO #A: replace with make_shared!
-    this->_data = std::unique_ptr<PerceptronData> (new PerceptronData(weights.size(), weights[0].size(), activation));
-    this->_activationFct = std::unique_ptr<ActivationFct> (new ActivationFct(activation));
+    // TODO #A: replace with make_unique!
+    this->_data.reset(new PerceptronData(weights.size(), weights[0].size(), activation));
+    this->_activationFct.reset(new ActivationFct(activation));
 }
 
+
 // constructor using random initialization
-// TODO #A: how to improve, i.e. directly using the perceptron without copying?
+// TODO: use make_unique?
 Perceptron::Perceptron(int rows, int cols, std::string activation) {
-    this->_data = std::unique_ptr<PerceptronData> (new PerceptronData(rows, cols, activation));
-    this->_activationFct = std::unique_ptr<ActivationFct> (new ActivationFct(activation));
-    
-    // TODO #A: actually need copy constructor?
-    // randomly initialize perceptron from _data
-    Perceptron per = _data->Initialize();
-    
-    SetWeights(per.Weights());
-    SetBias(per.Bias());
+    this->_data.reset(new PerceptronData(rows, cols, activation));
+    this->_activationFct.reset(new ActivationFct(activation)); 
+
+    SetWeights(PerceptronData::WeightInitialization(rows, cols, activation));
+    // TODO: suboptimal to initialize bias as zeros?
+    SetBias(std::vector<double>(rows, 0));
 }
 
 // copy constructor (deep copy)
@@ -49,6 +51,8 @@ Perceptron &Perceptron::operator=(const Perceptron &perceptron) {
 
     _data.reset(new PerceptronData(*perceptron._data));
     _activationFct.reset(new ActivationFct(*perceptron._activationFct));
+
+    return *this;
 }
 
 
@@ -76,6 +80,7 @@ std::vector<double> Perceptron::Evaluate(std::vector<double> inputVector) {
 }
 
 // summary
+// TODO #A: add weights and bias!
 std::string Perceptron::Summary() {
     return _data->Summary();
 }

@@ -2,8 +2,10 @@
 #define PERCEPTRON_DATA_H_
 
 #include <string>
+#include <vector>
 
 #include "perceptron.h"
+
 
 class PerceptronData
 /*
@@ -37,12 +39,12 @@ public:
     }
 
     // initialize to a perceptron
+    // initialization of weights as static member function to call it independent of an instance
+    static std::vector<std::vector<double> > WeightInitialization(int rows, int cols, std::string activation);
     Perceptron Initialize();
 
     // summary
     std::string Summary();
 };
-
-
 
 #endif // PERCEPTRON_DATA_H

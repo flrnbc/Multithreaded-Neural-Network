@@ -28,8 +28,8 @@ public:
     Perceptron(int rows, int cols, std::string fct);
 
     // destructor
-    // TODO #A: issue with empty destructor?
-    ~Perceptron();
+    // TODO #A: had an issue with an empty destructor?
+    //~Perceptron();
 
     // copy constructor
     Perceptron(const Perceptron&);

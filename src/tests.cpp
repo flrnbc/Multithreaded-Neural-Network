@@ -7,6 +7,20 @@
 #include "perceptron.h"
 #include "perceptron_data.h"
 
+
+void test_WeightInitialization() {
+    PerceptronData pd = PerceptronData(3, 3, "relu");
+    std::vector<std::vector<double> > weights;
+    weights = PerceptronData::WeightInitialization(3, 3, "relu");
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            std::cout << "weight[" << i << "][" << j << "]: " << weights[i][j] << std::endl;
+        }
+    }
+}
+
+
 void test_PerceptronData() {
     PerceptronData pd = PerceptronData(2, 2, "relu");
     PerceptronData pd2;
@@ -94,30 +108,44 @@ void test_Perceptron() {
     Perceptron per(weights, bias, "sigmoid");
     std::vector<double> input{-1, 0, 1};
 
-    per.Evaluate(input);
-    for (double d: per.Evaluate(input)) {
+    std::cout << "Evaluate 1st perceptron: " << std::endl;
+    for (double& d: per.Evaluate(input)) {
         std::cout << d << std::endl;
     }
+
+    std::cout << "Instantiate 2nd perceptron with weights: " << std::endl;
+    Perceptron per2(3, 4, "relu");
+    auto weights2 = per2.Weights();
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 4; j++) {
+            std::cout << "weight[" << i << "][" << j << "]: " << weights2[i][j] << std::endl;
+        }
+    }
+    
+    std::cout << '\n' << "Summary of 2nd perceptron: " << std::endl;
+    std::cout << per2.Summary() << std::endl;
 }
 
 
-void test_Layer() {
-    auto layer1 = Layer(10, 3, "relu");
-    auto layer2 = Layer(3, 1, "sigmoid");
+//void test_Layer() {
+//     auto layer1 = Layer(10, 3, "relu");
+//     auto layer2 = Layer(3, 1, "sigmoid");
 
-    std::cout << layer1.Summary() << std::endl;
-    std::cout << layer2.Summary() << std::endl;
+//     std::cout << layer1.Summary() << std::endl;
+//     std::cout << layer2.Summary() << std::endl;
 
-    layer1.SetNext(layer2);
+//     layer1.SetNext(layer2);
 
-}
+// }
 
 int main() {
+    //test_WeightInitialization();
     //test_PerceptronData();
     //test_activationFcts();
     //test_ActivationFct();
-    //test_Perceptron();
-    test_Layer();
+    test_Perceptron();
+    //test_Layer();
 
     return 0;
 }

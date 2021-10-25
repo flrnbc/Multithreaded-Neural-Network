@@ -15,7 +15,8 @@ class SequentialNN
         std::unique_ptr<std::vector<Layer> > _layers_ptr;
 
     public: 
-        SequentialNN(std::vector<Layer>);       
+        SequentialNN(std::vector<Layer>);  
+        std::vector<Layer> Layers() { return *_layers_ptr; }     
         std::string Summary(); 
 };
 

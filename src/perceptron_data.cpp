@@ -101,5 +101,5 @@ std::string PerceptronData::Summary() {
     std::string cols = std::to_string(Cols());
     std::string size = "(" + rows + ", " + cols + ")";
 
-    return "size: " + size + '\t' + " activation: " + Activation();
+    return "shape: " + size + "\tactivation: " + Activation();
 }

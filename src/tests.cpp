@@ -4,6 +4,7 @@
 
 #include "activation.h"
 #include "layer.h"
+#include "sequential_nn.h"
 #include "perceptron.h"
 #include "perceptron_data.h"
 
@@ -151,6 +152,14 @@ void test_Layer() {
     std::cout << layer2.Previous()->Summary() << std::endl;
 }
 
+
+void test_SequentialNN() {
+    auto seq1 = SequentialNN({Layer(10, 5, "relu"), Layer(5, 1, "sigmoid")});
+    //auto seq2 = SequentialNN({Layer(15, 5, "relu"), Layer(6, 2, "sigmoid")});
+
+    std::cout << seq1.Summary() << std::endl;
+}
+
 int main() {
     //test_WeightInitialization();
     //test_PerceptronData();
@@ -158,7 +167,9 @@ int main() {
     //test_ActivationFct();
     //test_Perceptron();
     //test_LayerBase();
-    test_Layer();
+    //test_Layer();
+
+    test_SequentialNN();
 
 
     return 0;

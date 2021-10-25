@@ -98,7 +98,6 @@ void test_ActivationFct() {
     for (double d: actFctTanh.Evaluate(input)) {
         std::cout << d << std::endl;
     }
-
 }
 
 
@@ -128,24 +127,39 @@ void test_Perceptron() {
 }
 
 
-//void test_Layer() {
-//     auto layer1 = Layer(10, 3, "relu");
-//     auto layer2 = Layer(3, 1, "sigmoid");
+void test_LayerBase() {
+     auto layer1 = LayerBase(10, 3, "relu");
+     auto layer2 = LayerBase(3, 1, "sigmoid");
 
-//     std::cout << layer1.Summary() << std::endl;
-//     std::cout << layer2.Summary() << std::endl;
+    std::cout << layer1.Summary() << std::endl;
+    std::cout << layer2.Summary() << std::endl;
 
-//     layer1.SetNext(layer2);
+    //layer1.SetNext(layer2);
+}
 
-// }
+
+void test_Layer() {
+     auto layer1 = Layer(10, 5, "relu");
+     auto layer2 = Layer(5, 1, "sigmoid");
+
+    std::cout << layer1.Summary() << std::endl;
+    std::cout << layer2.Summary() << std::endl;
+
+    layer1.SetNext(layer2);
+    std::cout << layer1.Next()->Summary() << std::endl;
+    layer2.SetPrevious(layer1);
+    std::cout << layer2.Previous()->Summary() << std::endl;
+}
 
 int main() {
     //test_WeightInitialization();
     //test_PerceptronData();
     //test_activationFcts();
     //test_ActivationFct();
-    test_Perceptron();
-    //test_Layer();
+    //test_Perceptron();
+    //test_LayerBase();
+    test_Layer();
+
 
     return 0;
 }

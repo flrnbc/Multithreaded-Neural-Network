@@ -57,7 +57,6 @@ std::vector<std::vector<double> > PerceptronData::WeightInitialization(int rows,
         int inputPlusOutputSize = cols + rows;
         // NOTE: uniform_real_distribution(a, b) generates for [a, b) (half-open interval)
         double min = -(sqrt(6)/sqrt(inputPlusOutputSize));
-        std::cout << "min: " << min << std::endl;
         double max = sqrt(6)/sqrt(inputPlusOutputSize);
 
         // randomly initialize weights

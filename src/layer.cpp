@@ -24,6 +24,7 @@ void LayerBase::SetOutputDelta(std::vector<double> output_delta) {
 
 // constructor for LayerBase
 LayerBase::LayerBase(int rows, int cols, std::string activation) {
+        // make_shared did not work for some reason and needed 'class'
         this->_perceptron.reset(new class Perceptron(rows, cols, activation));
         // TODO #A: should we use move semantics here?
         std::vector<double> input(this->_perceptron->Cols(), 0);
@@ -42,12 +43,12 @@ std::string LayerBase::Summary() {
 
 // Layer //
 // setters & getters for Layer
-void Layer::SetNext(LayerBase next) {
-        *_next = next; 
+void Layer::SetNext(Layer next) {
+        _next = std::make_shared<Layer>(std::move(next)); 
 }
 
-void Layer::SetPrevious(LayerBase previous) { 
-        *_previous = previous; 
+void Layer::SetPrevious(Layer previous) { 
+        _previous = std::make_shared<Layer>(std::move(previous)); 
 }
 
 // constructor for Layer

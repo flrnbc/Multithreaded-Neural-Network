@@ -48,6 +48,8 @@ public:
     void SetOutputDelta(std::vector<double>);
 
     // perceptron 
+    // TODO #A: is it inefficient to use this method to evaluate a layer?
+    // return by value vs. by ref
     std::shared_ptr<Perceptron> Perceptron() { return _perceptron; }
     // int Rows() { return _perceptron->Rows(); }
     // int Cols() { return _perceptron->Cols(); }
@@ -75,19 +77,19 @@ class Layer : public LayerBase
         // by default.
 
         // next layer
-        std::shared_ptr<LayerBase> _next; 
+        std::shared_ptr<Layer> _next; 
         // previous layer
-        std::shared_ptr<LayerBase> _previous;
+        std::shared_ptr<Layer> _previous;
 
     public:
         // constructor
         Layer(int rows, int cols, std::string activation);
 
         // setters & getters
-        std::shared_ptr<LayerBase> Next() { return _next; }
-        void SetNext(LayerBase next); 
-        std::shared_ptr<LayerBase> Previous() { return _previous; }
-        void SetPrevious(LayerBase previous);
+        std::shared_ptr<Layer> Next() { return _next; }
+        void SetNext(Layer next); 
+        std::shared_ptr<Layer> Previous() { return _previous; }
+        void SetPrevious(Layer previous);
 
         // forward pass
         void UpdateInput(); 

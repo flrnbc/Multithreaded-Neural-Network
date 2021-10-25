@@ -1,5 +1,8 @@
+
+#include <memory>
 #include <string>
 #include <vector>
+#include "activation.h"
 #include "layer.h"
 #include "perceptron_data.h"
 #include "perceptron.h"
@@ -21,7 +24,7 @@ void LayerBase::SetOutputDelta(std::vector<double> output_delta) {
 
 // constructor for LayerBase
 LayerBase::LayerBase(int rows, int cols, std::string activation) {
-        this->_perceptron = std::shared_ptr<Perceptron> (new Perceptron(rows, cols, activation));
+        this->_perceptron.reset(new class Perceptron(rows, cols, activation));
         // TODO #A: should we use move semantics here?
         std::vector<double> input(this->_perceptron->Cols(), 0);
         std::vector<double> output(this->_perceptron->Rows(), 0);

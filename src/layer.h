@@ -98,6 +98,4 @@ class Layer : public LayerBase
 };
 
 
-
-
 #endif // LAYER_H_

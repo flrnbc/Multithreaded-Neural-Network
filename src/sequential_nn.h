@@ -16,8 +16,15 @@ class SequentialNN
 
     public: 
         SequentialNN(std::vector<Layer>);  
-        std::vector<Layer> Layers() { return *_layers_ptr; }     
-        std::string Summary(); 
+        std::unique_ptr<std::vector<Layer> >& Layers() { return _layers_ptr; }     
+        std::string Summary();
+        // forward pass
+        void Forward();
+        // evaluate
+        // TODO #B: overload ()-operator
+        std::vector<double> Evaluate(std::vector<double>);
+
+        // TODO #A: ADD flatten?
 };
 
 #endif // SEQUENTIAL_NN_H_

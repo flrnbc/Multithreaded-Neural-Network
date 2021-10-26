@@ -39,9 +39,24 @@ SequentialNN::SequentialNN(std::vector<Layer> layers) {
 std::string SequentialNN::Summary() {
     std::string summary = "Summary of sequential neural network: ";
 
-    for (int i=0; i < (*_layers_ptr).size(); i++) {
-        summary += "\nLayer " + std::to_string(i) + ": " + (*_layers_ptr)[i].Summary();
+    for (int i=0; i < _layers_ptr->size(); i++) {
+        summary += "\nLayer " + std::to_string(i) + ":\n" + (*_layers_ptr)[i].Summary();
     }
 
     return summary;
+}
+
+void SequentialNN::Forward() {
+    for (int i=0; i < _layers_ptr->size(); i++) {
+        (*_layers_ptr)[i].Forward();
+        std::cout << "input (in Forward): " << Perceptron::PrintDoubleVector((*_layers_ptr)[i].InputData()) << std::endl;
+        std::cout << "output (in Forward): " << Perceptron::PrintDoubleVector((*_layers_ptr)[i].OutputData()) << std::endl;
+    }
+}
+
+std::vector<double> SequentialNN::Evaluate(std::vector<double> input) {
+    (*_layers_ptr)[0].SetInputData(input);
+    //std::cout << "input: " << Perceptron::PrintDoubleVector((*_layers_ptr)[0].InputData()) << std::endl;
+    this->Forward();
+    return (*_layers_ptr).back().OutputData();
 }

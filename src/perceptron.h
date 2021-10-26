@@ -55,6 +55,7 @@ public:
     std::vector<double> Evaluate(std::vector<double>);
 
     // summary
+    static std::string PrintDoubleVector(const std::vector<double>&);
     std::string Summary();
 };
 

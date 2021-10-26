@@ -62,6 +62,7 @@ int Perceptron::Cols() { return _data->Cols(); }
 std::string Perceptron::Activation() { return _data->Activation(); }
 
 // evaluation method
+// TODO #A: ADD check if input works
 std::vector<double> Perceptron::Evaluate(std::vector<double> inputVector) {
     std::vector<std::vector<double> > weights = this->Weights();
     std::vector<double> outputVector(weights.size(), 0);
@@ -80,7 +81,21 @@ std::vector<double> Perceptron::Evaluate(std::vector<double> inputVector) {
 }
 
 // summary
-// TODO #A: add weights and bias!
+std::string Perceptron::PrintDoubleVector(const std::vector<double>& double_vector) {
+    std::string vector_string = "";
+    for (double d: double_vector) {
+        vector_string += std::to_string(d) + ",\t";
+    }
+    return vector_string;
+}
 std::string Perceptron::Summary() {
-    return _data->Summary();
+    std::string summary = _data->Summary() + "\n";
+    std::string weights_string = "Weights:\n";
+    std::string bias_string = "Bias:\n" + Perceptron::PrintDoubleVector(this->Bias());
+
+    for (int i=0; i < this->Rows(); i++) {
+        weights_string += Perceptron::PrintDoubleVector(this->Weights()[i]) + "\n";
+    }
+
+    return summary + weights_string + bias_string;
 }

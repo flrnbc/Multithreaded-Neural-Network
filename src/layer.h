@@ -92,8 +92,10 @@ class Layer : public LayerBase
         void SetPrevious(Layer previous);
 
         // forward pass
+        // (NOTE: no evaluate method because that's covered by Perceptron)
         void UpdateInput(); 
-        void Forward(); // in particular updates output
+        void UpdateOutput();
+        void Forward(); 
 
         // backward pass
         // TODO #A: ADD!!!

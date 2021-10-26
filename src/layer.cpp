@@ -42,6 +42,12 @@ std::string LayerBase::Summary() {
 
 
 // Layer //
+// constructor for Layer
+Layer::Layer(int rows, int cols, std::string activation) : 
+        LayerBase(rows, cols, activation), 
+        _next(nullptr),
+        _previous(nullptr) {}
+
 // setters & getters for Layer
 void Layer::SetNext(Layer next) {
         _next = std::make_shared<Layer>(std::move(next)); 
@@ -51,12 +57,6 @@ void Layer::SetPrevious(Layer previous) {
         _previous = std::make_shared<Layer>(std::move(previous)); 
 }
 
-// constructor for Layer
-Layer::Layer(int rows, int cols, std::string activation) : 
-        LayerBase(rows, cols, activation), 
-        _next(nullptr),
-        _previous(nullptr) {}
-
 // forward pass
 // NOTE: no need to update for input layer (need to set input though)
 void Layer::UpdateInput() {
@@ -65,8 +65,13 @@ void Layer::UpdateInput() {
         }
 }
 
-void Layer::Forward() {
+void Layer::UpdateOutput() {
         SetOutputData(Perceptron()->Evaluate(InputData()));
+}
+
+void Layer::Forward() {
+        UpdateInput();
+        UpdateOutput();
 }
 
 // backward pass

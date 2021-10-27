@@ -104,7 +104,7 @@ void test_ActivationFct() {
 
 void test_Perceptron() {
     std::vector<std::vector<double> > weights{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-    std::vector<double> bias{5.0, 5.0, 5.0};
+    std::vector<double> bias({5.0, 5.0, 5.0});
     Perceptron per(weights, bias, "sigmoid");
     std::vector<double> input{-1, 0, 1};
 
@@ -125,6 +125,9 @@ void test_Perceptron() {
     
     std::cout << '\n' << "Summary of 2nd perceptron: " << std::endl;
     std::cout << per2.Summary() << std::endl;
+
+    std::vector<double> input2{-1, 0, 1, 0};
+    std::cout << "per2 output: " << Perceptron::PrintDoubleVector(per2.Evaluate(input2)) << std::endl;
 }
 
 
@@ -135,13 +138,16 @@ void test_LayerBase() {
     std::cout << layer1.Summary() << std::endl;
     std::cout << layer2.Summary() << std::endl;
 
-    //layer1.SetNext(layer2);
+    std::vector<double> input{1.0, 1.0, 1.0};
+    layer1.SetInputData(input);
+    layer1.UpdateOutput();
+    std::cout << "output: " << Perceptron::PrintDoubleVector(layer1.OutputData()) << std::endl;
 }
 
 
 void test_Layer() {
      auto layer1 = Layer(10, 5, "relu");
-     auto layer2 = Layer(5, 1, "sigmoid");
+     auto layer2 = Layer(5, 10, "sigmoid");
 
     std::cout << layer1.Summary() << std::endl;
     std::cout << layer2.Summary() << std::endl;
@@ -150,14 +156,35 @@ void test_Layer() {
     std::cout << layer1.Next()->Summary() << std::endl;
     layer2.SetPrevious(layer1);
     std::cout << layer2.Previous()->Summary() << std::endl;
+
+    std::vector<double> input{5.0, 0.0, 1.0, 0.0, 1.0};
+    layer1.SetInputData(input);
+    std::cout << "input: " << Perceptron::PrintDoubleVector(layer1.InputData()) << std::endl;
+    layer1.Forward();
+    std::cout << "output: " << Perceptron::PrintDoubleVector(layer1.OutputData()) << std::endl;
+    layer2.Forward();
+    std::cout << "input: " << Perceptron::PrintDoubleVector(layer2.InputData()) << std::endl;
 }
 
 
 void test_SequentialNN() {
-    auto seq1 = SequentialNN({Layer(10, 5, "relu"), Layer(5, 1, "sigmoid")});
+    std::vector<Layer> layers1 = {Layer(10, 5, "identity"), Layer(5, 1, "identity")};
+    auto seq1 = SequentialNN(layers1);
     //auto seq2 = SequentialNN({Layer(15, 5, "relu"), Layer(6, 2, "sigmoid")});
 
-    std::cout << seq1.Summary() << std::endl;
+    //std::cout << seq1.Summary() << std::endl;
+    std::cout << "next: " << (*seq1.Layers())[0].Next()->Summary() << std::endl;
+    std::cout << "prev: " << (*seq1.Layers())[1].Previous()->Summary() << std::endl;
+
+    std::vector<double> input{ 1.0, 1.0, 0.0, 0.0, 0.0 };
+    (*seq1.Layers())[0].SetInputData(input);
+    std::cout << "input for pass: " << Perceptron::PrintDoubleVector((*seq1.Layers())[0].InputData()) << std::endl;
+    seq1.Forward();
+    std::cout << "forward pass: " << Perceptron::PrintDoubleVector((*seq1.Layers())[1].OutputData()) << std::endl;
+
+    std::vector<double> output = seq1.Evaluate(input);
+    // TODO #A: add print function for vectors...
+    std::cout << "output:\n" << Perceptron::PrintDoubleVector(output) << std::endl;
 }
 
 int main() {
@@ -167,10 +194,8 @@ int main() {
     //test_ActivationFct();
     //test_Perceptron();
     //test_LayerBase();
-    //test_Layer();
-
-    test_SequentialNN();
-
+    test_Layer();
+    //test_SequentialNN();
 
     return 0;
 }

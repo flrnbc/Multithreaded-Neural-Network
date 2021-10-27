@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -11,6 +12,7 @@
 // setters & getters for LayerBase
 void LayerBase::SetInputData(std::vector<double> input) {
         _input_data = input;
+        std::cout << "From SetInputData " << std::endl;
 }
 void LayerBase::SetOutputData(std::vector<double> output) {
         _output_data = output;
@@ -49,23 +51,24 @@ Layer::Layer(int rows, int cols, std::string activation) :
         _previous(nullptr) {}
 
 // setters & getters for Layer
-void Layer::SetNext(Layer next) {
-        _next = std::make_shared<Layer>(std::move(next)); 
+void Layer::SetNext(std::shared_ptr<Layer> next) {
+        _next = next; 
 }
 
-void Layer::SetPrevious(Layer previous) { 
-        _previous = std::make_shared<Layer>(std::move(previous)); 
+void Layer::SetPrevious(std::shared_ptr<Layer> previous) { 
+        _previous = previous;
 }
 
 // forward pass
 // NOTE: no need to update for input layer (need to set input though)
 void Layer::UpdateInput() {
         if (Previous() != nullptr) {
+                std::cout << "from UpdateInput: " << Perceptron::PrintDoubleVector(Previous()->OutputData()) << std::endl;
                 SetInputData(Previous()->OutputData());
         }
 }
 
-void Layer::UpdateOutput() {
+void LayerBase::UpdateOutput() {
         SetOutputData(Perceptron()->Evaluate(InputData()));
 }
 

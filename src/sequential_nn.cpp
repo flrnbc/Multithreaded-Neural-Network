@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <vector>
 
@@ -6,10 +7,12 @@
 #include "perceptron.h"
 #include "sequential_nn.h"
 
-bool ComposabilityCheck(std::vector<Layer> layers) {
+bool ComposabilityCheck(std::vector<std::shared_ptr<Layer> > pointers_layers) {
     bool composable = true;
-    for (int i=0; i<layers.size()-1; i++) {
-        if (layers[i].Perceptron()->Cols() != layers[i+1].Perceptron()->Rows()) {
+    int N = pointers_layers.size();
+
+    for (int i=0; i<N-1; i++) {
+        if (pointers_layers[i]->Perceptron()->Cols() != pointers_layers[i+1]->Perceptron()->Rows()) {
             composable = false;
             break;
         }
@@ -17,46 +20,53 @@ bool ComposabilityCheck(std::vector<Layer> layers) {
     return composable;
 }
 
-std::vector<Layer> ConnectLayers(std::vector<Layer> layers) {
-    if (not ComposabilityCheck(layers)) {
+// TODO #A: efficient enough (i.e. withouth copying)?
+std::vector<std::shared_ptr<Layer> > ConnectLayers(std::vector<std::shared_ptr<Layer> >& pointers_layers) {
+    int N = pointers_layers.size();
+    if (not ComposabilityCheck(pointers_layers)) {
             throw std::invalid_argument("Not composable!");
     } 
     else {
-        for (int i=0; i<layers.size()-1; i++) {
-            layers[i].SetNext(layers[i+1]);
-            layers[i+1].SetPrevious(layers[i]);
+        for (int i=0; i<N-1; i++) {
+            pointers_layers[i]->SetNext(pointers_layers[i+1]);
+            pointers_layers[i+1]->SetPrevious(pointers_layers[i]);
         }
     }
-    return layers;
+    return pointers_layers;
 }
 
 SequentialNN::SequentialNN(std::vector<Layer> layers) {
-    std::vector<Layer> connectedLayers = ConnectLayers(layers);
-    // make_unique did not work...
-    this->_layers_ptr.reset(new std::vector<Layer>(connectedLayers));
+    for (int i=0; i<layers.size(); i++) {
+        // TODO #A: need to improve: do we copy too much here?
+        _pointers_layers.emplace_back(std::make_shared<Layer>(layers[i]));
+    }
+
+    _pointers_layers = ConnectLayers(_pointers_layers);
 }
 
 std::string SequentialNN::Summary() {
     std::string summary = "Summary of sequential neural network: ";
+    int N = Layers().size();
 
-    for (int i=0; i < _layers_ptr->size(); i++) {
-        summary += "\nLayer " + std::to_string(i) + ":\n" + (*_layers_ptr)[i].Summary();
+    for (int i=0; i < N; i++) {
+        summary += "\nLayer " + std::to_string(i) + ":\n" + _pointers_layers[i]->Summary();
     }
 
     return summary;
 }
 
 void SequentialNN::Forward() {
-    for (int i=0; i < _layers_ptr->size(); i++) {
-        (*_layers_ptr)[i].Forward();
-        std::cout << "input (in Forward): " << Perceptron::PrintDoubleVector((*_layers_ptr)[i].InputData()) << std::endl;
-        std::cout << "output (in Forward): " << Perceptron::PrintDoubleVector((*_layers_ptr)[i].OutputData()) << std::endl;
+    int N = Layers().size();
+    for (int i=0; i < N; i++) {
+        _pointers_layers[i]->Forward();
+        //std::cout << "input (in Forward): " << Perceptron::PrintDoubleVector(_pointers_layers[i]->InputData()) << std::endl;
+        //std::cout << "output (in Forward): " << Perceptron::PrintDoubleVector(_pointers_layers[i]->OutputData()) << std::endl;
     }
 }
 
 std::vector<double> SequentialNN::Evaluate(std::vector<double> input) {
-    (*_layers_ptr)[0].SetInputData(input);
+    _pointers_layers[0]->SetInputData(input);
     //std::cout << "input: " << Perceptron::PrintDoubleVector((*_layers_ptr)[0].InputData()) << std::endl;
     this->Forward();
-    return (*_layers_ptr).back().OutputData();
+    return (_pointers_layers).back()->OutputData();
 }

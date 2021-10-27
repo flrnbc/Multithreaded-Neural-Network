@@ -56,6 +56,8 @@ public:
     // std::vector<std::vector<double> > Weights() { return _perceptron->Weights(); }
     // std::vector<double> Bias() { return _perceptron->Bias(); }
 
+    // update output (i.e. evaluate)
+    void UpdateOutput();
     // summary
     std::string Summary();
 };
@@ -87,14 +89,14 @@ class Layer : public LayerBase
 
         // setters & getters
         std::shared_ptr<Layer> Next() { return _next; }
-        void SetNext(Layer next); 
-        std::shared_ptr<Layer> Previous() { return _previous; }
-        void SetPrevious(Layer previous);
+        void SetNext(std::shared_ptr<Layer> next); 
+        std::shared_ptr<Layer>& Previous() { return _previous; }
+        void SetPrevious(std::shared_ptr<Layer> pointer_previous);
 
         // forward pass
         // (NOTE: no evaluate method because that's covered by Perceptron)
         void UpdateInput(); 
-        void UpdateOutput();
+        // UpdateOutput() contained in base class
         void Forward(); 
 
         // backward pass

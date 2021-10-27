@@ -12,11 +12,14 @@ class SequentialNN
 */
 {
     private:
-        std::unique_ptr<std::vector<Layer> > _layers_ptr;
+        // it turned out to be more convenient to work with a vector of shared
+        // pointers (main reason: Layer has shared_ptr<Layer>'s as member var's)
+        std::vector<std::shared_ptr<Layer> >  _pointers_layers;
 
     public: 
-        SequentialNN(std::vector<Layer>);  
-        std::unique_ptr<std::vector<Layer> >& Layers() { return _layers_ptr; }     
+        SequentialNN(std::vector<Layer>); 
+        // TODO #A: need reference? 
+        std::vector<std::shared_ptr<Layer> > Layers() { return _pointers_layers; }     
         std::string Summary();
         // forward pass
         void Forward();

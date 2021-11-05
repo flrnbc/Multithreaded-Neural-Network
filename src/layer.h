@@ -68,8 +68,6 @@ class Layer : public LayerBase
     Class of a layer in a neural network based on LayerBase.
     It enhances LayerBase by the neighbors (_next and _previous)
     in a neural network. 
-
-    TODO #A: does nullptr help to implement input/output layers?
 */
 {
     private:
@@ -92,6 +90,9 @@ class Layer : public LayerBase
         void SetNext(std::shared_ptr<Layer> next); 
         std::shared_ptr<Layer>& Previous() { return _previous; }
         void SetPrevious(std::shared_ptr<Layer> pointer_previous);
+
+        // flatten layer
+        static std::vector<double> Flatten(const std::vector<std::vector<double> >& matrix);
 
         // forward pass
         // (NOTE: no evaluate method because that's covered by Perceptron)

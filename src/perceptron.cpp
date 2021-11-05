@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <random>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -15,14 +16,14 @@ Perceptron::Perceptron(std::vector<std::vector<double> > weights, std::vector<do
     SetBias(bias);
     // initialize perceptron data
     // TODO: test if it rejects 'empty vectors'
-    // TODO #A: replace with make_unique!
+    // TODO #A: use make_unique?
     this->_data.reset(new PerceptronData(weights.size(), weights[0].size(), activation));
     this->_activationFct.reset(new ActivationFct(activation));
 }
 
 
 // constructor using random initialization
-// TODO: use make_unique?
+// TODO #A: use make_unique?
 Perceptron::Perceptron(int rows, int cols, std::string activation) {
     this->_data.reset(new PerceptronData(rows, cols, activation));
     this->_activationFct.reset(new ActivationFct(activation)); 
@@ -62,22 +63,26 @@ int Perceptron::Cols() { return _data->Cols(); }
 std::string Perceptron::Activation() { return _data->Activation(); }
 
 // evaluation method
-// TODO #A: ADD check if input works
 std::vector<double> Perceptron::Evaluate(std::vector<double> inputVector) {
-    std::vector<std::vector<double> > weights = this->Weights();
-    std::vector<double> outputVector(weights.size(), 0);
-    std::vector<double> bias = this->Bias();
+    if (inputVector.size() != Cols()) {
+        throw std::domain_error("Vector cannot be evaluated.");
+    } else {
+        // TODO #A: really need to copy the weights?
+        std::vector<std::vector<double> > weights = this->Weights();
+        std::vector<double> outputVector(weights.size(), 0);
+        std::vector<double> bias = this->Bias();
 
-    for (int i=0; i < this->Rows(); i++) {
-        // matrix multiplication weights*inputVector
-        for (int j=0; j < this->Cols(); j++) {
-            outputVector[i] += weights[i][j]*inputVector[j];
+        for (int i=0; i < this->Rows(); i++) {
+            // matrix multiplication weights*inputVector
+            for (int j=0; j < this->Cols(); j++) {
+                outputVector[i] += weights[i][j]*inputVector[j];
+            }
+            // add bias 
+            outputVector[i] += bias[i];
         }
-        // add bias 
-        outputVector[i] += bias[i];
+        // apply activation function
+        return _activationFct->Evaluate(outputVector);
     }
-    // apply activation function
-   return _activationFct->Evaluate(outputVector);
 }
 
 // summary

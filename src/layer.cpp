@@ -59,6 +59,24 @@ void Layer::SetPrevious(std::shared_ptr<Layer> previous) {
         _previous = previous;
 }
 
+// flatten layer
+std::vector<double> Layer::Flatten(const std::vector<std::vector<double> >& matrix) {
+        int rows = matrix.size();
+        int cols = matrix[0].size();
+        int output_size = rows*cols;
+
+        std::vector<double> output(output_size, 0);
+
+        for (int i=0; i<rows; i++) {
+                for (int j=0; j<cols; j++) {
+                        output[i+j] = matrix[i][j];
+                }
+        }
+
+        return output;
+}
+
+
 // forward pass
 // NOTE: no need to update for input layer (need to set input though)
 void Layer::UpdateInput() {

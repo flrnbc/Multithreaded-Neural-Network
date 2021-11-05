@@ -26,5 +26,10 @@
   Another solution would be to include a 'NULL' layer but found the above more
   convenient to implement. 
 
+# Design issue with Perceptrons and Layers
+  Concerning backpropagation it makes more sense to build perceptrons from various layers. The point
+  is: we need to keep the results of both the affine linear transformation and after applying the 
+  (vectorized) activation function.
+
 # 'Global TODOs'
   + Where to use move semantics or passing by reference? 

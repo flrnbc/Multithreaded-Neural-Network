@@ -16,13 +16,13 @@ double sigmoid(double);
 class ActivationFct{
 private:
     std::string _name;
-    double (*activation_fct)(double); // TODO #A: really need function pointer?
+    double (*activation_fct)(double); // function pointer seems to be needed
 
 public:
     // (default) constructor
     ActivationFct(std::string fct_name="identity"); // TODO #B: add possibility to add custom activation functions
     // methods
-    std::vector<double> Evaluate(std::vector<double>); // TODO #A: better pass by reference?
+    std::vector<double> Evaluate(std::vector<double>); // want to keep input, so no pass by reference
     // setters/getters
     std::string Name() {
         return _name; 

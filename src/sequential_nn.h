@@ -27,7 +27,6 @@ class SequentialNN
         // TODO #B: overload ()-operator
         std::vector<double> Evaluate(std::vector<double>);
 
-        // TODO #A: ADD flatten?
 };
 
 #endif // SEQUENTIAL_NN_H_

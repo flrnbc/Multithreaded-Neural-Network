@@ -28,7 +28,7 @@ public:
     Perceptron(int rows, int cols, std::string fct);
 
     // destructor
-    // TODO #A: had an issue with an empty destructor?
+    // TODO #A: had an issue with an empty destructor but why?
     //~Perceptron();
 
     // copy constructor

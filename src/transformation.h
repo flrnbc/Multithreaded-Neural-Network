@@ -102,5 +102,4 @@ class ActivationTransformation: public Transformation {
 
 // TODO: to include: Flatten layer
 
-
 #endif // TRANSFORMATION_H_

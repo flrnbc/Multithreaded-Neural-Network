@@ -6,9 +6,11 @@
 #include <string>
 
 
-/*
-    Abstract base class
-*/
+
+/***********************
+ * ABSTRACT BASE CLASS *
+ ***********************/
+
 class Transformation {
     protected:
         int _rows;
@@ -24,7 +26,7 @@ class Transformation {
         // pure virtual functions
         // overloaded transform method (want to keep input, so no pass by reference)
         virtual std::vector<double> Transform(std::vector<double>) = 0;
-        virtual std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >) = 0;
+        //virtual std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >) = 0;
         
         // TODO #A: backward/derivative
         
@@ -34,9 +36,11 @@ class Transformation {
 };
 
 
-/*
-    Concrete implementation: Linear transformation
-*/ 
+
+/**************************************************
+ * CONCRETE IMPLEMENTATION: LINEAR TRANSFORMATION *
+ **************************************************/
+
 class LinearTransformation: public Transformation {
     private:    
         std::vector<std::vector<double> > _weights;
@@ -65,15 +69,17 @@ class LinearTransformation: public Transformation {
         // transform methods (just right matrix multiplication with input)
         // NOTE: we do _not_ work with transpose etc.
         std::vector<double> Transform(std::vector<double>); 
-        std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
+        //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
 
         // summaries
         std::string Summary();
 };
 
-/*
-    Concrete implementation: Activation transformation
-*/
+
+/******************************************************
+ * CONCRETE IMPLEMENTATION: ACTIVATION TRANSFORMATION *
+ ******************************************************/
+
 // collect activation functions
 double heaviside(double);
 double identity(double); 

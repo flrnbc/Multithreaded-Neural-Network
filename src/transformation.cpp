@@ -22,7 +22,7 @@ std::string Transformation::PrintDoubleVector(const std::vector<double>& double_
 
 // helper function to transpose
 // TODO: improve with move semantics?!
-static std::vector<std::vector<double> > Transpose(const std::vector<std::vector<double> >& matrix) {
+std::vector<std::vector<double> > LinearTransformation::Transpose(const std::vector<std::vector<double> >& matrix) {
     int rows = matrix.size();
     int cols = matrix[0].size();
     std::vector<std::vector<double> > transposedMatrix(rows, std::vector<double>(cols, 0));
@@ -61,13 +61,18 @@ double RandomNumberNormal(double min, double max) {
 // constructor using random initialization (used for different activation functions)
 // TODO #A: give reference for different initializations
 LinearTransformation::LinearTransformation(int rows, int cols, std::string initialization_type) {
-    if (initialization_type != "He" || initialization_type != "Xavier") {
+    if (initialization_type != "He" && initialization_type != "Xavier") {
         // TODO #A: need to catch it somewhere?
         throw std::domain_error("Initialization type is unknown.");
     }
     // set rows and cols
     SetCols(cols);
     SetRows(rows);
+
+    // set bias to zero
+    // TODO: we initialize the bias to a zero vector here which might not be optimal
+    std::vector<double> bias(rows, 0);
+    SetBias(bias);
 
     // initialize weights to zeros
     std::vector<std::vector<double> > weights(rows, std::vector<double>(cols, 0));
@@ -129,28 +134,28 @@ std::vector<double> LinearTransformation::Transform(std::vector<double> inputVec
     }
 }
 
-std::vector<std::vector<double> > LinearTransformation::Transform(std::vector<std::vector<double> > inputMatrix) {
-    // rows of inputMatrix = inputMatrix[0].size()
-    // cols of inputMatrix = inputMatrix.size()
-    if ((inputMatrix[0].size() != Cols()) || (inputMatrix.size() != Rows())) {
-        throw std::domain_error("Matrices cannot be multiplied.");
-    } else {
-        // TODO #A: really need to copy the weights?
-        std::vector<std::vector<double> > weights = this->Weights();
-        // TODO #A: again might be much better to use move semantics
-        // NOTE: the trick here is to use the transpose so that we can access the columns vectors of inputMatrix
-        // more easily and use the previous method. Of course, we then have to apply the transpose again to get 
-        // the correct output.
-        std::vector<std::vector<double> > transposedInput = Transpose(inputMatrix);
-        std::vector<std::vector<double> > transposedOutputMatrix(Cols(), std::vector<double>(Rows(), 0));
+// std::vector<std::vector<double> > LinearTransformation::Transform(std::vector<std::vector<double> > inputMatrix) {
+//     // rows of inputMatrix = inputMatrix[0].size()
+//     // cols of inputMatrix = inputMatrix.size()
+//     if ((inputMatrix[0].size() != Cols()) || (inputMatrix.size() != Rows())) {
+//         throw std::domain_error("Matrices cannot be multiplied.");
+//     } else {
+//         // TODO #A: really need to copy the weights?
+//         std::vector<std::vector<double> > weights = this->Weights();
+//         // TODO #A: again might be much better to use move semantics
+//         // NOTE: the trick here is to use the transpose so that we can access the columns vectors of inputMatrix
+//         // more easily and use the previous method. Of course, we then have to apply the transpose again to get 
+//         // the correct output.
+//         std::vector<std::vector<double> > transposedInput = LinearTransformation::Transpose(inputMatrix);
+//         std::vector<std::vector<double> > transposedOutputMatrix(Cols(), std::vector<double>(Rows(), 0));
 
-        // TODO #A: check if above idea works in detail!
-        for (int i=0; i < Rows(); i++) {
-            transposedOutputMatrix[i] = Transform(transposedInput[i]);
-        }
-        return Transpose(transposedOutputMatrix);
-    }
-}
+//         // TODO #A: check if above idea works in detail!
+//         for (int i=0; i < Rows(); i++) {
+//             transposedOutputMatrix[i] = Transform(transposedInput[i]);
+//         }
+//         return Transpose(transposedOutputMatrix);
+//     }
+// }
 
 // Summary
 std::string LinearTransformation::Summary() {
@@ -199,7 +204,7 @@ double sigmoid(double x) {
  * ACTIVATION TRANSFORMATION *
  *****************************/
 
-ActivationTransformation::ActivationTransformation(int size, std::string fct_name="identity") {
+ActivationTransformation::ActivationTransformation(int size, std::string fct_name) {
     SetCols(size);
     SetRows(size);
     if (fct_name == "heaviside") {
@@ -235,13 +240,13 @@ std::vector<double> ActivationTransformation::Transform(std::vector<double> vect
     return vector;
 }
 
-std::vector<std::vector<double> > ActivationTransformation::Transform(std::vector<std::vector<double> > matrix) {
-    for (int i=0; i < matrix.size(); i++) {
-        matrix[i] = Transform(matrix[i]);
-    }
+// std::vector<std::vector<double> > ActivationTransformation::Transform(std::vector<std::vector<double> > matrix) {
+//     for (int i=0; i < matrix.size(); i++) {
+//         matrix[i] = Transform(matrix[i]);
+//     }
     
-    return matrix;
-}
+//     return matrix;
+// }
 
 std::string ActivationTransformation::Summary() {
     std::string rows = std::to_string(Rows());

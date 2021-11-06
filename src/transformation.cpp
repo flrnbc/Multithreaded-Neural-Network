@@ -7,9 +7,10 @@
 
 #include "transformation.h"
 
-/* 
-    Helper functions
-*/
+/********************
+ * HELPER FUNCTIONS *
+ ********************/
+
 // helper function to print double vectors
 std::string Transformation::PrintDoubleVector(const std::vector<double>& double_vector) {
     std::string vector_string = "";
@@ -35,16 +36,38 @@ static std::vector<std::vector<double> > Transpose(const std::vector<std::vector
     return transposedMatrix;
 }
 
-/*
-    LinearTransformation
-*/
+// helper function for random numbers
+// TODO: is there a performance issue? (since we create a generator etc. each time)?
+double RandomNumberUniform(double min, double max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(min, max);
+
+    return dis(gen);
+}
+
+double RandomNumberNormal(double min, double max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<> dis(min, max);
+
+    return dis(gen);
+}
+
+/*************************
+ * LINEAR TRANSFORMATION *
+ *************************/
+
 // constructor using random initialization (used for different activation functions)
 // TODO #A: give reference for different initializations
-LinearTransformation(int rows, int cols, std::string initialization_type) {
+LinearTransformation::LinearTransformation(int rows, int cols, std::string initialization_type) {
     if (initialization_type != "He" || initialization_type != "Xavier") {
         // TODO #A: need to catch it somewhere?
-        throw std::domain_error("Initialization type is unknown.")
+        throw std::domain_error("Initialization type is unknown.");
     }
+    // set rows and cols
+    SetCols(cols);
+    SetRows(rows);
 
     // initialize weights to zeros
     std::vector<std::vector<double> > weights(rows, std::vector<double>(cols, 0));
@@ -78,7 +101,8 @@ LinearTransformation(int rows, int cols, std::string initialization_type) {
             }
         }
     }
-    return weights;
+    // TODO #A: again, use move semantics?
+    SetWeights(weights);
 }
 
 
@@ -145,9 +169,10 @@ std::string LinearTransformation::Summary() {
 }
 
 
-/* 
- *    Activation functions
-*/
+/************************
+ * ACTIVATION FUNCTIONS *
+ ************************/
+
 double heaviside(double x) {
     if (x < 0) { return 0; }
     return 1;
@@ -170,9 +195,10 @@ double sigmoid(double x) {
     return 1/(1 + exp(-x));
 }
 
-/*
-    Constructor for activation function
-*/
+/*****************************
+ * ACTIVATION TRANSFORMATION *
+ *****************************/
+
 ActivationTransformation::ActivationTransformation(int size, std::string fct_name="identity") {
     SetCols(size);
     SetRows(size);
@@ -199,9 +225,7 @@ ActivationTransformation::ActivationTransformation(int size, std::string fct_nam
 }
 
 
-/*
-    Implementing the transform methods for ActivationTransformation
-*/
+// transform methods for ActivationTransformation
 std::vector<double> ActivationTransformation::Transform(std::vector<double> vector) {
     // TODO #A: optimize vectorization! (OpenMP?)
     for (int i = 0; i < vector.size(); i++) {

@@ -43,10 +43,13 @@ class LinearTransformation: public Transformation {
         std::vector<double > _bias;
 
     public:
-        // (default) constructor
+        // default constructor
         LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias) :
-            _weights(weights), _bias(bias) {};
+            _weights(weights), _bias(bias) {}
 
+        // constructor using random initialization:
+        // He weight initialization and normalized Xavier weight initialization
+        LinearTransformation(int rows, int cols, std::string initialization_type);
 
         // setters & getters
         std::vector< std::vector<double> > Weights() { return _weights; }
@@ -64,7 +67,7 @@ class LinearTransformation: public Transformation {
         std::vector<double> Transform(std::vector<double>); 
         std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
 
-        // summary
+        // summaries
         std::string Summary();
 };
 

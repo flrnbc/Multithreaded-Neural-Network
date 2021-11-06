@@ -38,9 +38,54 @@ static std::vector<std::vector<double> > Transpose(const std::vector<std::vector
 /*
     LinearTransformation
 */
+// constructor using random initialization (used for different activation functions)
+// TODO #A: give reference for different initializations
+LinearTransformation(int rows, int cols, std::string initialization_type) {
+    if (initialization_type != "He" || initialization_type != "Xavier") {
+        // TODO #A: need to catch it somewhere?
+        throw std::domain_error("Initialization type is unknown.")
+    }
+
+    // initialize weights to zeros
+    std::vector<std::vector<double> > weights(rows, std::vector<double>(cols, 0));
+
+    // actual initialization of weights
+    if (initialization_type == "Xavier") {      
+        // use normalized Xavier weight initialization
+        int inputPlusOutputSize = cols + rows;
+        // NOTE: uniform_real_distribution(a, b) generates for [a, b) (half-open interval)
+        double min = -(sqrt(6)/sqrt(inputPlusOutputSize));
+        double max = sqrt(6)/sqrt(inputPlusOutputSize);
+
+        // randomly initialize weights
+        // NOTE: be careful with cache-friendliness (outer loop over rows)
+        // TODO #A: would be nicer to put this for-loop after the else-block (but then would have to declare dis before; but as what?)
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                weights[i][j] = RandomNumberUniform(min, max); 
+            }
+        }
+    } 
+    else {
+        // use He weight initialization
+        double min = 0.0;
+        double max = sqrt(2.0/cols);
+
+        // randomly initialize weights
+        for (int i=0; i<rows; i++) {
+            for (int j=0; j<cols; j++) {
+                weights[i][j] = RandomNumberNormal(min, max); 
+            }
+        }
+    }
+    return weights;
+}
+
+
 // transform methods
 std::vector<double> LinearTransformation::Transform(std::vector<double> inputVector) {
     if (inputVector.size() != Cols()) {
+        // TODO #A: catch exception somewhere?
         throw std::domain_error("Vector cannot be evaluated.");
     } else {
         // TODO #A: really need to copy the weights?
@@ -84,7 +129,6 @@ std::vector<std::vector<double> > LinearTransformation::Transform(std::vector<st
 }
 
 // Summary
-// TODO #A: extend a bit more
 std::string LinearTransformation::Summary() {
     std::string rows = std::to_string(Rows());
     std::string cols = std::to_string(Cols());
@@ -101,9 +145,8 @@ std::string LinearTransformation::Summary() {
 }
 
 
-
 /* 
-    Activation functions
+ *    Activation functions
 */
 double heaviside(double x) {
     if (x < 0) { return 0; }

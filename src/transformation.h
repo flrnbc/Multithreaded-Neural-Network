@@ -13,7 +13,9 @@
 
 class Transformation {
     protected:
+        // output dimension 
         int _rows;
+        // input dimension   
         int _cols;
 
     public:
@@ -103,7 +105,7 @@ class ActivationTransformation: public Transformation {
 
         // transform methods
         std::vector<double> Transform(std::vector<double>);
-        std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
+        //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
 
         // Summary of transformation
         std::string Summary(); 

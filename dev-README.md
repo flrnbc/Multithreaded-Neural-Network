@@ -31,5 +31,9 @@
   is: we need to keep the results of both the affine linear transformation and after applying the 
   (vectorized) activation function.
 
+# Matrix class?
+  It would have been better to implement a Matrix class which deals with transpose, evaluating etc.
+  But this would have required another refactoring and is therefore postponed.
+
 # 'Global TODOs'
   + Where to use move semantics or passing by reference? 

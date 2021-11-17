@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-class Perceptron
 class Transformation;
+class LinearTransformation;
 
 // TODO #A: use a template (e.g. for matrices etc.)
 class Cache {
@@ -39,41 +39,34 @@ class LayerCache {
 };
 
 
-class Layer
+class LayerBase
 /*
-    Class of a layer in a neural network based on LayerBase.
-    It enhances LayerBase by the neighbors (_next and _previous)
-    in a neural network. 
+    Base of a layer in a neural network. 
+    
+    Functionality: 
+        - keeping caches for backward and forward propagation
+        - transformation of the layer
 */
 {
     private:
-        // transformation of layer
-        // TODO: check if unique_ptr makes sense/requires copy constructor etc.
-        std::unique_ptr<Transformation> _transformation;
-        // cache for forward pass
+        // cache for forward and backward pass/propagation
         std::unique_ptr<LayerCache> _forward_cache;
-        // cache for backward pass
         std::unique_ptr<LayerCache> _backward_cache;
-        // next layer
-        std::shared_ptr<Layer> _next; 
-        // previous layer
-        std::shared_ptr<Layer> _previous;
+
+        // transformation
+        std::unique_ptr<Transformation> _transformation;
 
     public:
-        // (default) constructor 
-        Layer(Transformation);
+        // default constructor
+        LayerBase(Transformer);
 
         // setters & getters
-        // for next/previous layer
-        // TODO: actually want reference?
-        std::shared_ptr<Layer> Next() { return _next; }
-        void SetNext(std::shared_ptr<Layer> next); 
-        std::shared_ptr<Layer> Previous() { return _previous; }
-        void SetPrevious(std::shared_ptr<Layer> pointer_previous);
-        // for caches
+        // for caches (note that we do not need setters)
+        // they are contained in the corresponding class
         std::unique_ptr<LayerCache>& ForwardCache() { return _forward_cache; }
         std::unique_ptr<LayerCache>& BackwardCache() { return _backward_cache; }
-        
+        // NOTE: we keep the transformation 'hidden' on purpose
+
         // 'forward propagation'
         // update input of foward cache (i.e. take output from previous layer)
         void UpdateInput();
@@ -85,71 +78,57 @@ class Layer
         void UpdateBackwardInput();
         // update output of backward cache
         void UpdateBackwardOutput();
-        
+
+        // summary
+        std::string Summary();     
 };
 
 
-
-
-
-
-
-
-
-class LayerBase
-/*
-    Class which enhances a perceptron with input/output data 
-    as well as input/output deltas for forward and backward
-    propagation respectively.
-*/
-{
-    private:
-        // perceptron of layer
-        // NOTE: a perceptron is obviously (uniquely) tied to an object of LayerBase.
-        // however, when we built neural networks from Layer/LayerBase, the perceptron
-        // is shared by connected layers. hence we use a shared_ptr.
-        std::shared_ptr<Perceptron> _perceptron;
-        // data for forward propagation
-        std::vector<double> _input_data;
-        std::vector<double> _output_data;
-        // data for backward propagation
-        std::vector<double> _input_delta;
-        std::vector<double> _output_delta;
+class Layer {
+    private: 
+        std::shared_ptr<Layer> _next;
+        std::shared_ptr<Layer> _previous;
+        std::unique_ptr<LayerBase> _base;
 
     public:
-        // TODO: default constructor
+        // default constructor
+        Layer(LayerBase);
 
-        // constructor 
-        LayerBase(int, int, std::string);
+        // forward pass 
+        void Forward();
+        // backward pass 
+        void Backward();
 
-        // setters & getters (TODO: too much boilerplate?)
-        // input and output data
-        std::vector<double> InputData() { return _input_data; } 
-        void SetInputData(std::vector<double>); 
-        
-        std::vector<double> OutputData() { return _output_data; }
-        void SetOutputData(std::vector<double>); 
+        // setters/getters
+        // TODO: makes sense for an abstract class?!?
+        // for next/previous layer
+        // TODO: actually want reference?
+        std::shared_ptr<Layer> Next() { return _next; }
+        void SetNext(std::shared_ptr<Layer> next); 
+        std::shared_ptr<Layer> Previous() { return _previous; }
+        void SetPrevious(std::shared_ptr<Layer> pointer_previous);
+        // for LayerBase
+        std::unique_ptr<LayerBase>& Base() { return _base; }
 
-        std::vector<double> InputDelta() { return _input_delta; }
-        void SetInputDelta(std::vector<double>);
-
-        std::vector<double> OutputDelta() { return _output_delta; }
-        void SetOutputDelta(std::vector<double>);
-
-        // perceptron 
-        // TODO #A: is it inefficient to use this method to evaluate a layer?
-        // return by value vs. by ref
-        std::shared_ptr<Perceptron> Perceptron() { return _perceptron; }
-        // int Rows() { return _perceptron->Rows(); }
-        // int Cols() { return _perceptron->Cols(); }
-        // std::vector<std::vector<double> > Weights() { return _perceptron->Weights(); }
-        // std::vector<double> Bias() { return _perceptron->Bias(); }
-
-        // update output (i.e. evaluate)
-        void UpdateOutput();
         // summary
         std::string Summary();
 };
+
+class LinearLayer : public Layer {
+    public:
+        // default constructor
+        LinearLayer(LinearTransformation):
+            Layer(LinearTransformation) 
+            {
+            }
+        // simplified constructor
+        LinearLayer(int, int);
+
+        // update weights (gradient descent)
+        void UpdateWeights();
+};
+
+class 
 
 // flatten layer --> extra layer class
         //static std::vector<double> Flatten(const std::vector<std::vector<double> >& matrix);

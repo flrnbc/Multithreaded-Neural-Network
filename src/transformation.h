@@ -6,37 +6,36 @@
 #include <string>
 
 
-
 /***********************
  * ABSTRACT BASE CLASS *
  ***********************/
 
 class Transformation {
-    protected:
+    private:
         // output dimension 
         int _rows;
         // input dimension   
-        int _cols;
+        int _cols; 
 
-    public:
-        // Transformation() {}; 
-        virtual int Cols() { return _cols; }
-        virtual int Rows() { return _rows; }
-        virtual void SetCols(int cols) { _cols = cols; }
-        virtual void SetRows(int rows) { _rows = rows; }
+    protected: 
+        // not meant to be called directly 
+        Transformation();
+
+    public: 
+        int Cols() { return _cols; }
+        int Rows() { return _rows; }
+        void SetCols(int cols) { _cols = cols; }
+        void SetRows(int rows) { _rows = rows; }
         
-        // pure virtual functions
-        // overloaded transform method (want to keep input, so no pass by reference)
-        virtual std::vector<double> Transform(std::vector<double>) = 0;
-        //virtual std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >) = 0;
+        // transform method (want to keep input, so no pass by reference)
+        std::vector<double> Transform(std::vector<double>);
+        //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
         
         // TODO #A: backward/derivative
         
-        // summary of transformation
         static std::string PrintDoubleVector(const std::vector<double>&); // simply attach function to Class
-        virtual std::string Summary() = 0;
+        std::string Summary();
 };
-
 
 
 /**************************************************
@@ -49,13 +48,11 @@ class LinearTransformation: public Transformation {
         std::vector<double > _bias;
 
     public:
-        // default constructor
-        LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias) :
-            _weights(weights), _bias(bias) {}
-
-        // constructor using random initialization:
-        // He weight initialization and normalized Xavier weight initialization
-        LinearTransformation(int rows, int cols, std::string initialization_type);
+        // constructors
+        // default constructor for (affine) linear transformations
+        LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias);
+        // constructor (all zeros)
+        LinearTransformation(int rows, int cols);
 
         // setters & getters
         std::vector< std::vector<double> > Weights() { return _weights; }
@@ -64,6 +61,9 @@ class LinearTransformation: public Transformation {
         }
         std::vector<double> Bias() { return _bias; }
         void SetBias(std::vector<double> bias) { _bias = bias; }
+
+        // random initialize (either via "He" or "Normalized Xavier")
+        void Initialize(std::string initialize_type);
 
         // useful helper function to transpose
         static std::vector<std::vector<double> > Transpose(const std::vector<std::vector<double> >&);

@@ -54,28 +54,60 @@ double RandomNumberNormal(double min, double max) {
     return dis(gen);
 }
 
+
+/******************
+ * TRANSFORMATION *
+ ******************/
+
+Transformation::Transformation() {
+    // not meant to be called directly
+    SetCols(0);
+    SetRows(0);
+}
+
+std::vector<double> Transformation::Transform(std::vector<double> input) {
+    // just the identity
+    return input;
+}
+
+std::string Transformation::Summary() {
+    return "Identity transformation.";
+}
+
+
 /*************************
  * LINEAR TRANSFORMATION *
  *************************/
 
-// constructor using random initialization (used for different activation functions)
-// TODO #A: give reference for different initializations
-LinearTransformation::LinearTransformation(int rows, int cols, std::string initialization_type) {
+// default constructor
+LinearTransformation::LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias) {
+    SetWeights(weights);
+    SetBias(bias);
+    SetRows(weights.size());
+    SetCols(weights[0].size());
+}
+
+
+// set weights and bias to zero
+LinearTransformation::LinearTransformation(int rows, int cols) {
+    SetCols(cols);
+    SetRows(rows);
+
+    SetWeights(std::vector<std::vector<double> >(rows, std::vector<double>(cols, 0))); // implicitly uses move semantics?
+    SetBias(std::vector<double>(rows, 0));
+}
+
+
+// random initialization (used for different activation functions)
+// either He or normalized Xavier initialization
+void LinearTransformation::Initialize(std::string initialization_type) {
     if (initialization_type != "He" && initialization_type != "Xavier") {
         // TODO #A: need to catch it somewhere?
         throw std::domain_error("Initialization type is unknown.");
     }
-    // set rows and cols
-    SetCols(cols);
-    SetRows(rows);
 
-    // set bias to zero
-    // TODO: we initialize the bias to a zero vector here which might not be optimal
-    std::vector<double> bias(rows, 0);
-    SetBias(bias);
-
-    // initialize weights to zeros
-    std::vector<std::vector<double> > weights(rows, std::vector<double>(cols, 0));
+    int rows = Rows();
+    int cols = Cols();
 
     // actual initialization of weights
     if (initialization_type == "Xavier") {      
@@ -90,7 +122,7 @@ LinearTransformation::LinearTransformation(int rows, int cols, std::string initi
         // TODO #A: would be nicer to put this for-loop after the else-block (but then would have to declare dis before; but as what?)
         for (int i=0; i<rows; i++) {
             for (int j=0; j<cols; j++) {
-                weights[i][j] = RandomNumberUniform(min, max); 
+                _weights[i][j] = RandomNumberUniform(min, max); 
             }
         }
     } 
@@ -102,12 +134,11 @@ LinearTransformation::LinearTransformation(int rows, int cols, std::string initi
         // randomly initialize weights
         for (int i=0; i<rows; i++) {
             for (int j=0; j<cols; j++) {
-                weights[i][j] = RandomNumberNormal(min, max); 
+                _weights[i][j] = RandomNumberNormal(min, max); 
             }
         }
     }
-    // TODO #A: again, use move semantics?
-    SetWeights(weights);
+
 }
 
 

@@ -59,20 +59,20 @@ double RandomNumberNormal(double min, double max) {
  * TRANSFORMATION *
  ******************/
 
-Transformation::Transformation() {
-    // not meant to be called directly
-    SetCols(0);
-    SetRows(0);
-}
+// Transformation::Transformation() {
+//     // not meant to be called directly
+//     SetCols(0);
+//     SetRows(0);
+// }
 
-std::vector<double> Transformation::Transform(std::vector<double> input) {
-    // just the identity
-    return input;
-}
+// std::vector<double> Transformation::Transform(std::vector<double> input) {
+//     // just the identity
+//     return input;
+// }
 
-std::string Transformation::Summary() {
-    return "Identity transformation.";
-}
+// std::string Transformation::Summary() {
+//     return "Identity transformation.";
+// }
 
 
 /*************************

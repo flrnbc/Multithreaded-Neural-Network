@@ -9,38 +9,48 @@
 
 
 // setters/getters
-void LinearLayer::SetForwardInput(std::shared_ptr<std::vector<double> > input_ptr) {
+void Layer::SetForwardInput(std::shared_ptr<std::vector<double> > input_ptr) {
        _forward_input = std::move(input_ptr);
 }
 
-std::shared_ptr<std::vector<double> > LinearLayer::GetForwardOutput() {
+void Layer::SetForwardOutput(std::shared_ptr<std::vector<double> > output_ptr) {
+        _forward_output = std::move(output_ptr);
+}
+
+std::shared_ptr<std::vector<double> > Layer::GetForwardOutput() {
         return _forward_output;
 }
 
-void LinearLayer::SetBackwardInput(std::shared_ptr<std::vector<double> > backward_input_ptr) {
+std::shared_ptr<std::vector<double> > Layer::GetForwardInput() {
+        return _forward_input;
+}
+
+void Layer::SetBackwardInput(std::shared_ptr<std::vector<double> > backward_input_ptr) {
         _backward_input = std::move(backward_input_ptr);
 }
 
-std::shared_ptr<std::vector<double> > LinearLayer::GetBackwardOutput() { 
+std::shared_ptr<std::vector<double> > Layer::GetBackwardOutput() { 
         return _backward_output;
 }
 
 void LinearLayer::Forward() {
         // NOTE: for 'connected' layers we have _forward_output != nullptr by the initialization
-        // of a (sequential) neural network. In these cases, we simply forward pass the input.
-        // The end(s) of a (sequential) NN will have _forward_output == nullptr and we create 
-        // a new shared_ptr to the output.
-        if (_forward_input != nullptr) {
+        // of a (sequential) neural network. Moreover, two layers share _forward_input and _forward_output 
+        // respectively. We do not want to break this connection by setting the shared_ptr via 
+        // std::make_shared<std::vector<double> > ... (which creates a new shared_ptr).
+        // Instead we simply change the object owned by the shared_ptr.
+
+        if (GetForwardInput() != nullptr) {
                 // TODO: do we copy the transformed vector too often?
-                std::vector<double> transformed_vector = _transformation->Transform(*(_forward_input));
-                if (_forward_output == nullptr) { 
-                        _forward_output = std::make_shared<std::vector<double> >(transformed_vector);
+                std::vector<double> transformed_vector = _transformation->Transform(*(GetForwardInput()));
+                if (GetBackwardOutput() == nullptr){
+                        SetForwardOutput(std::make_shared<std::vector<double> >(transformed_vector));
                 } else {
-                        *(_forward_output) = transformed_vector;
+                        // TODO: do we create an unecessary copy of _backward_output here
+                        *(GetBackwardOutput()) = transformed_vector;
                 }
-        }
-        else {
-                throw std::invalid_argument("Pointers are null!");
+        } else {
+                throw std::invalid_argument("Pointer is null!");
         }          
 }
 
@@ -50,9 +60,9 @@ void LinearLayer::Forward() {
  *******************************/
 
 LinearLayer::LinearLayer(int rows, int cols) {
-        _transformation = std::make_unique<LinearTransformation>(rows, cols);
-}
+        _transformation = std::make_unique<LinearTransformation>(rows, cols); 
 
+}
 
 void LinearLayer::Initialize(std::string initialization_type) {
         _transformation->Initialize(initialization_type);

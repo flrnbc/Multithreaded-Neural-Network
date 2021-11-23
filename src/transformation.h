@@ -17,22 +17,26 @@ class Transformation {
         // input dimension   
         int _cols; 
 
-    protected: 
-        // not meant to be called directly 
-        Transformation();
-
-    public: 
+    public:
+        // default constructor
+        //Transformation();
+        // empty destructor
+        //~Transformation() {};
+        // setters/getters
         int Cols() { return _cols; }
         int Rows() { return _rows; }
         void SetCols(int cols) { _cols = cols; }
         void SetRows(int rows) { _rows = rows; }
         
         // transform method (want to keep input, so no pass by reference)
-        std::vector<double> Transform(std::vector<double>);
+        virtual std::vector<double> Transform(std::vector<double>) = 0;
         //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
         
+        // initialize
+        void Initialize(std::string initialize_type) {}
+
         // TODO #A: backward/derivative
-        
+
         static std::string PrintDoubleVector(const std::vector<double>&); // simply attach function to Class
         std::string Summary();
 };
@@ -98,7 +102,7 @@ class ActivationTransformation: public Transformation {
     public:
         // (default) constructor
         ActivationTransformation(int size, std::string fct_name="identity"); 
-        
+
         // setters & getters
         std::string Name() { return _name; }
         void SetName(std::string fct_name) { _name = fct_name; }

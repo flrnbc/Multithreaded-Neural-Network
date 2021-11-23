@@ -40,36 +40,43 @@ class Cache {
  * ABSTRACT LAYER CLASS *
  ************************/
 
-class Layer {
-    protected: // it's fine that derived (concrete) classes access these attributes
-        std::shared_ptr<Transformation> _transformation;
+class LinearLayer {
+    private:
         // TODO: the following are created as nullptr's?!?
+        std::unique_ptr<LinearTransformation> _transformation;
         std::shared_ptr<std::vector<double> > _forward_input;
         std::shared_ptr<std::vector<double> > _forward_output;
         std::shared_ptr<std::vector<double> > _backward_input;
         std::shared_ptr<std::vector<double> > _backward_output;
 
     public:
+        // default constructor
+        // TODO: empty ok?!?
+        LinearLayer(int, int);
         // destructor
-        // TODO: always needed in an abstract class?
-        ~Layer() {};
-        // forward pass (updates _forward_output)
-        void Forward();
-        // backward pass (updates _backward_output)
-        virtual void Backward() = 0;
+        // TODO: always needed?
+        ~LinearLayer() {};
 
         // setters/getters
         // NOTE: backward/forward output should be computed, NOT set.
         // forward
         void SetForwardInput(std::shared_ptr<std::vector<double> > input_ptr); 
+        std::shared_ptr<std::vector<double> > GetForwardInput();
         std::shared_ptr<std::vector<double> > GetForwardOutput();
         // backward
         void SetBackwardInput(std::shared_ptr<std::vector<double> > backward_input_ptr);
         std::shared_ptr<std::vector<double> > GetBackwardOutput(); 
 
-        // summary 
-        // TODO: might change to include _forward_input etc.
-        std::string Summary(); 
+        // initialize
+        void Initialize(std::string initialization_type);
+
+        // forward pass
+        void Forward();
+        // backward pass AND updating weights
+        //void Backward() {}
+
+        // summary
+        std::string Summary();
 };
 
 
@@ -77,18 +84,7 @@ class Layer {
  * CONCRETE IMPLEMENTATIONS *
  ****************************/
 
-class LinearLayer : public Layer {
-    public:
-        // simplified constructor
-        // TODO: might add others later but for now sufficient
-        LinearLayer(int rows, int cols);
 
-        // initialize
-        void Initialize(std::string initialization_type);
-
-        // backward pass AND updating weights
-        void Backward() {}
-};
 
 // flatten layer --> extra layer class
         //static std::vector<double> Flatten(const std::vector<std::vector<double> >& matrix);

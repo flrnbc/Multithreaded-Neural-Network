@@ -8,29 +8,24 @@
 #include "transformation.h"
 
 
-//summary
-std::string Layer::Summary() {
-        return _transformation->Summary(); 
-}
-
 // setters/getters
-void Layer::SetForwardInput(std::shared_ptr<std::vector<double> > input_ptr) {
+void LinearLayer::SetForwardInput(std::shared_ptr<std::vector<double> > input_ptr) {
        _forward_input = std::move(input_ptr);
 }
 
-std::shared_ptr<std::vector<double> > Layer::GetForwardOutput() {
+std::shared_ptr<std::vector<double> > LinearLayer::GetForwardOutput() {
         return _forward_output;
 }
 
-void Layer::SetBackwardInput(std::shared_ptr<std::vector<double> > backward_input_ptr) {
+void LinearLayer::SetBackwardInput(std::shared_ptr<std::vector<double> > backward_input_ptr) {
         _backward_input = std::move(backward_input_ptr);
 }
 
-std::shared_ptr<std::vector<double> > Layer::GetBackwardOutput() { 
+std::shared_ptr<std::vector<double> > LinearLayer::GetBackwardOutput() { 
         return _backward_output;
 }
 
-void Layer::Forward() {
+void LinearLayer::Forward() {
         // NOTE: for 'connected' layers we have _forward_output != nullptr by the initialization
         // of a (sequential) neural network. In these cases, we simply forward pass the input.
         // The end(s) of a (sequential) NN will have _forward_output == nullptr and we create 
@@ -55,15 +50,16 @@ void Layer::Forward() {
  *******************************/
 
 LinearLayer::LinearLayer(int rows, int cols) {
-        // TODO: not ideal; only a fix to avoid upcasting and calling the base class constructor
-        auto linear_transformation = std::make_shared<LinearTransformation>(rows, cols);
-        std::cout << "Message from constructor: " << linear_transformation->Summary() << std::endl;
-        _transformation = linear_transformation;
+        _transformation = std::make_unique<LinearTransformation>(rows, cols);
 }
 
 
 void LinearLayer::Initialize(std::string initialization_type) {
         _transformation->Initialize(initialization_type);
+}
+
+std::string LinearLayer::Summary() {
+        return _transformation->Summary();
 }
 
 

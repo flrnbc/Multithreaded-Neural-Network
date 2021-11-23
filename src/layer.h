@@ -8,127 +8,87 @@
 class Transformation;
 class LinearTransformation;
 
-// TODO #A: use a template (e.g. for matrices etc.)
+/*
+    (Abstract) classes to fix concepts
+*/
+
 class Cache {
-    private:
-        std::vector<double> _cached_vector;
+    /*
+        Cache for layers to save vectors in computations and update from
+        other caches.
+        TODO: use template
+    */
+    private: 
+        std::vector<double> _cached;
+
     public:
-        // (default) constructor
+        // default constructor from vector
         Cache(std::vector<double>);
-        // alternative constructor (initialize with zero vector of given size)
+        // simplified constructor (zero vector of given length)
         Cache(int input_size);
         
         // setters/getters
-        std::vector<double> CachedVector() { return _cached_vector; } 
-        void SetCachedVector(std::vector<double>); 
+        void Set(std::vector<double>); // TODO: better to use template
+        std::vector<double> Get();
 
-        // reset cached vector (to zero)
+        // reset to zero vector
         void Reset();
 };
 
 
-class LayerCache {
-    private:
-        std::shared_ptr<Cache> _input_cache;
-        std::shared_ptr<Cache> _output_cache;
-    public:
-        std::shared_ptr<Cache> Input() { return _input_cache; }
-        std::shared_ptr<Cache> Output() { return _output_cache; }
-        // reset
-        void Reset();
-};
-
-
-class LayerBase
-/*
-    Base of a layer in a neural network. 
-    
-    Functionality: 
-        - keeping caches for backward and forward propagation
-        - transformation of the layer
-*/
-{
-    private:
-        // cache for forward and backward pass/propagation
-        std::unique_ptr<LayerCache> _forward_cache;
-        std::unique_ptr<LayerCache> _backward_cache;
-
-        // transformation
-        std::unique_ptr<Transformation> _transformation;
-
-    public:
-        // default constructor
-        LayerBase(Transformer);
-
-        // setters & getters
-        // for caches (note that we do not need setters)
-        // they are contained in the corresponding class
-        std::unique_ptr<LayerCache>& ForwardCache() { return _forward_cache; }
-        std::unique_ptr<LayerCache>& BackwardCache() { return _backward_cache; }
-        // NOTE: we keep the transformation 'hidden' on purpose
-
-        // 'forward propagation'
-        // update input of foward cache (i.e. take output from previous layer)
-        void UpdateInput();
-        // update output of forward cache (i.e. transform input and store in output)
-        void UpdateOutput();
-
-        // backward propagation
-        // update input of backward cache (take output from previous layer)
-        void UpdateBackwardInput();
-        // update output of backward cache
-        void UpdateBackwardOutput();
-
-        // summary
-        std::string Summary();     
-};
-
+/************************
+ * ABSTRACT LAYER CLASS *
+ ************************/
 
 class Layer {
-    private: 
-        std::shared_ptr<Layer> _next;
-        std::shared_ptr<Layer> _previous;
-        std::unique_ptr<LayerBase> _base;
+    protected: // it's fine that derived (concrete) classes access these attributes
+        std::shared_ptr<Transformation> _transformation;
+        // TODO: the following are created as nullptr's?!?
+        std::shared_ptr<std::vector<double> > _forward_input;
+        std::shared_ptr<std::vector<double> > _forward_output;
+        std::shared_ptr<std::vector<double> > _backward_input;
+        std::shared_ptr<std::vector<double> > _backward_output;
 
     public:
-        // default constructor
-        Layer(LayerBase);
-
-        // forward pass 
+        // destructor
+        // TODO: always needed in an abstract class?
+        ~Layer() {};
+        // forward pass (updates _forward_output)
         void Forward();
-        // backward pass 
-        void Backward();
+        // backward pass (updates _backward_output)
+        virtual void Backward() = 0;
 
         // setters/getters
-        // TODO: makes sense for an abstract class?!?
-        // for next/previous layer
-        // TODO: actually want reference?
-        std::shared_ptr<Layer> Next() { return _next; }
-        void SetNext(std::shared_ptr<Layer> next); 
-        std::shared_ptr<Layer> Previous() { return _previous; }
-        void SetPrevious(std::shared_ptr<Layer> pointer_previous);
-        // for LayerBase
-        std::unique_ptr<LayerBase>& Base() { return _base; }
+        // NOTE: backward/forward output should be computed, NOT set.
+        // forward
+        void SetForwardInput(std::shared_ptr<std::vector<double> > input_ptr); 
+        std::shared_ptr<std::vector<double> > GetForwardOutput();
+        // backward
+        void SetBackwardInput(std::shared_ptr<std::vector<double> > backward_input_ptr);
+        std::shared_ptr<std::vector<double> > GetBackwardOutput(); 
 
-        // summary
-        std::string Summary();
+        // summary 
+        // TODO: might change to include _forward_input etc.
+        std::string Summary(); 
 };
+
+
+/****************************
+ * CONCRETE IMPLEMENTATIONS *
+ ****************************/
 
 class LinearLayer : public Layer {
     public:
-        // default constructor
-        LinearLayer(LinearTransformation):
-            Layer(LinearTransformation) 
-            {
-            }
         // simplified constructor
-        LinearLayer(int, int);
+        // TODO: might add others later but for now sufficient
+        LinearLayer(int rows, int cols);
 
-        // update weights (gradient descent)
-        void UpdateWeights();
+        // initialize
+        void Initialize(std::string initialization_type);
+
+        // backward pass AND updating weights
+        void Backward() {}
 };
-
-class 
 
 // flatten layer --> extra layer class
         //static std::vector<double> Flatten(const std::vector<std::vector<double> >& matrix);

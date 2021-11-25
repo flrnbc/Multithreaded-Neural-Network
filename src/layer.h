@@ -22,7 +22,6 @@ class Layer {
         std::shared_ptr<std::vector<double> > _forward_output;
         std::shared_ptr<std::vector<double> > _backward_input;
         std::shared_ptr<std::vector<double> > _backward_output;
-        //std::unique_ptr<Transformation> _transformation;
 
      public: 
         // NOTE: backward/forward output should be computed, NOT set.
@@ -39,6 +38,9 @@ class Layer {
         virtual void Forward() = 0;
         // backward pass
         // virtual void Backward() = 0;
+
+        // summary
+        virtual std::string Summary() = 0;
 };
 
 
@@ -51,7 +53,6 @@ class Layer {
 
 class LinearLayer: public Layer {
     private:
-        // TODO: the following are created as nullptr's?!?
         std::unique_ptr<LinearTransformation> _transformation;
 
     public:
@@ -78,22 +79,21 @@ class LinearLayer: public Layer {
  * ACTIVATION LAYER *
  ********************/
 
-class ActivationLayer {
+class ActivationLayer: public Layer {
     private:
         std::unique_ptr<ActivationTransformation> _transformation;
         std::string _activation;
 
     public:
         // default constructor
-        // TODO: empty ok?!?
-        ActivationLayer(std::string);
+        ActivationLayer(int, std::string);
         // destructor
         // TODO: always needed?
         ~ActivationLayer() {};
 
         // setters/getters
         
-        std::string GetActivation() { return _activation; }
+        std::string GetActivationString() { return _activation; }
 
         // forward pass
         void Forward();

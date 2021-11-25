@@ -35,5 +35,8 @@
   It would have been better to implement a Matrix class which deals with transpose, evaluating etc.
   But this would have required another refactoring and is therefore postponed.
 
-# 'Global TODOs'
+
+# TODOs
   + Where to use move semantics or passing by reference? 
+  + Implement Forward() in Transformation class
+  + Factory pattern to create Layers?

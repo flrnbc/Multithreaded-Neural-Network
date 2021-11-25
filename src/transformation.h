@@ -18,10 +18,8 @@ class Transformation {
         int _cols; 
 
     public:
-        // default constructor
-        //Transformation();
-        // empty destructor
-        //~Transformation() {};
+        // TODO: pure virtual destructor?
+        virtual ~Transformation() {};
         // setters/getters
         int Cols() { return _cols; }
         int Rows() { return _rows; }
@@ -32,13 +30,10 @@ class Transformation {
         virtual std::vector<double> Transform(std::vector<double>) = 0;
         //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
         
-        // initialize
-        void Initialize(std::string initialize_type) {}
-
         // TODO #A: backward/derivative
 
         static std::string PrintDoubleVector(const std::vector<double>&); // simply attach function to Class
-        std::string Summary();
+        virtual std::string Summary() = 0;
 };
 
 

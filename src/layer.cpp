@@ -33,6 +33,15 @@ std::shared_ptr<std::vector<double> > Layer::GetBackwardOutput() {
         return _backward_output;
 }
 
+
+/*******************************
+ * LINEAR LAYER IMPLEMENTATION *
+ *******************************/
+
+LinearLayer::LinearLayer(int rows, int cols) {
+        _transformation = std::make_unique<LinearTransformation>(rows, cols); 
+}
+
 void LinearLayer::Forward() {
         // NOTE: for 'connected' layers we have _forward_output != nullptr by the initialization
         // of a (sequential) neural network. Moreover, two layers share _forward_input and _forward_output 
@@ -54,18 +63,9 @@ void LinearLayer::Forward() {
         }          
 }
 
-
-/*******************************
- * LINEAR LAYER IMPLEMENTATION *
- *******************************/
-
-LinearLayer::LinearLayer(int rows, int cols) {
-        _transformation = std::make_unique<LinearTransformation>(rows, cols); 
-
-}
-
 void LinearLayer::Initialize(std::string initialization_type) {
         _transformation->Initialize(initialization_type);
+        //->Initialize(initialization_type);
 }
 
 std::string LinearLayer::Summary() {
@@ -73,21 +73,39 @@ std::string LinearLayer::Summary() {
 }
 
 
-// Layer //
-// constructor for Layer
-// Layer::Layer(int rows, int cols, std::string activation) : 
-//         LayerBase(rows, cols, activation), 
-//         _next(nullptr),
-//         _previous(nullptr) {}
 
-// // setters & getters for Layer
-// void Layer::SetNext(std::shared_ptr<Layer> next) {
-//         _next = next; 
-// }
+ActivationLayer::ActivationLayer(int size, std::string activation_fct) {
+        _transformation = std::make_unique<ActivationTransformation>(size, activation_fct);
+        _activation = activation_fct;
+}
 
-// void Layer::SetPrevious(std::shared_ptr<Layer> previous) { 
-//         _previous = previous;
-// }
+
+void ActivationLayer::Forward() {
+        // NOTE: for 'connected' layers we have _forward_output != nullptr by the initialization
+        // of a (sequential) neural network. Moreover, two layers share _forward_input and _forward_output 
+        // respectively. We do not want to break this connection by setting the shared_ptr via 
+        // std::make_shared<std::vector<double> > ... (which creates a new shared_ptr).
+        // Instead we simply change the object owned by the shared_ptr.
+
+        if (GetForwardInput() != nullptr) {
+                // TODO: do we copy the transformed vector too often?
+                std::vector<double> transformed_vector = _transformation->Transform(*(GetForwardInput()));
+                if (GetBackwardOutput() == nullptr){
+                        SetForwardOutput(std::make_shared<std::vector<double> >(transformed_vector));
+                } else {
+                        // TODO: do we create an unecessary copy of _backward_output here
+                        *(GetBackwardOutput()) = transformed_vector;
+                }
+        } else {
+                throw std::invalid_argument("Pointer is null!");
+        }          
+}
+
+
+std::string ActivationLayer::Summary() {
+        return _transformation->Summary();
+}
+
 
 // // flatten layer
 // std::vector<double> Layer::Flatten(const std::vector<std::vector<double> >& matrix) {
@@ -107,24 +125,5 @@ std::string LinearLayer::Summary() {
 // }
 
 
-// // forward pass
-// // NOTE: no need to update for input layer (need to set input though)
-// void Layer::UpdateInput() {
-//         if (Previous() != nullptr) {
-//                 std::cout << "from UpdateInput: " << Perceptron::PrintDoubleVector(Previous()->OutputData()) << std::endl;
-//                 SetInputData(Previous()->OutputData());
-//         }
-// }
 
-// void LayerBase::UpdateOutput() {
-//         SetOutputData(Perceptron()->Evaluate(InputData()));
-// }
-
-// void Layer::Forward() {
-//         UpdateInput();
-//         UpdateOutput();
-// }
-
-// backward pass
-// TODO #A: ADD!!!
 

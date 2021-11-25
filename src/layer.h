@@ -1,48 +1,42 @@
 #ifndef LAYER_H_
 #define LAYER_H_
 
-#include <memory>
+#include "layer_cache.h"
+#include "transformation.h"
 #include <string>
 #include <vector>
 
-
+class LayerCache;
 class Transformation;
-class ActivationTransformation;
 class LinearTransformation;
-
-/****************
- * LINEAR CACHE *
- ****************/
+class ActivationTransformation;
 
 class Layer {
     private:
-        // ownership important: the corresponding resources will be shared with different pointers
-        // (inside the Layers of other Layers)
-        std::shared_ptr<std::vector<double> > _forward_input;
-        std::shared_ptr<std::vector<double> > _forward_output;
-        std::shared_ptr<std::vector<double> > _backward_input;
-        std::shared_ptr<std::vector<double> > _backward_output;
+        // only protected to make access to layer cache easier
+        std::unique_ptr<LayerCache> _layer_cache; 
 
-     public: 
-        // NOTE: backward/forward output should be computed, NOT set.
-        // forward
-        void SetForwardInput(std::shared_ptr<std::vector<double> > input_ptr); 
-        void SetForwardOutput(std::shared_ptr<std::vector<double> > output_ptr);
-        std::shared_ptr<std::vector<double> > GetForwardOutput();
-        std::shared_ptr<std::vector<double> > GetForwardInput();
-        // backward
-        void SetBackwardInput(std::shared_ptr<std::vector<double> > backward_input_ptr);
-        std::shared_ptr<std::vector<double> > GetBackwardOutput();
+    public: 
+        // destructor 
+        virtual ~Layer() {};
+
+        // setter
+        void SetLayerCache(std::unique_ptr<LayerCache>);
+
+        // getter
+        std::unique_ptr<LayerCache>& GetLayerCache() { return _layer_cache; }
 
         // forward pass
+        void Input(std::vector<double>); // TODO: do we copy too often here?
         virtual void Forward() = 0;
+        std::vector<double> Output(); // TODO: better to return const ref?
+
         // backward pass
         // virtual void Backward() = 0;
 
         // summary
         virtual std::string Summary() = 0;
 };
-
 
 /**********************
  * LINEAR LAYER CLASS *
@@ -57,7 +51,8 @@ class LinearLayer: public Layer {
 
     public:
         // constructor
-        LinearLayer(int rows, int cols);
+        LinearLayer(int rows, int cols); 
+
         // destructor
         // TODO: always needed?
         ~LinearLayer() {};
@@ -86,13 +81,13 @@ class ActivationLayer: public Layer {
 
     public:
         // default constructor
-        ActivationLayer(int, std::string);
+        ActivationLayer(int m, std::string activation_fct);
+           
         // destructor
         // TODO: always needed?
         ~ActivationLayer() {};
 
         // setters/getters
-        
         std::string GetActivationString() { return _activation; }
 
         // forward pass

@@ -9,6 +9,7 @@
 //#include "perceptron_data.h"
 
 class ActivationFct;
+class Cache;
 class PerceptronData;
 
 class Perceptron
@@ -20,6 +21,7 @@ private:
     std::unique_ptr<PerceptronData> _data;
     // activation
     std::unique_ptr<ActivationFct> _activationFct;
+    
 
 public:
     // (default) constructor

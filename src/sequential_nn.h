@@ -5,6 +5,7 @@
 #include "layer.h"
 #include <vector>
 
+class Layer;
 
 class SequentialNN
 /*
@@ -19,16 +20,14 @@ class SequentialNN
         SequentialNN(std::vector<Layer>); 
         
         // setters/getters
-        // NOTE: we do not allow changing the Layer's on purpose
-        // TODO #A: need reference? 
-        std::vector<Layer> Layers() { return _layers; }     
+        // NOTE: return by reference to modify layers 'in place'.
+        // TODO: check!
+        std::vector<Layer>& Layers() { return _layers; }     
         std::string Summary();
-        
-        
 
         // forward pass
         // TODO #B: overload ()-operator
-        void SetInput(std::vector<double>);
+        void Input(std::vector<double>);
         void Forward();
         
         // evaluate

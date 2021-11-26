@@ -27,6 +27,12 @@ class Layer {
         // return as reference because it's a unique_ptr
         // TODO: better to return constant ref to the underlying raw pointer?
         std::unique_ptr<LayerCache>& GetLayerCache() { return _layer_cache; }
+        // Rows and Cols of Transformation
+        // TODO: it would be better to include a Transformation class into this 
+        // abstract class. But this caused issues with the derived classes. Still
+        // there might be a way.
+        virtual int Cols() = 0;
+        virtual int Rows() = 0;
 
         // forward pass
         void Input(std::vector<double>); // TODO: do we copy too often here?
@@ -59,6 +65,11 @@ class LinearLayer: public Layer {
         // TODO: always needed?
         ~LinearLayer() {};
 
+        // getter
+        // TODO: this smells like refactoring...
+        int Cols() { return _transformation->Cols(); }
+        int Rows() { return _transformation->Rows(); }
+
         // initialize
         void Initialize(std::string initialization_type);
 
@@ -90,6 +101,9 @@ class ActivationLayer: public Layer {
         ~ActivationLayer() {};
 
         // setters/getters
+        // TODO: this smells like refactoring...
+        int Cols() { return _transformation->Cols(); }
+        int Rows() { return _transformation->Rows(); }
         std::string GetActivationString() { return _activation; }
 
         // forward pass

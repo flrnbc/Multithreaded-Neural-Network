@@ -24,6 +24,8 @@ class Layer {
         void SetLayerCache(std::unique_ptr<LayerCache>);
 
         // getter
+        // return as reference because it's a unique_ptr
+        // TODO: better to return constant ref to the underlying raw pointer?
         std::unique_ptr<LayerCache>& GetLayerCache() { return _layer_cache; }
 
         // forward pass

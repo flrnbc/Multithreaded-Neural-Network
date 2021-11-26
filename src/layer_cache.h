@@ -36,7 +36,7 @@ class LayerCache {
 
         // connecting Layer's 
         // forward
-        void ConnectForward(LayerCache); 
+        void ConnectForward(int, LayerCache&); 
         // backward
         // void ConnectBackward(Layer);
 

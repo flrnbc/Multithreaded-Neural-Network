@@ -13,17 +13,18 @@ class SequentialNN
 */
 {
     private:
-        std::vector<Layer>  _layers;
+        std::vector<std::unique_ptr<Layer> >  _layers;
 
     public: 
         // constructor
-        SequentialNN(std::vector<Layer>); 
+        SequentialNN(std::vector<std::unique_ptr<Layer> >); 
         
         // setters/getters
         // NOTE: return by reference to modify layers 'in place'.
         // TODO: check!
-        std::vector<Layer>& Layers() { return _layers; }     
-        std::string Summary();
+        //std::vector<Layer> GetLayers() { return _layers; }     
+        //std::string Summary();
+        int Length() { return _layers.size(); }
 
         // forward pass
         // TODO #B: overload ()-operator

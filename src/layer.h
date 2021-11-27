@@ -20,6 +20,12 @@ class Layer {
         // destructor 
         virtual ~Layer() {};
 
+        // copy constructor
+        Layer(const Layer &source);
+
+        // copy assignment constructor
+        //Layer &operator=(const Layer &source) {};
+
         // setter
         void SetLayerCache(std::unique_ptr<LayerCache>);
 

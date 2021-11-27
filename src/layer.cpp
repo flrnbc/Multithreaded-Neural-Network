@@ -10,6 +10,12 @@
  * LAYER *
  *********/
 
+// copy constructor
+Layer(const Layer &source) {
+       this->_layer_cache = std::make_unique<LayerCache>(*source.GetLayerCache());
+
+}
+
 void Layer::Input(std::vector<double> input_vector) {
         _layer_cache->SetForwardInput(std::make_shared<std::vector<double> >(input_vector));
 }
@@ -94,7 +100,6 @@ void ActivationLayer::Forward() {
                 throw std::invalid_argument("Pointer is null!");
         }          
 }
-
 
 std::string ActivationLayer::Summary() {
         return _transformation->Summary();

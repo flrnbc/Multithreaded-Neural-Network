@@ -17,7 +17,7 @@ class Layer {
         std::unique_ptr<LayerCache> _layer_cache;
         // TODO: better would be to include a std::unique_ptr<Transformation> _transformation.
         // But this caused some issues (e.g. could not make _transformation.Transform() work).
-
+        
     public: 
         // destructor 
         virtual ~Layer() {}
@@ -32,19 +32,16 @@ class Layer {
         Layer& operator=(const Layer &source) = delete;
 
         // move constructor
-        Layer(const Layer &&source) {
-            _layer_cache = source._layer_cache; // just moves the unique_ptr
-            source._layer_cache = nullptr;
+        Layer(Layer &&source) {
+            _layer_cache = std::move(source._layer_cache); // just moves the unique_ptr
         }
 
         // move assignment operator
-        Layer& operator=(const Layer &&source) {
+        Layer& operator=(Layer &&source) {
             if (this == &source) {
                 return *this;
             }
-
-            _layer_cache = source._layer_cache;
-            source._layer_cache = nullptr;
+            _layer_cache = std::move(source._layer_cache);
 
             return *this;
         }

@@ -33,9 +33,13 @@ class Transformation {
         
         // TODO #A: backward/derivative
 
+        // initialize transformation (many transformations have empty implementation)
+        virtual void Initialize(std::string initialize_type) {}
+        
         static std::string PrintDoubleVector(const std::vector<double>&); // TODO: move somewhere else
         // summary of transformation
         virtual std::string Summary() = 0;
+
 };
 
 

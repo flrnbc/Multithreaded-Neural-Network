@@ -10,12 +10,6 @@
  * LAYER *
  *********/
 
-// copy constructor
-Layer(const Layer &source) {
-       this->_layer_cache = std::make_unique<LayerCache>(*source.GetLayerCache());
-
-}
-
 void Layer::Input(std::vector<double> input_vector) {
         _layer_cache->SetForwardInput(std::make_shared<std::vector<double> >(input_vector));
 }
@@ -28,7 +22,7 @@ std::vector<double> Layer::Output() {
         }
 }
 
-void Layer::SetLayerCache(std::shared_ptr<LayerCache> layer_cache) {
+void Layer::SetLayerCache(std::unique_ptr<LayerCache> layer_cache) {
         // TODO: this seems to work even though we did not define a move (assignment) operator
         // does it implicitly use the std::vector move (assignment) operator?
         _layer_cache = std::move(layer_cache);
@@ -37,11 +31,6 @@ void Layer::SetLayerCache(std::shared_ptr<LayerCache> layer_cache) {
 /*******************************
  * LINEAR LAYER IMPLEMENTATION *
  *******************************/
-
-LinearLayer::LinearLayer(int rows, int cols) {
-        _transformation = std::make_unique<LinearTransformation>(rows, cols);
-        SetLayerCache(std::make_unique<LayerCache>());
-}
 
 void LinearLayer::Forward() {
         // NOTE: for 'connected' layers we have _forward_output != nullptr by the initialization
@@ -79,12 +68,6 @@ std::string LinearLayer::Summary() {
 /********************
  * ACTIVATION LAYER *
  ********************/
-
-ActivationLayer::ActivationLayer(int m, std::string activation_fct) {
-        _transformation = std::make_unique<ActivationTransformation>(m, activation_fct);
-        _activation = activation_fct;
-        SetLayerCache(std::make_unique<LayerCache>());
-}
 
 void ActivationLayer::Forward() {
         if (GetLayerCache()->GetForwardInput() != nullptr) {

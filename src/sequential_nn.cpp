@@ -12,7 +12,7 @@
  * HELPER FUNCTION *
  *******************/
 
-bool ComposabilityCheck(std::vector<std::shared_ptr<Layer> > layers) {
+bool ComposabilityCheck(std::vector<std::shared_ptr<Layer> >& layers) {
     bool composable = true;
     int N = layers.size();
 
@@ -34,25 +34,28 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
     if (ComposabilityCheck(layers) == false) {
         throw std::invalid_argument("Layers are not composable.");
     } else {
-        _layers = layers;
         int N = layers.size();
 
+        for (int i = 0; i < N; i++) {
+            _layers.emplace_back(std::move(layers[i])); // TODO: move necessary?
+        }
+
         for (int i = 0; i < N-1; i++) {
-            _layers[i]->GetLayerCache()->ConnectForward(_layers[i]->Rows(), *(_layers[i+1]->GetLayerCache()));
+            _layers[i]->GetLayerCache()->ConnectForward(_layers[i]->Rows(), _layers[i+1]->GetLayerCache());
         }
     }
 }
 
-// std::string SequentialNN::Summary() {
-//     std::string summary = "Summary of sequential neural network: ";
-//     int N = GetLayers().size();
+std::string SequentialNN::Summary() {
+    std::string summary = "Summary of sequential neural network: ";
+    int N = _layers.size();
 
-//     for (int i=0; i < N; i++) {
-//         summary += "\nLayer " + std::to_string(i) + ":\n" + _layers[i].Summary();
-//     }
+    for (int i=0; i < N; i++) {
+        summary += "\nLayer " + std::to_string(i) + ":\n" + _layers[i]->Summary();
+    }
 
-//     return summary;
-// }
+    return summary;
+}
 
 void SequentialNN::Forward() {
     for (int i=0; i < Length(); i++) {
@@ -64,4 +67,12 @@ void SequentialNN::Forward() {
 
 void SequentialNN::Input(std::vector<double> input) {
     _layers[0]->Input(input);
+}
+
+std::vector<double> SequentialNN::Output() {
+    if ((_layers.back())->GetLayerCache()->GetForwardOutput() == nullptr) {
+        throw std::invalid_argument("Backward output is null.");
+    }
+    
+    return *((_layers.back())->GetLayerCache()->GetForwardOutput());
 }

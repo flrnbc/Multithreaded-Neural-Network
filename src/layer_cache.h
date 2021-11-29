@@ -19,8 +19,13 @@ class LayerCache {
         std::shared_ptr<std::vector<double> > _backward_output;
 
      public:
-        // constructor
-        LayerCache() {}
+        // constructor (nullptr added to be explicit)
+        LayerCache(): 
+            _forward_input(nullptr), 
+            _forward_output(nullptr), 
+            _backward_input(nullptr),
+            _backward_output(nullptr) {}
+
         // destructor
         ~LayerCache() {}
 
@@ -69,7 +74,7 @@ class LayerCache {
 
         // connecting Layer's 
         // forward
-        void ConnectForward(int, LayerCache&); 
+        void ConnectForward(int, std::shared_ptr<LayerCache>&); 
         // backward
         // void ConnectBackward(Layer);
 

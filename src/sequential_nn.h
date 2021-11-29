@@ -13,11 +13,11 @@ class SequentialNN
 */
 {
     private:
-        std::vector<std::shared_ptr<Layer> >  _layers;
+        std::vector<std::shared_ptr<Layer> > _layers;
 
     public: 
         // constructor
-        SequentialNN(std::vector<std::shared_ptr<Layer> >); 
+        SequentialNN(std::vector<std::shared_ptr<Layer> > layers); 
         
         // setters/getters
         // NOTE: return by reference to modify layers 'in place'.
@@ -30,6 +30,10 @@ class SequentialNN
         // TODO #B: overload ()-operator
         void Input(std::vector<double>);
         void Forward();
+        std::vector<double> Output();
+
+        // summary
+        std::string Summary();
         
         // evaluate
         //std::vector<double> Evaluate(std::vector<double>);

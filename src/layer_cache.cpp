@@ -32,9 +32,9 @@ std::shared_ptr<std::vector<double> > LayerCache::GetBackwardOutput() {
     return _backward_output;
 }
 
-void LayerCache::ConnectForward(int size_of_vector, LayerCache& next_layer_cache) {
+void LayerCache::ConnectForward(int size_of_vector, std::shared_ptr<LayerCache>& next_layer_cache) {
     std::vector<double> zero_vector(size_of_vector, 0);
 
     this->SetForwardOutput(std::make_shared<std::vector<double> >(zero_vector));
-    next_layer_cache.SetForwardInput(this->GetForwardOutput());
+    next_layer_cache->SetForwardInput(this->GetForwardOutput());
 }

@@ -12,13 +12,15 @@ class LinearTransformation;
 class ActivationTransformation;
 
 class Layer {
-    private:
+    protected:
         // only protected to make access to layer cache easier
-        std::unique_ptr<LayerCache> _layer_cache;
+        std::shared_ptr<LayerCache> _layer_cache;
         // TODO: better would be to include a std::unique_ptr<Transformation> _transformation.
         // But this caused some issues (e.g. could not make _transformation.Transform() work).
-        
-    public: 
+
+        Layer(): _layer_cache(std::make_shared<LayerCache>()) {}
+
+    public:
         // destructor 
         virtual ~Layer() {}
 
@@ -27,24 +29,36 @@ class Layer {
         // the copy operators.
         // TODO: might change in the future, if we want to be able to copy layers etc. ...
 
-        // copy constructor/assignment operator
-        Layer(const Layer &source) = delete;
-        Layer& operator=(const Layer &source) = delete;
+        // copy constructor
+        // Layer(const Layer &source) {
+        //     _layer_cache = std::make_unique<LayerCache>(*(source._layer_cache)); 
+        // }
 
-        // move constructor
-        Layer(Layer &&source) {
-            _layer_cache = std::move(source._layer_cache); // just moves the unique_ptr
-        }
+        // // copy assignment operator
+        // Layer& operator=(const Layer &source) {
+        //     if (this == &source) {
+        //         return *this;
+        //     }
+        //     _layer_cache = std::make_unique<LayerCache>(*(source._layer_cache));
 
-        // move assignment operator
-        Layer& operator=(Layer &&source) {
-            if (this == &source) {
-                return *this;
-            }
-            _layer_cache = std::move(source._layer_cache);
+        //     return *this;
+        // }
+       
+        // // move constructor
+        // Layer(Layer &&source) {
+        //     _layer_cache = std::move(source._layer_cache); // just moves the unique_ptr
+        //     // TODO: hence no need to set _layer_cache to null?
+        // }
 
-            return *this;
-        }
+        // // move assignment operator
+        // Layer& operator=(Layer &&source) {
+        //     if (this == &source) {
+        //         return *this;
+        //     }
+        //     _layer_cache = std::move(source._layer_cache);
+
+        //     return *this;
+        // }
 
         // setter
         void SetLayerCache(std::unique_ptr<LayerCache>);
@@ -52,7 +66,7 @@ class Layer {
         // getter
         // return as reference because it's a unique_ptr
         // TODO: better to return constant ref to the underlying raw pointer?
-        std::unique_ptr<LayerCache>& GetLayerCache() { return _layer_cache; }
+        std::shared_ptr<LayerCache>& GetLayerCache() { return _layer_cache; }
         // Rows and Cols of Transformation
         // TODO: it would be better to include a Transformation class into this 
         // abstract class. But this caused issues with the derived classes. Still
@@ -81,12 +95,13 @@ class Layer {
 
 class LinearLayer: public Layer {
     private:
-        std::unique_ptr<LinearTransformation> _transformation;
+        std::shared_ptr<LinearTransformation> _transformation;
 
     public:
         // constructor
-        LinearLayer(int rows, int cols); 
-
+        LinearLayer(int rows, int cols): 
+            _transformation(std::make_shared<LinearTransformation>(rows, cols)) {}
+            
         // destructor
         // TODO: always needed?
         ~LinearLayer() {};
@@ -115,12 +130,15 @@ class LinearLayer: public Layer {
 
 class ActivationLayer: public Layer {
     private:
-        std::unique_ptr<ActivationTransformation> _transformation;
+        std::shared_ptr<ActivationTransformation> _transformation;
         std::string _activation;
 
     public:
         // default constructor
-        ActivationLayer(int m, std::string activation_fct);
+        ActivationLayer(int m, std::string activation_fct): 
+            _activation(activation_fct),
+            _transformation(std::make_shared<ActivationTransformation>(m, activation_fct)) 
+            {}
            
         // destructor
         // TODO: always needed?

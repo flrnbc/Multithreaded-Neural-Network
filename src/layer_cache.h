@@ -11,7 +11,7 @@
 class LayerCache {
     private:
         // ownership important: the corresponding resources will be shared with different pointers
-        // (inside the Layers of other Layers)
+        // (namely in layers of sequential neural nets)
         std::shared_ptr<std::vector<double> > _forward_input;
         std::shared_ptr<std::vector<double> > _forward_output;
         std::shared_ptr<std::vector<double> > _backward_input;
@@ -19,9 +19,12 @@ class LayerCache {
 
      public:
         // constructor
-        LayerCache() {};
+        LayerCache() {}
         // destructor
-        ~LayerCache() {};
+        ~LayerCache() {}
+
+        // TODO: again the default copy/move constructors/assignment operators should be enough?!?
+        // (i.e. use the ones for std::vector)
 
         // setters/getters 
         // NOTE: backward/forward output should be computed, NOT set.

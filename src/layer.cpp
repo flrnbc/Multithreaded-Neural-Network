@@ -28,7 +28,7 @@ std::vector<double> Layer::Output() {
         }
 }
 
-void Layer::SetLayerCache(std::unique_ptr<LayerCache> layer_cache) {
+void Layer::SetLayerCache(std::shared_ptr<LayerCache> layer_cache) {
         // TODO: this seems to work even though we did not define a move (assignment) operator
         // does it implicitly use the std::vector move (assignment) operator?
         _layer_cache = std::move(layer_cache);

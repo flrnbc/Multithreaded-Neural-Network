@@ -79,7 +79,7 @@ double RandomNumberNormal(double min, double max) {
  * LINEAR TRANSFORMATION *
  *************************/
 
-// default constructor
+// constructor
 LinearTransformation::LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias) {
     SetWeights(weights);
     SetBias(bias);
@@ -87,8 +87,7 @@ LinearTransformation::LinearTransformation(std::vector<std::vector<double> > wei
     SetCols(weights[0].size());
 }
 
-
-// set weights and bias to zero
+// constructor setting weights and bias to zero
 LinearTransformation::LinearTransformation(int rows, int cols) {
     SetCols(cols);
     SetRows(rows);
@@ -96,7 +95,6 @@ LinearTransformation::LinearTransformation(int rows, int cols) {
     SetWeights(std::vector<std::vector<double> >(rows, std::vector<double>(cols, 0))); // implicitly uses move semantics?
     SetBias(std::vector<double>(rows, 0));
 }
-
 
 // random initialization (used for different activation functions)
 // either He or normalized Xavier initialization
@@ -142,7 +140,7 @@ void LinearTransformation::Initialize(std::string initialization_type) {
 }
 
 
-// transform methods
+// transform method
 std::vector<double> LinearTransformation::Transform(std::vector<double> inputVector) {
     if (inputVector.size() != Cols()) {
         // TODO #A: catch exception somewhere?

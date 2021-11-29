@@ -14,17 +14,40 @@ class ActivationTransformation;
 class Layer {
     private:
         // only protected to make access to layer cache easier
-        std::unique_ptr<LayerCache> _layer_cache; 
+        std::unique_ptr<LayerCache> _layer_cache;
+        // TODO: better would be to include a std::unique_ptr<Transformation> _transformation.
+        // But this caused some issues (e.g. could not make _transformation.Transform() work).
 
     public: 
         // destructor 
-        virtual ~Layer() {};
+        virtual ~Layer() {}
 
-        // copy constructor
-        Layer(const Layer &source);
+        // NOTE: we only want to move Layers into std::vectors so that we 
+        // only implement move semantics. Following the rule of five, we delete
+        // the copy operators.
+        // TODO: might change in the future, if we want to be able to copy layers etc. ...
 
-        // copy assignment constructor
-        //Layer &operator=(const Layer &source) {};
+        // copy constructor/assignment operator
+        Layer(const Layer &source) = delete;
+        Layer& operator=(const Layer &source) = delete;
+
+        // move constructor
+        Layer(const Layer &&source) {
+            _layer_cache = source._layer_cache; // just moves the unique_ptr
+            source._layer_cache = nullptr;
+        }
+
+        // move assignment operator
+        Layer& operator=(const Layer &&source) {
+            if (this == &source) {
+                return *this;
+            }
+
+            _layer_cache = source._layer_cache;
+            source._layer_cache = nullptr;
+
+            return *this;
+        }
 
         // setter
         void SetLayerCache(std::unique_ptr<LayerCache>);

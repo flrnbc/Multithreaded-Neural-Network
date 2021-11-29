@@ -12,7 +12,7 @@
  * HELPER FUNCTION *
  *******************/
 
-bool ComposabilityCheck(std::vector<std::unique_ptr<Layer> > layers) {
+bool ComposabilityCheck(std::vector<std::shared_ptr<Layer> > layers) {
     bool composable = true;
     int N = layers.size();
 
@@ -30,10 +30,11 @@ bool ComposabilityCheck(std::vector<std::unique_ptr<Layer> > layers) {
  * SEQUENTIAL NEURAL NETWORK IMPLEMENTATION *
  ********************************************/
 
-SequentialNN::SequentialNN(std::vector<std::unique_ptr<Layer> > layers) {
+SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
     if (ComposabilityCheck(layers) == false) {
         throw std::invalid_argument("Layers are not composable.");
     } else {
+        _layers = layers;
         int N = layers.size();
 
         for (int i = 0; i < N-1; i++) {

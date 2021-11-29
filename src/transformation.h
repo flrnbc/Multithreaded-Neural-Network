@@ -12,14 +12,15 @@
 
 class Transformation {
     private:
-        // output dimension 
+        // output dimension
         int _rows;
         // input dimension   
         int _cols; 
 
     public:
-        // TODO: pure virtual destructor?
-        virtual ~Transformation() {};
+        // virtual destructor
+        virtual ~Transformation() {}
+
         // setters/getters
         int Cols() { return _cols; }
         int Rows() { return _rows; }
@@ -32,7 +33,8 @@ class Transformation {
         
         // TODO #A: backward/derivative
 
-        static std::string PrintDoubleVector(const std::vector<double>&); // simply attach function to Class
+        static std::string PrintDoubleVector(const std::vector<double>&); // TODO: move somewhere else
+        // summary of transformation
         virtual std::string Summary() = 0;
 };
 
@@ -48,10 +50,12 @@ class LinearTransformation: public Transformation {
 
     public:
         // constructors
-        // default constructor for (affine) linear transformations
+        // constructor for (affine) linear transformations
         LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias);
         // constructor (all zeros)
         LinearTransformation(int rows, int cols);
+
+        // TODO: the default copy and move constructors/assignment operators should be enough?!?
 
         // setters & getters
         std::vector< std::vector<double> > Weights() { return _weights; }

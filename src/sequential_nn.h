@@ -13,11 +13,11 @@ class SequentialNN
 */
 {
     private:
-        std::vector<std::unique_ptr<Layer> >  _layers;
+        std::vector<std::shared_ptr<Layer> >  _layers;
 
     public: 
         // constructor
-        SequentialNN(std::vector<std::unique_ptr<Layer> >); 
+        SequentialNN(std::vector<std::shared_ptr<Layer> >); 
         
         // setters/getters
         // NOTE: return by reference to modify layers 'in place'.

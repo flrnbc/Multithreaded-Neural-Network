@@ -6,7 +6,7 @@
  * LAYER CACHE *
  **************/
 
-// TODO: would it be better to give othe ption to set the corresponding vectors?
+// TODO: would it be better to give other options to set the corresponding vectors?
 
 void LayerCache::SetForwardInput(std::shared_ptr<std::vector<double> > input_ptr) {
     _forward_input = std::move(input_ptr);

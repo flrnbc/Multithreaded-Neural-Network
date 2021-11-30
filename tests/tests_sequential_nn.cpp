@@ -6,13 +6,25 @@
 #include <vector>
 
 void test_SequentialNN() {
-    LinearLayer ll(20, 50);
-    ActivationLayer al(20, "relu"); 
-    std::vector<std::shared_ptr<Layer> > v{std::make_shared<LinearLayer>(ll), std::make_shared<ActivationLayer>(al)};
+    auto ll_ptr = std::make_shared<LinearLayer>(2, 5);
+    auto al_ptr = std::make_shared<ActivationLayer>(5, "relu"); 
+    //std::vector<Layer> v{std::move(ll), std::move(al)};
 
-    SequentialNN snn(v);
-    std::vector<double> w(50, 1);
+    SequentialNN snn({ll_ptr, al_ptr});
+    std::cout << snn.Summary() << std::endl;
+
+    std::vector<double> w(5, 1);
 
     snn.Input(w);
     snn.Forward();
+
+    for (double a: snn.Output()) {
+        std::cout << a << std::endl;
+    }
+}
+
+int main() {
+    test_SequentialNN();
+
+    return 0;
 }

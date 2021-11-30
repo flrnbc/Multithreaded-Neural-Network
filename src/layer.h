@@ -15,10 +15,15 @@ class Layer {
     protected:
         // only protected to make access to layer cache easier
         std::shared_ptr<LayerCache> _layer_cache;
+        // transformation of layer
+        std::shared_ptr<Transformation> _transformation;
         // TODO: better would be to include a std::unique_ptr<Transformation> _transformation.
         // But this caused some issues (e.g. could not make _transformation.Transform() work).
 
-        Layer(): _layer_cache(std::make_shared<LayerCache>()) {}
+        Layer(std::shared_ptr<Transformation> transformation): 
+            _layer_cache(std::make_shared<LayerCache>()),
+            _transformation(transformation)
+            {}
 
     public:
         // destructor 
@@ -67,12 +72,10 @@ class Layer {
         // return as reference because it's a unique_ptr
         // TODO: better to return constant ref to the underlying raw pointer?
         std::shared_ptr<LayerCache>& GetLayerCache() { return _layer_cache; }
-        // Rows and Cols of Transformation
-        // TODO: it would be better to include a Transformation class into this 
-        // abstract class. But this caused issues with the derived classes. Still
-        // there might be a way.
-        virtual int Cols() = 0;
-        virtual int Rows() = 0;
+        
+        // Rows and Cols of Transformation (simplified getter)
+        int Cols() { return _transformation->Cols(); }
+        int Rows() { return _transformation->Rows(); }
 
         // forward pass
         void Input(std::vector<double>); // TODO: do we copy too often here?
@@ -83,7 +86,7 @@ class Layer {
         // virtual void Backward() = 0;
 
         // summary
-        virtual std::string Summary() = 0;
+        std::string Summary() { return _transformation->Summary(); }
 };
 
 /**********************
@@ -94,22 +97,17 @@ class Layer {
 // issues with interface Layer: Transformation class and downcasting
 
 class LinearLayer: public Layer {
-    private:
-        std::shared_ptr<LinearTransformation> _transformation;
+    //private:
+    //    std::shared_ptr<LinearTransformation> _transformation;
 
     public:
         // constructor
         LinearLayer(int rows, int cols): 
-            _transformation(std::make_shared<LinearTransformation>(rows, cols)) {}
+            Layer(std::make_shared<LinearTransformation>(rows, cols)) {}
             
         // destructor
         // TODO: always needed?
         ~LinearLayer() {};
-
-        // getter
-        // TODO: this smells like refactoring...
-        int Cols() { return _transformation->Cols(); }
-        int Rows() { return _transformation->Rows(); }
 
         // initialize
         void Initialize(std::string initialization_type);
@@ -130,14 +128,14 @@ class LinearLayer: public Layer {
 
 class ActivationLayer: public Layer {
     private:
-        std::shared_ptr<ActivationTransformation> _transformation;
+    //    std::shared_ptr<ActivationTransformation> _transformation;
         std::string _activation;
 
     public:
         // default constructor
         ActivationLayer(int m, std::string activation_fct): 
-            _activation(activation_fct),
-            _transformation(std::make_shared<ActivationTransformation>(m, activation_fct)) 
+            Layer(std::make_shared<ActivationTransformation>(m, activation_fct)),
+            _activation(activation_fct) 
             {}
            
         // destructor
@@ -145,9 +143,6 @@ class ActivationLayer: public Layer {
         ~ActivationLayer() {};
 
         // setters/getters
-        // TODO: this smells like refactoring...
-        int Cols() { return _transformation->Cols(); }
-        int Rows() { return _transformation->Rows(); }
         std::string GetActivationString() { return _activation; }
 
         // forward pass

@@ -68,14 +68,16 @@ class Layer {
         // setter
         void SetLayerCache(std::unique_ptr<LayerCache>);
 
-        // getter
-        // return as reference because it's a unique_ptr
+        // getters
         // TODO: better to return constant ref to the underlying raw pointer?
         std::shared_ptr<LayerCache>& GetLayerCache() { return _layer_cache; }
+        std::shared_ptr<Transformation>& GetTransformation() { return _transformation; }
         
-        // Rows and Cols of Transformation (simplified getter)
+        // getters to simplify access to data members of transformation
         int Cols() { return _transformation->Cols(); }
         int Rows() { return _transformation->Rows(); }
+        std::string Summary() { return _transformation->Summary(); } // TODO: this might change in the future to contain more specific data
+        std::string Type() { return _transformation->Type(); }
 
         // forward pass
         void Input(std::vector<double>); // TODO: do we copy too often here?
@@ -84,9 +86,6 @@ class Layer {
 
         // backward pass
         // virtual void Backward() = 0;
-
-        // summary
-        std::string Summary() { return _transformation->Summary(); }
 };
 
 /**********************
@@ -116,9 +115,6 @@ class LinearLayer: public Layer {
         void Forward();
         // backward pass AND updating weights
         //void Backward() {}
-
-        // summary
-        std::string Summary();
 };
 
 
@@ -149,9 +145,6 @@ class ActivationLayer: public Layer {
         void Forward();
         // backward pass AND updating weights
         //void Backward() {}
-
-        // summary
-        std::string Summary();
 };
 
 

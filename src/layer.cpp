@@ -60,10 +60,6 @@ void LinearLayer::Initialize(std::string initialization_type) {
         //->Initialize(initialization_type);
 }
 
-std::string LinearLayer::Summary() {
-        return _transformation->Summary();
-}
-
 
 /********************
  * ACTIVATION LAYER *
@@ -82,10 +78,6 @@ void ActivationLayer::Forward() {
         } else {
                 throw std::invalid_argument("Pointer is null!");
         }          
-}
-
-std::string ActivationLayer::Summary() {
-        return _transformation->Summary();
 }
 
 

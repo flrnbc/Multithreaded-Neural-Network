@@ -17,14 +17,17 @@ class SequentialNN
 
     public: 
         // constructor
+        // TODO: need to change to std::vector<Layer> 
         SequentialNN(std::vector<std::shared_ptr<Layer> > layers); 
         
         // setters/getters
         // NOTE: return by reference to modify layers 'in place'.
         // TODO: check!
         //std::vector<Layer> GetLayers() { return _layers; }     
-        //std::string Summary();
         int Length() { return _layers.size(); }
+
+        // initialize the sequential network
+        void Initialize();
 
         // forward pass
         // TODO #B: overload ()-operator
@@ -37,6 +40,12 @@ class SequentialNN
         
         // evaluate
         //std::vector<double> Evaluate(std::vector<double>);
+
+        // helper functions
+        // check for composability of layers in a SequentialNN
+        static bool ComposabilityCheck(const std::vector<std::shared_ptr<Layer> >&);
+        // get initialization type of layers
+        static std::string GetInitializationType(const std::shared_ptr<Layer>&, const std::shared_ptr<Layer>&);
 };
 
 #endif // SEQUENTIAL_NN_H_

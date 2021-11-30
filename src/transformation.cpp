@@ -239,5 +239,5 @@ std::string ActivationTransformation::Summary() {
     std::string cols = std::to_string(Cols());
     std::string shape = "Shape: (" + rows + ", " + cols + ")" + "\n";
 
-    return shape + "Function name: " + Name();
+    return shape + "Function name: " + Type();
 }

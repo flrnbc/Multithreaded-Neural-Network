@@ -8,11 +8,11 @@
 #include "transformation.h"
 #include "sequential_nn.h"
 
-/*******************
- * HELPER FUNCTION *
- *******************/
+/********************
+ * HELPER FUNCTIONS *
+ ********************/
 
-bool ComposabilityCheck(std::vector<std::shared_ptr<Layer> >& layers) {
+bool SequentialNN::ComposabilityCheck(const std::vector<std::shared_ptr<Layer> >& layers) {
     bool composable = true;
     int N = layers.size();
 
@@ -24,6 +24,33 @@ bool ComposabilityCheck(std::vector<std::shared_ptr<Layer> >& layers) {
     } 
     return composable;
 }
+
+std::string SequentialNN::GetInitializationType(const std::shared_ptr<Layer>& layer, const std::shared_ptr<Layer>& next_layer) {
+    std::string layer_transformation_type = layer->GetTransformation()->Type();
+    std::string next_layer_transformation_type = next_layer->GetTransformation()->Type();
+    
+    if (layer_transformation_type != "LinearTransformation") { // TODO: this is not ideal if we e.g. add further layers
+        return "";
+    }
+
+    std::vector<std::string> approximate_linear_activation = {"identity", "sigmoid", "tanh"};
+    std::vector<std::string> other_activation = {"relu", "prelu"};
+
+    // TODO: couldn't this be optimized? (e.g. consider case where next_layer_transformation_type == "LinearTransformation")
+    if (std::find(std::begin(approximate_linear_activation), 
+        std::end(approximate_linear_activation), 
+        next_layer_transformation_type) != std::end(approximate_linear_activation)) {
+            return "Xavier";
+        } 
+    
+    else if (std::find(std::begin(other_activation), 
+            std::end(other_activation), 
+            next_layer_transformation_type) != std::end(other_activation)) {
+                return "He";
+            }
+    return "";
+}
+
 
 
 /********************************************
@@ -44,6 +71,15 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
             _layers[i]->GetLayerCache()->ConnectForward(_layers[i]->Rows(), _layers[i+1]->GetLayerCache());
         }
     }
+}
+
+void SequentialNN::Initialize() {
+    int N = _layers.size();
+
+    for (int i = 0; i < N-1; i++) {
+        _layers[i]->GetTransformation()->Initialize(GetInitializationType(_layers[i], _layers[i+1]));
+    }
+    // TODO: here might be some room to optimize (e.g. jump over the ones which have "" as initialization type)
 }
 
 std::string SequentialNN::Summary() {

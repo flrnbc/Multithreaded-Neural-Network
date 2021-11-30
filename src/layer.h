@@ -77,7 +77,6 @@ class Layer {
         int Cols() { return _transformation->Cols(); }
         int Rows() { return _transformation->Rows(); }
         std::string Summary() { return _transformation->Summary(); } // TODO: this might change in the future to contain more specific data
-        std::string Type() { return _transformation->Type(); }
 
         // forward pass
         void Input(std::vector<double>); // TODO: do we copy too often here?

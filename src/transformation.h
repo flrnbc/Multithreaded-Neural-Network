@@ -29,13 +29,11 @@ class Transformation {
         // virtual destructor
         virtual ~Transformation() {}
 
-        // setters/getters
+        // getters 
+        // NOTE: no setters because the attributes are not supposed to be changed later on
         int Cols() { return _cols; }
         int Rows() { return _rows; }
         std::string Type() { return _type; }
-        void SetCols(int cols) { _cols = cols; }
-        void SetRows(int rows) { _rows = rows; }
-        void SetType(std::string type) { _type = type; }
         
         // transform method (want to keep input, so no pass by reference)
         virtual std::vector<double> Transform(std::vector<double>) = 0;
@@ -118,15 +116,12 @@ double sigmoid(double);
 
 class ActivationTransformation: public Transformation {
     private:
-        std::string _name;
         double (*activation_fct)(double); // function pointer seems to be needed
 
     public:
         // constructor
         ActivationTransformation(int size, std::string fct_name="identity"): 
-            Transformation(size, size, fct_name),
-            _name(fct_name)
-            
+            Transformation(size, size, fct_name)       
             {
                 if (fct_name == "heaviside") {
                     activation_fct = &heaviside;
@@ -146,9 +141,6 @@ class ActivationTransformation: public Transformation {
                 }
                 else throw std::invalid_argument("Not a valid activation function.");
              }
-
-        // setters
-        std::string Name() { return _name; }
 
         // transform methods
         std::vector<double> Transform(std::vector<double>);

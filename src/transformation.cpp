@@ -79,26 +79,6 @@ double RandomNumberNormal(double min, double max) {
  * LINEAR TRANSFORMATION *
  *************************/
 
-// constructor
-LinearTransformation::LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias) {
-    SetWeights(weights);
-    SetBias(bias);
-    SetRows(weights.size());
-    SetCols(weights[0].size());
-    SetType("LinearLayer");
-}
-
-// constructor setting weights and bias to zero
-LinearTransformation::LinearTransformation(int rows, int cols) {
-    SetCols(cols);
-    SetRows(rows);
-
-    SetWeights(std::vector<std::vector<double> >(rows, std::vector<double>(cols, 0))); // implicitly uses move semantics?
-    SetBias(std::vector<double>(rows, 0));
-
-    SetType("LinearLayer");
-}
-
 // random initialization (used for different activation functions)
 // either He or normalized Xavier initialization
 void LinearTransformation::Initialize(std::string initialization_type) {
@@ -235,32 +215,6 @@ double sigmoid(double x) {
 /*****************************
  * ACTIVATION TRANSFORMATION *
  *****************************/
-
-ActivationTransformation::ActivationTransformation(int size, std::string fct_name) {
-    SetCols(size);
-    SetRows(size);
-    if (fct_name == "heaviside") {
-        activation_fct = &heaviside;
-    }
-    else if (fct_name == "identity") {
-        activation_fct = &identity;
-    }
-    // TODO #B: to simplify, only offer relu and not prelu at the moment
-    else if (fct_name == "relu") {
-        activation_fct = &relu;
-    }
-    else if (fct_name == "sigmoid") {
-        activation_fct = &sigmoid;
-    }
-    else if (fct_name == "tanh") {
-        activation_fct = &tanh;
-    }
-    else throw std::invalid_argument("Not a valid activation function.");
-
-    // finally set the name
-    this->SetName(fct_name);
-}
-
 
 // transform methods for ActivationTransformation
 std::vector<double> ActivationTransformation::Transform(std::vector<double> vector) {

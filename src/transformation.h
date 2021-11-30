@@ -11,13 +11,19 @@
  ***********************/
 
 class Transformation {
-    private:
+    protected:
         // output dimension
         int _rows;
         // input dimension   
         int _cols;
         // type of transformation
         std::string _type;
+
+        Transformation(int rows, int cols, std::string type):
+            _rows(rows),
+            _cols(cols),
+            _type(type)
+            {}
 
     public:
         // virtual destructor
@@ -38,16 +44,12 @@ class Transformation {
         // TODO #A: backward/derivative
 
         // initialize transformation (many transformations have empty implementation)
-        virtual void Initialize(std::string initialize_type) {}
+        virtual void Initialize(std::string initialize_type="") {}
         
         static std::string PrintDoubleVector(const std::vector<double>&); // TODO: move somewhere else
         
         // Summary of transformation
         virtual std::string Summary() = 0;
-
-        // Type of transformation
-        virtual std::string Type() = 0;
-
 };
 
 
@@ -63,9 +65,18 @@ class LinearTransformation: public Transformation {
     public:
         // constructors
         // constructor for (affine) linear transformations
-        LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias);
+        LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias): 
+            Transformation(weights.size(), weights[0].size(), "LinearTransformation"),
+            _weights(weights),
+            _bias(bias)
+            {}
+
         // constructor (all zeros)
-        LinearTransformation(int rows, int cols);
+        LinearTransformation(int rows, int cols): 
+            Transformation(rows, cols, "LinearTransformation"),
+            _weights(std::vector<std::vector<double> >(rows, std::vector<double>(cols, 0))), 
+            _bias(std::vector<double>(rows, 0))
+            {}
 
         // TODO: the default copy and move constructors/assignment operators should be enough?!?
 
@@ -111,12 +122,33 @@ class ActivationTransformation: public Transformation {
         double (*activation_fct)(double); // function pointer seems to be needed
 
     public:
-        // (default) constructor
-        ActivationTransformation(int size, std::string fct_name="identity"); 
+        // constructor
+        ActivationTransformation(int size, std::string fct_name="identity"): 
+            Transformation(size, size, fct_name),
+            _name(fct_name)
+            
+            {
+                if (fct_name == "heaviside") {
+                    activation_fct = &heaviside;
+                }
+                else if (fct_name == "identity") {
+                    activation_fct = &identity;
+                }
+                // TODO #B: to simplify, only offer relu and not prelu at the moment
+                else if (fct_name == "relu") {
+                    activation_fct = &relu;
+                }
+                else if (fct_name == "sigmoid") {
+                    activation_fct = &sigmoid;
+                }
+                else if (fct_name == "tanh") {
+                    activation_fct = &tanh;
+                }
+                else throw std::invalid_argument("Not a valid activation function.");
+             }
 
-        // setters & getters
+        // setters
         std::string Name() { return _name; }
-        void SetName(std::string fct_name) { _name = fct_name; }
 
         // transform methods
         std::vector<double> Transform(std::vector<double>);

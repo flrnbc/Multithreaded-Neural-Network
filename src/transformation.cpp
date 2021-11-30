@@ -85,6 +85,7 @@ LinearTransformation::LinearTransformation(std::vector<std::vector<double> > wei
     SetBias(bias);
     SetRows(weights.size());
     SetCols(weights[0].size());
+    SetType("LinearLayer");
 }
 
 // constructor setting weights and bias to zero
@@ -94,6 +95,8 @@ LinearTransformation::LinearTransformation(int rows, int cols) {
 
     SetWeights(std::vector<std::vector<double> >(rows, std::vector<double>(cols, 0))); // implicitly uses move semantics?
     SetBias(std::vector<double>(rows, 0));
+
+    SetType("LinearLayer");
 }
 
 // random initialization (used for different activation functions)

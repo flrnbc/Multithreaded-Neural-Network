@@ -15,7 +15,9 @@ class Transformation {
         // output dimension
         int _rows;
         // input dimension   
-        int _cols; 
+        int _cols;
+        // type of transformation
+        std::string _type;
 
     public:
         // virtual destructor
@@ -24,8 +26,10 @@ class Transformation {
         // setters/getters
         int Cols() { return _cols; }
         int Rows() { return _rows; }
+        std::string Type() { return _type; }
         void SetCols(int cols) { _cols = cols; }
         void SetRows(int rows) { _rows = rows; }
+        void SetType(std::string type) { _type = type; }
         
         // transform method (want to keep input, so no pass by reference)
         virtual std::vector<double> Transform(std::vector<double>) = 0;
@@ -37,8 +41,12 @@ class Transformation {
         virtual void Initialize(std::string initialize_type) {}
         
         static std::string PrintDoubleVector(const std::vector<double>&); // TODO: move somewhere else
-        // summary of transformation
+        
+        // Summary of transformation
         virtual std::string Summary() = 0;
+
+        // Type of transformation
+        virtual std::string Type() = 0;
 
 };
 

@@ -71,7 +71,7 @@ class Layer {
         // getters
         // TODO: better to return constant ref to the underlying raw pointer?
         std::shared_ptr<LayerCache>& GetLayerCache() { return _layer_cache; }
-        std::shared_ptr<Transformation>& GetTransformation() { return _transformation; }
+        std::shared_ptr<Transformation> GetTransformation() { return _transformation; }
         
         // getters to simplify access to data members of transformation
         int Cols() { return _transformation->Cols(); }

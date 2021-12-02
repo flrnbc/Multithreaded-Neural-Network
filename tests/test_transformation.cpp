@@ -2,7 +2,7 @@
 #include "../src/transformation.h"
 
 void test_RandomWeightInitialization() {
-    auto t = LinearTransformation(3, 3);
+    LinearTransformation t = LinearTransformation(3, 3);
     t.Initialize("He");
     auto t2 = LinearTransformation(3, 6);
     t2.Initialize("Xavier");

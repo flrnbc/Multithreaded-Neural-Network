@@ -3,4 +3,5 @@ tests/a.out
 CppNN.monopic
 src/.vscode/
 src/a.out.dSYM/
+tests/a.out.dSYM/
 

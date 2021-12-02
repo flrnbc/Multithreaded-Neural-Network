@@ -67,7 +67,7 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
         }
 
         for (int i = 0; i < N-1; i++) {
-            _layers[i]->GetLayerCache()->ConnectForward(_layers[i]->Rows(), _layers[i+1]->GetLayerCache());
+            _layers[i]->GetLayerCache().ConnectForward(_layers[i]->Rows(), _layers[i+1]->GetLayerCache());
         }
     }
 }
@@ -105,9 +105,9 @@ void SequentialNN::Input(std::vector<double> input) {
 }
 
 std::vector<double> SequentialNN::Output() {
-    if ((_layers.back())->GetLayerCache()->GetForwardOutput() == nullptr) {
+    if ((_layers.back())->GetLayerCache().GetForwardOutput() == nullptr) {
         throw std::invalid_argument("Backward output is null.");
     }
     
-    return *((_layers.back())->GetLayerCache()->GetForwardOutput());
+    return *((_layers.back())->GetLayerCache().GetForwardOutput());
 }

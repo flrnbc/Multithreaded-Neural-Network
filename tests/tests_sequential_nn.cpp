@@ -34,7 +34,7 @@ void test_ConnectLayers() {
 
 void test_SequentialNN() {
     auto ll_ptr = std::make_shared<LinearLayer>(2, 5);
-    auto al_ptr = std::make_shared<ActivationLayer>(5, "relu"); 
+    auto al_ptr = std::make_shared<ActivationLayer>(2, "relu"); 
     //std::vector<Layer> v{std::move(ll), std::move(al)};
 
     SequentialNN snn({ll_ptr, al_ptr});
@@ -48,14 +48,12 @@ void test_SequentialNN() {
     snn.Input(w);
     snn.Forward();
 
-    for (double a: snn.Output()) {
-        std::cout << a << std::endl;
-    }
+    std::cout << Transformation::PrintDoubleVector(snn.Output()) << std::endl;
 }
 
 int main() {
-    test_ConnectLayers();
-    //test_SequentialNN();
+    //test_ConnectLayers();
+    test_SequentialNN();
     //test_GetInitializationType();
 
     return 0;

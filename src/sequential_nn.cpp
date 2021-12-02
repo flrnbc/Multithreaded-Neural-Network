@@ -17,7 +17,7 @@ bool SequentialNN::ComposabilityCheck(const std::vector<std::shared_ptr<Layer> >
     int N = layers.size();
 
     for (int i=0; i<N-1; i++) {
-        if (layers[i]->Cols() != layers[i+1]->Rows()) {
+        if (layers[i]->Rows() != layers[i+1]->Cols()) {
             composable = false;
             break;
         }

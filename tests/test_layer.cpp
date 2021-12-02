@@ -11,7 +11,7 @@ void test_LinearLayer() {
 
     std::vector<double> e1{1, 0, 0};
 
-    ll.Initialize("Xavier"); 
+    ll.GetTransformation()->Initialize("Xavier"); 
     std::cout << ll.Summary() << std::endl;
     ll.Input(e1);
     ll.Forward();

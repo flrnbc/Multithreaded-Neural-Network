@@ -41,14 +41,14 @@ void LinearLayer::Forward() {
 
         // TODO: need to include this function into the Transformation class since we use it over and over again.
 
-        if (GetLayerCache()->GetForwardInput() != nullptr) {
+        if (GetLayerCache().GetForwardInput() != nullptr) {
                 // TODO: do we copy the transformed vector too often?
-                std::vector<double> transformed_vector = _transformation->Transform(*(GetLayerCache()->GetForwardInput()));
-                if (GetLayerCache()->GetBackwardOutput() == nullptr){
-                        GetLayerCache()->SetForwardOutput(std::make_shared<std::vector<double> >(transformed_vector));
+                std::vector<double> transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
+                if (GetLayerCache().GetForwardOutput() == nullptr){
+                        GetLayerCache().SetForwardOutput(std::make_shared<std::vector<double> >(transformed_vector));
                 } else {
                         // TODO: do we create an unecessary copy of _backward_output here
-                        *(GetLayerCache()->GetBackwardOutput()) = transformed_vector;
+                        *(GetLayerCache().GetForwardOutput()) = transformed_vector;
                 }
         } else {
                 throw std::invalid_argument("Pointer is null!");
@@ -66,14 +66,14 @@ void LinearLayer::Initialize(std::string initialization_type) {
  ********************/
 
 void ActivationLayer::Forward() {
-        if (GetLayerCache()->GetForwardInput() != nullptr) {
+        if (GetLayerCache().GetForwardInput() != nullptr) {
                 // TODO: do we copy the transformed vector too often?
-                std::vector<double> transformed_vector = _transformation->Transform(*(GetLayerCache()->GetForwardInput()));
-                if (GetLayerCache()->GetBackwardOutput() == nullptr){
-                        GetLayerCache()->SetForwardOutput(std::make_shared<std::vector<double> >(transformed_vector));
+                std::vector<double> transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
+                if (GetLayerCache().GetBackwardOutput() == nullptr){
+                        GetLayerCache().SetForwardOutput(std::make_shared<std::vector<double> >(transformed_vector));
                 } else {
                         // TODO: do we create an unecessary copy of _backward_output here
-                        *(GetLayerCache()->GetBackwardOutput()) = transformed_vector;
+                        *(GetLayerCache().GetBackwardOutput()) = transformed_vector;
                 }
         } else {
                 throw std::invalid_argument("Pointer is null!");

@@ -69,7 +69,9 @@ class Layer {
         void SetLayerCache(std::unique_ptr<LayerCache>);
 
         // getters
-        // TODO: better to return constant ref to the underlying raw pointer?
+        // NOTE: this is safe because we initialize _layer_cache (not as a nullptr) in 
+        // concrete derived classes
+        // TODO: this might be confusing though because GetTransformation returns a shared_ptr...
         LayerCache& GetLayerCache() { return *_layer_cache; }
         std::shared_ptr<Transformation> GetTransformation() { return _transformation; }
         

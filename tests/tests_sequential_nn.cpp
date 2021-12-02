@@ -5,6 +5,21 @@
 #include <iostream>
 #include <vector>
 
+void test_GetInitializationType() {
+    auto ll_ptr = std::make_shared<LinearLayer>(2, 5);
+    auto al_ptr = std::make_shared<ActivationLayer>(5, "tanh"); 
+
+    std::cout << "Initialization type: " << SequentialNN::GetInitializationType(ll_ptr, al_ptr) << std::endl;
+
+    ll_ptr->GetTransformation()->Initialize(SequentialNN::GetInitializationType(ll_ptr, al_ptr));
+
+    std::cout << "Summary: " << ll_ptr->Summary() << std::endl;    
+}
+
+void test_ConnectLayers() {
+    
+}
+
 void test_SequentialNN() {
     auto ll_ptr = std::make_shared<LinearLayer>(2, 5);
     auto al_ptr = std::make_shared<ActivationLayer>(5, "relu"); 
@@ -13,7 +28,10 @@ void test_SequentialNN() {
     SequentialNN snn({ll_ptr, al_ptr});
     std::cout << snn.Summary() << std::endl;
 
-    std::vector<double> w(5, 1);
+    std::vector<double> w({1, 2, 3, 4, 5});
+
+    snn.Initialize();
+    std::cout << snn.Summary() << std::endl;
 
     snn.Input(w);
     snn.Forward();
@@ -25,6 +43,7 @@ void test_SequentialNN() {
 
 int main() {
     test_SequentialNN();
+    //test_GetInitializationType();
 
     return 0;
 }

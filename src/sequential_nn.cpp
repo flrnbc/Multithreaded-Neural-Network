@@ -77,7 +77,7 @@ void SequentialNN::Initialize() {
     int N = _layers.size();
 
     for (int i = 0; i < N-1; i++) {
-        _layers[i]->GetTransformation()->Initialize(GetInitializationType(_layers[i], _layers[i+1]));
+        _layers[i]->GetTransformation()->Initialize(SequentialNN::GetInitializationType(_layers[i], _layers[i+1]));
     }
     // TODO: here might be some room to optimize (e.g. jump over the ones which have "" as initialization type)
 }
@@ -94,7 +94,7 @@ std::string SequentialNN::Summary() {
 }
 
 void SequentialNN::Forward() {
-    for (int i=0; i < Length(); i++) {
+    for (int i = 0; i < Length(); i++) {
         _layers[i]->Forward();
         //std::cout << "input (in Forward): " << Perceptron::PrintDoubleVector(_pointers_layers[i]->InputData()) << std::endl;
         //std::cout << "output (in Forward): " << Perceptron::PrintDoubleVector(_pointers_layers[i]->OutputData()) << std::endl;

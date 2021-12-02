@@ -52,7 +52,6 @@ std::string SequentialNN::GetInitializationType(const std::shared_ptr<Layer>& la
 }
 
 
-
 /********************************************
  * SEQUENTIAL NEURAL NETWORK IMPLEMENTATION *
  ********************************************/

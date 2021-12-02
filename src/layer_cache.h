@@ -74,7 +74,7 @@ class LayerCache {
 
         // connecting Layer's 
         // forward
-        void ConnectForward(int, std::shared_ptr<LayerCache>&); 
+        void ConnectForward(int, LayerCache&); 
         // backward
         // void ConnectBackward(Layer);
 

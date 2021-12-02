@@ -10,14 +10,26 @@ void test_GetInitializationType() {
     auto al_ptr = std::make_shared<ActivationLayer>(5, "tanh"); 
 
     std::cout << "Initialization type: " << SequentialNN::GetInitializationType(ll_ptr, al_ptr) << std::endl;
-
     ll_ptr->GetTransformation()->Initialize(SequentialNN::GetInitializationType(ll_ptr, al_ptr));
-
     std::cout << "Summary: " << ll_ptr->Summary() << std::endl;    
 }
 
 void test_ConnectLayers() {
-    
+    auto ll_ptr = std::make_shared<LinearLayer>(2, 5);
+    auto al_ptr = std::make_shared<ActivationLayer>(2, "tanh"); 
+
+    ll_ptr->GetLayerCache()->ConnectForward(2, al_ptr->GetLayerCache());
+    ll_ptr->Initialize("Xavier");
+    std::vector<double> w({1, 2, 3, 4, 5});
+
+    ll_ptr->Input(w);
+    ll_ptr->Forward();
+
+    std::cout << "Output of ll_ptr: " << Transformation::PrintDoubleVector(ll_ptr->Output()) << std::endl;
+    std::cout << "Input of al_ptr: " << Transformation::PrintDoubleVector(*al_ptr->GetLayerCache()->GetForwardInput()) << std::endl;
+
+    al_ptr->Forward();
+    std::cout << "Output of al_ptr: " << Transformation::PrintDoubleVector(al_ptr->Output()) << std::endl;
 }
 
 void test_SequentialNN() {
@@ -42,7 +54,8 @@ void test_SequentialNN() {
 }
 
 int main() {
-    test_SequentialNN();
+    test_ConnectLayers();
+    //test_SequentialNN();
     //test_GetInitializationType();
 
     return 0;

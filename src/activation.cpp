@@ -25,10 +25,6 @@ double sigmoid(double x) {
     return 1/(1 + exp(-x));
 }
 
-double softmax(double x) {
-    return exp(x);
-}
-
 
 ActivationFct::ActivationFct(std::string fct_name) {
     if (fct_name == "heaviside") {
@@ -44,6 +40,9 @@ ActivationFct::ActivationFct(std::string fct_name) {
     else if (fct_name == "sigmoid") {
         activation_fct = &sigmoid;
     }
+    else if (fct_name == "softmax") {
+        activation_fct = &exp; // note that we post-process for "softmax" (see below)
+    }
     else if (fct_name == "tanh") {
         activation_fct = &tanh;
     }
@@ -56,19 +55,19 @@ ActivationFct::ActivationFct(std::string fct_name) {
 
 std::vector<double> ActivationFct::Evaluate(std::vector<double> v) {
     // TODO #A: optimize vectorization?! (OpenMP?)
-    for (int i = 0; i < v.size(); i++) {
-        v[i] = activation_fct(v[i]); // NOTE: range-based did not modify the values (even when using &)?!
+    for (double& d: v) {
+        d = activation_fct(d); // NOTE: range-based did not modify the values (even when using &)?!
     }
 
     // TODO: that's not ideal but ok for now...
     if (_name == "softmax") {
         double sum = 0.0;
 
-        for (double d: v) {
+        for (double& d: v) {
             sum += d; // note the definition of softmax above
         }
 
-        for (double d: v) {
+        for (double& d: v) {
             d /= sum; // sum != 0
         }
     }

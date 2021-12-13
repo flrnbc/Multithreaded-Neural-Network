@@ -10,6 +10,7 @@ double identity(double);
 double prelu(double, double);
 double relu(double);
 double sigmoid(double);
+double softmax(double);
 // tanh built-in
 
 

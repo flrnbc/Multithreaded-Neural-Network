@@ -13,13 +13,14 @@ class ActivationTransformation;
 
 class Layer {
     protected:
-        // only protected to make access to layer cache easier
+        // only protected to make access to data members easier in concrete derived classes
         std::shared_ptr<LayerCache> _layer_cache;
         // transformation of layer
         std::shared_ptr<Transformation> _transformation;
         // TODO: better would be to include a std::unique_ptr<Transformation> _transformation.
         // But this caused some issues (e.g. could not make _transformation.Transform() work).
 
+        // constructor (needed for all concrete derived classes)
         Layer(std::shared_ptr<Transformation> transformation): 
             _layer_cache(std::make_shared<LayerCache>()),
             _transformation(transformation)
@@ -82,19 +83,19 @@ class Layer {
 
         // forward pass
         void Input(std::vector<double>); // TODO: do we copy too often here?
-        virtual void Forward() = 0;
+        virtual void Forward() = 0; // TODO: use _transformation to rewrite in a coherent way, not for each layer type
         std::vector<double> Output(); // TODO: better to return const ref?
 
         // backward pass
         // virtual void Backward() = 0;
 };
 
+
 /**********************
  * LINEAR LAYER CLASS *
  **********************/
  
-// TODO: need to refactor, e.g. with an interface Layer or a factory method?
-// issues with interface Layer: Transformation class and downcasting
+// possible IDEA for refactoring: use a factory pattern for creating various layers?
 
 class LinearLayer: public Layer {
     //private:
@@ -149,10 +150,8 @@ class ActivationLayer: public Layer {
 };
 
 
-
 // flatten layer --> extra layer class
         //static std::vector<double> Flatten(const std::vector<std::vector<double> >& matrix);
-
 
 
 #endif // LAYER_H_

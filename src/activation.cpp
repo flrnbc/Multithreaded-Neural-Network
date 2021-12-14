@@ -56,7 +56,7 @@ ActivationFct::ActivationFct(std::string fct_name) {
 std::vector<double> ActivationFct::Evaluate(std::vector<double> v) {
     // TODO #A: optimize vectorization?! (OpenMP?)
     for (double& d: v) {
-        d = activation_fct(d); // NOTE: range-based did not modify the values (even when using &)?!
+        d = activation_fct(d);
     }
 
     // TODO: that's not ideal but ok for now...

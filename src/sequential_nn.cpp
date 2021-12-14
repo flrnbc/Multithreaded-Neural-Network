@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -26,28 +27,29 @@ bool SequentialNN::ComposabilityCheck(const std::vector<std::shared_ptr<Layer> >
 }
 
 std::string SequentialNN::GetInitializationType(const std::shared_ptr<Layer>& layer, const std::shared_ptr<Layer>& next_layer) {
-    std::string layer_transformation_type = layer->GetTransformation()->Type();
-    std::string next_layer_transformation_type = next_layer->GetTransformation()->Type();
+    std::string layer_type = layer->GetTransformation()->Type();
+    std::string next_layer_type = next_layer->GetTransformation()->Type();
     
-    if (layer_transformation_type != "LinearTransformation") { // TODO: this is not ideal if we e.g. add further layers
+    if (layer_type != "LinearTransformation") { // TODO: this is not ideal if we e.g. add further layers
         return "";
     }
 
-    std::vector<std::string> approximate_linear_activation = {"identity", "sigmoid", "tanh"};
+    std::vector<std::string> approximate_linear = {"identity", "sigmoid", "tanh"};
     std::vector<std::string> other_activation = {"relu", "prelu"};
 
+    // search for different activations
     // TODO: couldn't this be optimized? (e.g. consider case where next_layer_transformation_type == "LinearTransformation")
-    if (std::find(std::begin(approximate_linear_activation), 
-        std::end(approximate_linear_activation), 
-        next_layer_transformation_type) != std::end(approximate_linear_activation)) {
+    auto find_approximate = std::find(std::begin(approximate_linear), std::end(approximate_linear), next_layer_type);
+    auto find_other = std::find(std::begin(other_activation), std::end(other_activation), next_layer_type);
+
+    if (find_approximate != std::end(approximate_linear)) {
             return "Xavier";
         } 
     
-    else if (std::find(std::begin(other_activation), 
-            std::end(other_activation), 
-            next_layer_transformation_type) != std::end(other_activation)) {
+    else if (find_other != std::end(other_activation)) {
                 return "He";
             }
+    
     return "";
 }
 

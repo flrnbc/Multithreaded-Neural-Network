@@ -15,7 +15,8 @@ class Layer {
     protected:
         // only protected to make access to data members easier in concrete derived classes
         std::shared_ptr<LayerCache> _layer_cache;
-        // transformation of layer
+        
+        // transformation for forward pass
         std::shared_ptr<Transformation> _transformation;
         // TODO: better would be to include a std::unique_ptr<Transformation> _transformation.
         // But this caused some issues (e.g. could not make _transformation.Transform() work).
@@ -87,7 +88,7 @@ class Layer {
         std::vector<double> Output(); // TODO: better to return const ref?
 
         // backward pass
-        // virtual void Backward() = 0;
+        virtual void Backward() = 0;
 };
 
 
@@ -115,8 +116,9 @@ class LinearLayer: public Layer {
 
         // forward pass
         void Forward();
+        
         // backward pass AND updating weights
-        //void Backward() {}
+        void Backward();
 };
 
 
@@ -145,8 +147,9 @@ class ActivationLayer: public Layer {
 
         // forward pass
         void Forward();
+        
         // backward pass AND updating weights
-        //void Backward() {}
+        void Backward();
 };
 
 

@@ -1,6 +1,8 @@
 #ifndef TRANSFORMATION_H_
 #define TRANSFORMATION_H_
 
+#include <cmath>
+#include <Eigen/Dense>
 #include <memory>
 #include <vector>
 #include <string>
@@ -36,15 +38,13 @@ class Transformation {
         std::string Type() { return _type; }
         
         // transform method (want to keep input, so no pass by reference)
-        virtual std::vector<double> Transform(std::vector<double>) = 0;
+        virtual Eigen::VectorXd Transform(Eigen::VectorXd) = 0;
         //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
         
         // TODO #A: backward/derivative
 
         // initialize transformation (many transformations have empty implementation)
         virtual void Initialize(std::string initialize_type="") {}
-        
-        static std::string PrintDoubleVector(const std::vector<double>&); // TODO: move somewhere else
         
         // Summary of transformation
         virtual std::string Summary() = 0;

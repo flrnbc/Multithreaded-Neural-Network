@@ -7,7 +7,6 @@
 #include <vector>
 #include <string>
 
-
 /***********************
  * ABSTRACT BASE CLASS *
  ***********************/
@@ -57,13 +56,13 @@ class Transformation {
 
 class LinearTransformation: public Transformation {
     private:    
-        std::vector<std::vector<double> > _weights;
-        std::vector<double > _bias;
+        Eigen::MatrixXd _weights;
+        Eigen::VectorXd _bias;
 
     public:
         // constructors
         // constructor for (affine) linear transformations
-        LinearTransformation(std::vector<std::vector<double> > weights, std::vector<double> bias): 
+        LinearTransformation(Eigen::MatrixXd weights, Eigen::VectorXd bias): 
             Transformation(weights.size(), weights[0].size(), "LinearTransformation"),
             _weights(weights),
             _bias(bias)
@@ -72,30 +71,29 @@ class LinearTransformation: public Transformation {
         // constructor (all zeros)
         LinearTransformation(int rows, int cols): 
             Transformation(rows, cols, "LinearTransformation"),
-            _weights(std::vector<std::vector<double> >(rows, std::vector<double>(cols, 0))), 
-            _bias(std::vector<double>(rows, 0))
+            _weights(Eigen::MatrixXd::Zero(rows, cols)), 
+            _bias(Eigen::VectorXd::Zero(rows))
             {}
 
         // TODO: the default copy and move constructors/assignment operators should be enough?!?
 
         // setters & getters
-        std::vector< std::vector<double> > Weights() { return _weights; }
-        void SetWeights(std::vector<std::vector<double> > weight_matrix) {
+        Eigen::MatrixXd Weights() { return _weights; }
+        void SetWeights(Eigen::MatrixXd weight_matrix) {
             _weights = weight_matrix;
         }
-        std::vector<double> Bias() { return _bias; }
-        void SetBias(std::vector<double> bias) { _bias = bias; }
+        Eigen::VectorXd Bias() { return _bias; }
+        void SetBias(Eigen::VectorXd bias) { _bias = bias; }
 
         // random initialize (either via "He" or "Normalized Xavier")
         void Initialize(std::string initialize_type);
 
-        // useful helper function to transpose
-        static std::vector<std::vector<double> > Transpose(const std::vector<std::vector<double> >&);
+        void Transpose();
 
         // transform methods (just right matrix multiplication with input)
-        // NOTE: we do _not_ work with transpose etc.
-        std::vector<double> Transform(std::vector<double>); 
-        //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
+        // NOTE: 
+        //    - we do _not_ work with transpose etc.
+        Eigen::VectorXd Transform(Eigen::VectorXd); 
 
         // summaries
         std::string Summary();
@@ -143,7 +141,7 @@ class ActivationTransformation: public Transformation {
              }
 
         // transform methods
-        std::vector<double> Transform(std::vector<double>);
+        Eigen::VectorXd Transform(Eigen::VectorXd);
         //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
 
         // Summary of transformation

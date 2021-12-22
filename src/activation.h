@@ -20,10 +20,12 @@ private:
     double (*activation_fct)(double); // function pointer seems to be needed
 
 public:
-    // (default) constructor
+    // constructor
     ActivationFct(std::string fct_name="identity"); // TODO #B: add possibility to add custom activation functions
+
     // methods
     std::vector<double> Evaluate(std::vector<double>); // want to keep input, so no pass by reference
+    
     // setters/getters
     std::string Name() {
         return _name; 

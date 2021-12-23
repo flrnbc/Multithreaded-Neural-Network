@@ -6,13 +6,16 @@
 #include <vector>
 
 // collect functions
-double heaviside(double);
-double identity(double); 
+double identity(double);
+double identity_derivative(double); 
 double prelu(double, double);
+double prelu_derivative(double);
 double relu(double);
+double relu_derivative(double);
 double sigmoid(double);
-double softmax(double);
+double sigmoid_derivative(double);
 // tanh built-in
+double tanh_derivative(double);
 
 
 class Function{
@@ -27,7 +30,7 @@ public:
 
     // methods/operators
     double operator()(double input) {
-        if function == nullptr {
+        if (function == nullptr) {
             throw std::invalid_argument("Function not set.");
         }
 
@@ -35,7 +38,7 @@ public:
     }
     
     double Derivative(double input) {
-        if derivative == nullptr {
+        if (derivative == nullptr) {
             throw std::invalid_argument("Derivative not set.");
         }
 

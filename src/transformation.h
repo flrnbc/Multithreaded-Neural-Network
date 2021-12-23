@@ -63,7 +63,7 @@ class LinearTransformation: public Transformation {
         // constructors
         // constructor for (affine) linear transformations
         LinearTransformation(Eigen::MatrixXd weights, Eigen::VectorXd bias): 
-            Transformation(weights.size(), weights[0].size(), "LinearTransformation"),
+            Transformation(weights.rows(), weights.cols(), "LinearTransformation"),
             _weights(weights),
             _bias(bias)
             {}
@@ -86,7 +86,7 @@ class LinearTransformation: public Transformation {
         void SetBias(Eigen::VectorXd bias) { _bias = bias; }
 
         // random initialize (either via "He" or "Normalized Xavier")
-        void Initialize(std::string initialize_type);
+        void Initialize(std::string);
 
         void Transpose();
 

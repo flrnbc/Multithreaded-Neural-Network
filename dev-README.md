@@ -25,6 +25,8 @@
   + Use _transformation in Layer::Forward.
   + Factory pattern to create Layers?
   + Do we really need pointers to Transformations in Layer?
+  + Use InputDim, OutputDim instead of Cols, Rows.
+  + Use ~Eigen~ for matrices.
 
 # Ideas for the future (which might never be implemented...)
   + Provide options for other optimizers, not just stochastic gradient descent.

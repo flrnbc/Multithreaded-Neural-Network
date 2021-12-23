@@ -1,7 +1,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "activation.h"
+#include "function.h"
 
 double heaviside(double x) {
     if (x < 0) { return 0; }
@@ -26,37 +26,37 @@ double sigmoid(double x) {
 }
 
 
-ActivationFct::ActivationFct(std::string fct_name) {
+Function::Function(std::string fct_name) {
     if (fct_name == "heaviside") {
-        activation_fct = &heaviside;
+        function = &heaviside;
     }
     else if (fct_name == "identity") {
-        activation_fct = &identity;
+        function = &identity;
     }
     // TODO #B: to simplify, only offer relu and not prelu at the moment
     else if (fct_name == "relu") {
-        activation_fct = &relu;
+        function = &relu;
     }
     else if (fct_name == "sigmoid") {
-        activation_fct = &sigmoid;
+        function = &sigmoid;
     }
     else if (fct_name == "softmax") {
-        activation_fct = &exp; // note that we post-process for "softmax" (see below)
+        function = &exp; // note that we post-process for "softmax" (see below)
     }
     else if (fct_name == "tanh") {
-        activation_fct = &tanh;
+        function = &tanh;
     }
-    else throw std::invalid_argument("Not a valid activation function.");
+    else throw std::invalid_argument("Not a known function.");
 
     // finally set the name
     this->SetName(fct_name);
 }
 
 
-std::vector<double> ActivationFct::Evaluate(std::vector<double> v) {
+std::vector<double> Function::Evaluate(std::vector<double> v) {
     // TODO #A: optimize vectorization?! (OpenMP?)
     for (double& d: v) {
-        d = activation_fct(d);
+        d = function(d);
     }
 
     // TODO: that's not ideal but ok for now...

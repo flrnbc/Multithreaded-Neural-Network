@@ -33,14 +33,27 @@ void test_LinearTransform () {
 
 void test_ActivationTransform () {
     auto a = ActivationTransformation(5, "relu");
-    Eigen::VectorXd e1{{1.0, 0, 0, 0, 0}};
-    Eigen::VectorXd e2{{0, 1.0, 0, 0, 0}};
+    auto a2 = ActivationTransformation(5, "sigmoid");
+    auto a3 = ActivationTransformation(5, "tanh");
 
+    Eigen::VectorXd e1{{1.0, 0, 0, 0, 0}};
+    Eigen::VectorXd e2{{0, 1.0, -1.0, -1.0, 0}};
+
+    // TODO: better: loop over a vector (a bit tricky because of incomplete types)
     std::cout << "Transformation a: " << std::endl;
     std::cout << a.Summary() << std::endl;
-
     std::cout << "Transform e2: " << std::endl;
     std::cout << a.Transform(e2) << std::endl;
+
+    std::cout << "Transformation a2: " << std::endl;
+    std::cout << a2.Summary() << std::endl;
+    std::cout << "Transform e2: " << std::endl;
+    std::cout << a2.Transform(e2) << std::endl;
+
+    std::cout << "Transformation a: " << std::endl;
+    std::cout << a3.Summary() << std::endl;
+    std::cout << "Transform e2: " << std::endl;
+    std::cout << a3.Transform(e2) << std::endl;
 }
 
 int main() {

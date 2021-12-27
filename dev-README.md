@@ -11,11 +11,8 @@
   The point is: we need to keep the results of both the affine linear transformation and after applying the 
   (vectorized) activation function.
 
-# Matrix class?
-  It would have been better to implement a Matrix class which deals with transpose, evaluating etc.
-  But this would have required another refactoring and is therefore postponed.
-  In fact, in the future we would prefer to use external libraries (e.g. Blaze or Eigen) for such 
-  computations.
+# Derivative of functions
+  Not ideal to implement them by hand. But ok for now.
 
 # LayerCache
   Needed for connecting layers.

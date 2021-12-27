@@ -129,41 +129,16 @@ std::string LinearTransformation::Summary() {
 }
 
 
-/************************
- * ACTIVATION FUNCTIONS *
- ************************/
-
-double heaviside(double x) {
-    if (x < 0) { return 0; }
-    return 1;
-}
-
-double identity(double x) {
-    return x;
-}
-
-double prelu(double x, double a) {
-    if (x <= 0) { return a*x; }
-    return x;
-}
-
-double relu(double x) {
-    return prelu(x, 0);
-}
-
-double sigmoid(double x) {
-    return 1/(1 + exp(-x));
-}
-
 /*****************************
  * ACTIVATION TRANSFORMATION *
  *****************************/
 
 // transform methods for ActivationTransformation
 Eigen::VectorXd ActivationTransformation::Transform(Eigen::VectorXd inputVector) {
-    // TODO #A: optimize vectorization (OpenMP?)
-    for (int i = 0; i < inputVector.cols(); i++) {
-        inputVector(i) = activation_fct(inputVector(i)); // NOTE: range-based did not modify the values (even when using &)?!
+    // TODO: optimize with vectorization? (OpenMP?)
+
+    for (int i = 0; i < inputVector.rows(); i++) {
+        inputVector(i) = _function(inputVector(i)); // NOTE: range-based did not modify the values (even when using &)?!
     }
 
     return inputVector;

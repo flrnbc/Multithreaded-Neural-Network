@@ -18,8 +18,8 @@ double prelu(double x, double a) {
 }
 
 double prelu_derivative(double x, double a) {
-    if (x <= 0) { return 0; }
-    return a;
+    if (x <= 0) { return a; }
+    return 1;
 }
 
 double relu(double x) {
@@ -40,32 +40,6 @@ double sigmoid_derivative(double x) {
 
 double tanh_derivative(double x) {
     return (1 - tanh(x)*tanh(x));
-}
-
-
-Function::Function(std::string fct_name) {
-    // how to improve?
-    if (fct_name == "identity") {
-        function = &identity;
-        derivative = &identity_derivative;
-    }
-    // TODO #B: to simplify, only offer relu and not prelu at the moment
-    else if (fct_name == "relu") {
-        function = &relu;
-        derivative = &relu_derivative;
-    }
-    else if (fct_name == "sigmoid") {
-        function = &sigmoid;
-        derivative = &sigmoid_derivative;
-    }
-    else if (fct_name == "tanh") {
-        function = &tanh;
-        derivative = &tanh_derivative;
-    }
-    else throw std::invalid_argument("Not a known function.");
-
-    // finally set the name
-    this->SetName(fct_name);
 }
 
 

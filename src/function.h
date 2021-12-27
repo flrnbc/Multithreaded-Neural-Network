@@ -21,13 +21,38 @@ double tanh_derivative(double);
 class Function{
 private:
     std::string _name;
-    double (*function)(double) = nullptr; // function pointer seems to be needed
-    double (*derivative)(double) = nullptr; 
+    double (*function)(double); // function pointer seems to be needed
+    double (*derivative)(double); 
 
 public:
     // constructor
-    Function(std::string fct_name="identity"); // TODO #B: add possibility to add custom activation functions
-
+    Function(std::string fct_name): 
+        function(&identity),
+        derivative(&identity_derivative)
+        {
+            // how to improve?
+            if (fct_name == "identity") {
+                function = &identity;
+                derivative = &identity_derivative;
+                }
+            // TODO #B: to simplify, only offer relu and not prelu at the moment
+            else if (fct_name == "relu") {
+                function = &relu;
+                derivative = &relu_derivative;
+            }
+            else if (fct_name == "sigmoid") {
+                function = &sigmoid;
+                derivative = &sigmoid_derivative;
+            }
+            else if (fct_name == "tanh") {
+                function = &tanh;
+                derivative = &tanh_derivative;
+            }
+            else throw std::invalid_argument("Not a known function.");
+            // finally set the name
+            this->SetName(fct_name);
+        }
+    
     // methods/operators
     double operator()(double input) {
         if (function == nullptr) {

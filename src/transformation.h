@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <Eigen/Dense>
+#include "function.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -104,42 +105,17 @@ class LinearTransformation: public Transformation {
  * CONCRETE IMPLEMENTATION: ACTIVATION TRANSFORMATION *
  ******************************************************/
 
-// collect activation functions
-double heaviside(double);
-double identity(double); 
-double prelu(double, double);
-double relu(double);
-double sigmoid(double);
-// tanh built-in
-
 class ActivationTransformation: public Transformation {
     private:
-        double (*activation_fct)(double); // function pointer seems to be needed
+        Function _function;
 
     public:
         // constructor
-        ActivationTransformation(int size, std::string fct_name="identity"): 
-            Transformation(size, size, fct_name)       
-            {
-                if (fct_name == "heaviside") {
-                    activation_fct = &heaviside;
-                }
-                else if (fct_name == "identity") {
-                    activation_fct = &identity;
-                }
-                // TODO #B: to simplify, only offer relu and not prelu at the moment
-                else if (fct_name == "relu") {
-                    activation_fct = &relu;
-                }
-                else if (fct_name == "sigmoid") {
-                    activation_fct = &sigmoid;
-                }
-                else if (fct_name == "tanh") {
-                    activation_fct = &tanh;
-                }
-                else throw std::invalid_argument("Not a valid activation function.");
-             }
-
+        ActivationTransformation(int size, std::string fct_name): 
+            Transformation(size, size, fct_name),
+            _function(Function(fct_name)) 
+            {} 
+            
         // transform methods
         Eigen::VectorXd Transform(Eigen::VectorXd);
         //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);

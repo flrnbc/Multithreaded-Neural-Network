@@ -2,12 +2,13 @@
 #include "../src/layer_cache.h"
 #include "../src/transformation.h"
 #include "../src/sequential_nn.h"
+#include <Eigen/Dense>
 #include <iostream>
 #include <vector>
 
 void test_GetInitializationType() {
     auto ll_ptr = std::make_shared<LinearLayer>(2, 5);
-    auto al_ptr = std::make_shared<ActivationLayer>(5, "tanh"); 
+    auto al_ptr = std::make_shared<ActivationLayer>(2, "tanh"); 
 
     std::cout << "Initialization type: " << SequentialNN::GetInitializationType(ll_ptr, al_ptr) << std::endl;
     ll_ptr->GetTransformation()->Initialize(SequentialNN::GetInitializationType(ll_ptr, al_ptr));
@@ -20,16 +21,16 @@ void test_ConnectLayers() {
 
     ll_ptr->GetLayerCache().ConnectForward(2, al_ptr->GetLayerCache());
     ll_ptr->Initialize("Xavier");
-    std::vector<double> w({1, 2, 3, 4, 5});
+    Eigen::VectorXd w{{1, 2, 3, 4, 5}};
 
     ll_ptr->Input(w);
     ll_ptr->Forward();
 
-    std::cout << "Output of ll_ptr: " << Transformation::PrintDoubleVector(ll_ptr->Output()) << std::endl;
-    std::cout << "Input of al_ptr: " << Transformation::PrintDoubleVector(*al_ptr->GetLayerCache().GetForwardInput()) << std::endl;
+    std::cout << "Output of ll_ptr: " << ll_ptr->Output() << std::endl;
+    std::cout << "Input of al_ptr: " << *al_ptr->GetLayerCache().GetForwardInput() << std::endl;
 
     al_ptr->Forward();
-    std::cout << "Output of al_ptr: " << Transformation::PrintDoubleVector(al_ptr->Output()) << std::endl;
+    std::cout << "Output of al_ptr: " << al_ptr->Output() << std::endl;
 }
 
 void test_SequentialNN() {
@@ -40,7 +41,7 @@ void test_SequentialNN() {
     SequentialNN snn({ll_ptr, al_ptr});
     std::cout << snn.Summary() << std::endl;
 
-    std::vector<double> w({1, 2, 3, 4, 5});
+    Eigen::VectorXd w{{1, 2, 3, 4, 5}};
 
     snn.Initialize();
     std::cout << snn.Summary() << std::endl;
@@ -48,13 +49,13 @@ void test_SequentialNN() {
     snn.Input(w);
     snn.Forward();
 
-    std::cout << Transformation::PrintDoubleVector(snn.Output()) << std::endl;
+    std::cout << snn.Output() << std::endl;
 }
 
 int main() {
-    //test_ConnectLayers();
+    test_ConnectLayers();
     test_SequentialNN();
-    //test_GetInitializationType();
+    test_GetInitializationType();
 
     return 0;
 }

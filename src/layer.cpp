@@ -1,4 +1,5 @@
 
+#include <Eigen/Dense>
 #include <iostream>
 #include <stdexcept>
 #include "layer_cache.h"
@@ -10,11 +11,11 @@
  * LAYER *
  *********/
 
-void Layer::Input(std::vector<double> input_vector) {
-        _layer_cache->SetForwardInput(std::make_shared<std::vector<double> >(input_vector));
+void Layer::Input(Eigen::VectorXd input_vector) {
+        _layer_cache->SetForwardInput(std::make_shared<Eigen::VectorXd>(input_vector));
 }
 
-std::vector<double> Layer::Output() {
+Eigen::VectorXd Layer::Output() {
         if (_layer_cache->GetForwardOutput() != nullptr) {
                 return *(_layer_cache->GetForwardOutput());
         } else {
@@ -36,16 +37,16 @@ void LinearLayer::Forward() {
         // NOTE: for 'connected' layers we have _forward_output != nullptr by the initialization
         // of a (sequential) neural network. Moreover, two layers share _forward_input and _forward_output 
         // respectively. We do not want to break this connection by setting the shared_ptr via 
-        // std::make_shared<std::vector<double> > ... (which creates a new shared_ptr).
+        // std::make_shared<Eigen::VectorXd > ... (which creates a new shared_ptr).
         // Instead we simply change the object owned by the shared_ptr.
 
         // TODO: need to include this function into the Transformation class since we use it over and over again.
 
         if (GetLayerCache().GetForwardInput() != nullptr) {
                 // TODO: do we copy the transformed vector too often?
-                std::vector<double> transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
+                Eigen::VectorXd transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
                 if (GetLayerCache().GetForwardOutput() == nullptr){
-                        GetLayerCache().SetForwardOutput(std::make_shared<std::vector<double> >(transformed_vector));
+                        GetLayerCache().SetForwardOutput(std::make_shared<Eigen::VectorXd>(transformed_vector));
                 } else {
                         // TODO: do we create an unecessary copy of _backward_output here
                         *(GetLayerCache().GetForwardOutput()) = transformed_vector;
@@ -68,9 +69,9 @@ void LinearLayer::Initialize(std::string initialization_type) {
 void ActivationLayer::Forward() {
         if (GetLayerCache().GetForwardInput() != nullptr) {
                 // TODO: do we copy the transformed vector too often?
-                std::vector<double> transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
+                Eigen::VectorXd transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
                 if (GetLayerCache().GetBackwardOutput() == nullptr){
-                        GetLayerCache().SetForwardOutput(std::make_shared<std::vector<double> >(transformed_vector));
+                        GetLayerCache().SetForwardOutput(std::make_shared<Eigen::VectorXd>(transformed_vector));
                 } else {
                         // TODO: do we create an unecessary copy of _backward_output here
                         *(GetLayerCache().GetBackwardOutput()) = transformed_vector;

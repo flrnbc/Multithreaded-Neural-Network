@@ -3,7 +3,6 @@
 
 #include <memory>
 #include "layer.h"
-#include <vector>
 
 class Layer;
 
@@ -31,15 +30,15 @@ class SequentialNN
 
         // forward pass
         // TODO #B: overload ()-operator
-        void Input(std::vector<double>);
+        void Input(Eigen::VectorXd);
         void Forward();
-        std::vector<double> Output();
+        Eigen::VectorXd Output();
 
         // summary
         std::string Summary();
         
         // evaluate
-        //std::vector<double> Evaluate(std::vector<double>);
+        //Eigen::VectorXd Evaluate(Eigen::VectorXd);
 
         // helper functions
         // check for composability of layers in a SequentialNN

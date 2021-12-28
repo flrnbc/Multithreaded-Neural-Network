@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <Eigen/Dense>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -102,11 +103,11 @@ void SequentialNN::Forward() {
     }
 }
 
-void SequentialNN::Input(std::vector<double> input) {
+void SequentialNN::Input(Eigen::VectorXd input) {
     _layers[0]->Input(input);
 }
 
-std::vector<double> SequentialNN::Output() {
+Eigen::VectorXd SequentialNN::Output() {
     if ((_layers.back())->GetLayerCache().GetForwardOutput() == nullptr) {
         throw std::invalid_argument("Backward output is null.");
     }

@@ -1,10 +1,10 @@
 #ifndef LAYER_H_
 #define LAYER_H_
 
+#include <Eigen/Dense>
 #include "layer_cache.h"
 #include "transformation.h"
 #include <string>
-#include <vector>
 
 class LayerCache;
 class Transformation;
@@ -83,12 +83,12 @@ class Layer {
         std::string Summary() { return _transformation->Summary(); } // TODO: this might change in the future to contain more specific data
 
         // forward pass
-        void Input(std::vector<double>); // TODO: do we copy too often here?
+        void Input(Eigen::VectorXd); // TODO: do we copy too often here?
         virtual void Forward() = 0; // TODO: use _transformation to rewrite in a coherent way, not for each layer type
-        std::vector<double> Output(); // TODO: better to return const ref?
+        Eigen::VectorXd Output(); // TODO: better to return const ref?
 
         // backward pass
-        virtual void Backward() = 0;
+        //virtual void Backward() = 0;
 };
 
 
@@ -118,7 +118,7 @@ class LinearLayer: public Layer {
         void Forward();
         
         // backward pass AND updating weights
-        void Backward();
+        //void Backward();
 };
 
 
@@ -149,7 +149,7 @@ class ActivationLayer: public Layer {
         void Forward();
         
         // backward pass AND updating weights
-        void Backward();
+        //void Backward();
 };
 
 

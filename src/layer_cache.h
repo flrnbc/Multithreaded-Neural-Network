@@ -1,8 +1,8 @@
 #ifndef LAYER_CACHE_H_
 #define LAYER_CACHE_H_
 
+#include <Eigen/Dense>
 #include <memory>
-#include <vector>
 
 /****************
  * LAYER CACHE *
@@ -13,10 +13,10 @@ class LayerCache {
         // ownership important: the corresponding resources will be shared with different pointers
         // (namely in layers of sequential neural nets)
         // TODO: might be better to split in forward and backward cache
-        std::shared_ptr<std::vector<double> > _forward_input;
-        std::shared_ptr<std::vector<double> > _forward_output;
-        std::shared_ptr<std::vector<double> > _backward_input;
-        std::shared_ptr<std::vector<double> > _backward_output;
+        std::shared_ptr<Eigen::VectorXd> _forward_input;
+        std::shared_ptr<Eigen::VectorXd> _forward_output;
+        std::shared_ptr<Eigen::VectorXd> _backward_input;
+        std::shared_ptr<Eigen::VectorXd> _backward_output;
 
      public:
         // constructor (nullptr added to be explicit)
@@ -64,13 +64,13 @@ class LayerCache {
         // setters/getters 
         // NOTE: backward/forward output should be computed, NOT set.
         // forward
-        void SetForwardInput(std::shared_ptr<std::vector<double> > input_ptr); 
-        void SetForwardOutput(std::shared_ptr<std::vector<double> > output_ptr);
-        std::shared_ptr<std::vector<double> > GetForwardOutput();
-        std::shared_ptr<std::vector<double> > GetForwardInput();
+        void SetForwardInput(std::shared_ptr<Eigen::VectorXd> input_ptr); 
+        void SetForwardOutput(std::shared_ptr<Eigen::VectorXd> output_ptr);
+        std::shared_ptr<Eigen::VectorXd > GetForwardOutput();
+        std::shared_ptr<Eigen::VectorXd > GetForwardInput();
         // backward
-        void SetBackwardInput(std::shared_ptr<std::vector<double> > backward_input_ptr);
-        std::shared_ptr<std::vector<double> > GetBackwardOutput();
+        void SetBackwardInput(std::shared_ptr<Eigen::VectorXd> backward_input_ptr);
+        std::shared_ptr<Eigen::VectorXd> GetBackwardOutput();
 
         // connecting Layer's 
         // forward

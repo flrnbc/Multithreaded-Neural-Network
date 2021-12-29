@@ -1,3 +1,5 @@
+
+#include <Eigen/Dense>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -9,7 +11,7 @@ void test_LinearLayer() {
     LinearLayer ll(5, 3);
     std::cout << ll.Summary() << std::endl;
 
-    std::vector<double> e1{1, 0, 0};
+    Eigen::VectorXd e1{{1, 0, 0}};
 
     ll.GetTransformation()->Initialize("Xavier"); 
     std::cout << ll.Summary() << std::endl;
@@ -28,7 +30,7 @@ void test_ActivationLayer() {
     ActivationLayer al(8, "relu");
     std::cout << al.Summary() << std::endl;
 
-    std::vector<double> v{1, -5, 0, 1, 3, -6, -8, 0};
+    Eigen::VectorXd v{{1, -5, 0, 1, 3, -6, -8, 0}};
 
     al.Input(v);
     al.Forward();

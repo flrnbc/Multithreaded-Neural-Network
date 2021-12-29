@@ -68,7 +68,6 @@ class LayerCache {
         LayerCache &operator=(LayerCache &&source) = default;
 
         // setters/getters 
-        // NOTE: backward/forward output should be computed, NOT set.
         // forward
         void SetForwardInput(std::shared_ptr<Eigen::VectorXd> input_ptr); 
         void SetForwardOutput(std::shared_ptr<Eigen::VectorXd> output_ptr);
@@ -77,7 +76,9 @@ class LayerCache {
 
         // backward
         void SetBackwardInput(std::shared_ptr<Eigen::RowVectorXd> backward_input_ptr);
+        void SetBackwardOutput(std::shared_ptr<Eigen::VectorXd> output_ptr);
         std::shared_ptr<Eigen::RowVectorXd> GetBackwardOutput();
+        std::shared_ptr<Eigen::RowVectorXd> GetBackwardInput();
 
         // connecting Layer's 
         // forward

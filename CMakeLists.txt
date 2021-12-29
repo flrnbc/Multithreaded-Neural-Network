@@ -15,11 +15,13 @@ add_subdirectory(tests)
 # executables
 add_executable(TestFunction tests/test_function.cpp)
 add_executable(TestTransformation tests/test_transformation.cpp)
+add_executable(TestLayerCache tests/test_layer_cache.cpp)
 add_executable(TestLayer tests/test_layer.cpp)
 add_executable(TestSequentialNN tests/test_sequential_nn.cpp)
 
 # linking libraries
 target_link_libraries(TestFunction PUBLIC LibFunction)
 target_link_libraries(TestTransformation PUBLIC LibFunction LibTransformation)
-target_link_libraries(TestLayer PUBLIC LibFunction LibTransformation LibLayer)
-target_link_libraries(TestSequentialNN PUBLIC LibFunction LibTransformation LibLayer LibSequentialNN)
+target_link_libraries(TestLayerCache PUBLIC LibLayerCache)
+target_link_libraries(TestLayer PUBLIC LibFunction LibTransformation LibLayerCache LibLayer)
+target_link_libraries(TestSequentialNN PUBLIC LibFunction LibTransformation LibLayer LibLayerCache LibSequentialNN)

@@ -35,6 +35,7 @@ void test_ActivationTransform () {
     auto a = ActivationTransformation(5, "relu");
     auto a2 = ActivationTransformation(5, "sigmoid");
     auto a3 = ActivationTransformation(5, "tanh");
+    auto a4 = ActivationTransformation(5, "softmax");
 
     Eigen::VectorXd e1{{1.0, 0, 0, 0, 0}};
     Eigen::VectorXd e2{{0, 1.0, -1.0, -1.0, 0}};
@@ -54,6 +55,13 @@ void test_ActivationTransform () {
     std::cout << a3.Summary() << std::endl;
     std::cout << "Transform e2: " << std::endl;
     std::cout << a3.Transform(e2) << std::endl;
+
+    std::cout << "Transformation a: " << std::endl;
+    std::cout << a4.Summary() << std::endl;
+    std::cout << "Transform e2: " << std::endl;
+    std::cout << a4.Transform(e2) << std::endl;
+    std::cout << a4.Transform(e2).sum() << std::endl;
+
 }
 
 int main() {

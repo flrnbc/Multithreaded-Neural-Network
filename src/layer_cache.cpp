@@ -42,6 +42,6 @@ void LayerCache::ConnectForward(int size_of_vector, LayerCache& next_layer_cache
 void LayerCache::ConnectBackward(int size_of_vector, LayerCache& next_layer_cache) {
     Eigen::RowVectorXd zero_vector = Eigen::RowVectorXd::Zero(size_of_vector);
 
-    this->SetBackOutput(std::make_shared<Eigen::RowVectorXd>(zero_vector));
+    this->SetBackwardOutput(std::make_shared<Eigen::RowVectorXd>(zero_vector));
     next_layer_cache.SetBackwardInput(this->GetBackwardOutput());
 }

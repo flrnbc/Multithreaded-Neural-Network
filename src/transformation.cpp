@@ -142,8 +142,9 @@ Eigen::VectorXd ActivationTransformation::Transform(Eigen::VectorXd inputVector)
     }
 
     if (_type == "softmax") {
-        for (auto d: inputVector) {
-            d /= (d/inputVector.sum()); // Note: this is safe because _function = exp for softmax
+        double vectorSum = inputVector.sum();
+        for (auto &d: inputVector) {
+            d /= vectorSum; // Note: this is safe because _function = exp for softmax
         }
     }
 

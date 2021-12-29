@@ -51,16 +51,16 @@ void test_ActivationTransform () {
     std::cout << "Transform e2: " << std::endl;
     std::cout << a2.Transform(e2) << std::endl;
 
-    std::cout << "Transformation a: " << std::endl;
+    std::cout << "Transformation a3: " << std::endl;
     std::cout << a3.Summary() << std::endl;
     std::cout << "Transform e2: " << std::endl;
     std::cout << a3.Transform(e2) << std::endl;
 
-    std::cout << "Transformation a: " << std::endl;
+    std::cout << "Transformation a4: " << std::endl;
     std::cout << a4.Summary() << std::endl;
     std::cout << "Transform e2: " << std::endl;
-    std::cout << a4.Transform(e2) << std::endl;
-    std::cout << a4.Transform(e2).sum() << std::endl;
+    std::cout << a4.Transform(e1) << std::endl;
+    std::cout << "Sum of entries: " << a4.Transform(e1).sum() << std::endl;
 
 }
 

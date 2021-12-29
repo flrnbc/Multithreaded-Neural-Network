@@ -13,10 +13,16 @@ class LayerCache {
         // ownership important: the corresponding resources will be shared with different pointers
         // (namely in layers of sequential neural nets)
         // TODO: might be better to split in forward and backward cache
+
+        // cache for forward pass
+        // NOTE: each data point is a column vector here
         std::shared_ptr<Eigen::VectorXd> _forward_input;
         std::shared_ptr<Eigen::VectorXd> _forward_output;
-        std::shared_ptr<Eigen::VectorXd> _backward_input;
-        std::shared_ptr<Eigen::VectorXd> _backward_output;
+
+        // cache for backward pass, i.e. keeps track of the gradients (\Delta_i in documentation)
+        // NOTE: we consider gradients as row vectors
+        std::shared_ptr<Eigen::RowVectorXd> _backward_input;
+        std::shared_ptr<Eigen::RowVectorXd> _backward_output;
 
      public:
         // constructor (nullptr added to be explicit)
@@ -68,15 +74,16 @@ class LayerCache {
         void SetForwardOutput(std::shared_ptr<Eigen::VectorXd> output_ptr);
         std::shared_ptr<Eigen::VectorXd > GetForwardOutput();
         std::shared_ptr<Eigen::VectorXd > GetForwardInput();
+
         // backward
-        void SetBackwardInput(std::shared_ptr<Eigen::VectorXd> backward_input_ptr);
-        std::shared_ptr<Eigen::VectorXd> GetBackwardOutput();
+        void SetBackwardInput(std::shared_ptr<Eigen::RowVectorXd> backward_input_ptr);
+        std::shared_ptr<Eigen::RowVectorXd> GetBackwardOutput();
 
         // connecting Layer's 
         // forward
         void ConnectForward(int, LayerCache&); 
         // backward
-        // void ConnectBackward(Layer);
+        void ConnectBackward(int, LayerCache&);
 
        
 };

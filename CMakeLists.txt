@@ -8,26 +8,28 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # source subdirectory 
-# TODO: why needed? Doesn't target_include_directories suffice?
-# TEST it by commenting it out
+# TODO: Definitely needed but why? Difference to target_include_directories?
 add_subdirectory(src)
 add_subdirectory(tests)
 
+# executables
 add_executable(TestFunction tests/test_function.cpp)
+add_executable(TestTransformation tests/test_transformation.cpp)
+
+# linking libraries
 target_link_libraries(TestFunction PUBLIC LibFunction LibTestFunction)
+target_link_libraries(TestTransformation PUBLIC LibFunction LibTransformation LibTestTransformation)
+
+# include directories for above targets
 target_include_directories(TestFunction PUBLIC
                             "${PROJECT_BINARY_DIR}"
                             "${PROJECT_SOURCE_DIR}/src"
                             "${PROJECT_SOURCE_DIR}/tests"
 )
-
-add_executable(TestTransformation tests/test_transformation.cpp)
-target_link_libraries(TestTransformation PUBLIC LibFunction LibTransformation LibTestTransformation)
 target_include_directories(TestTransformation PUBLIC
                             "${PROJECT_BINARY_DIR}"
                             "${PROJECT_SOURCE_DIR}/src"
                             "${PROJECT_SOURCE_DIR}/tests"
-                            "${PROJECT_SOURCE_DIR}/eigen"
 )
 
 # add_library(Transformation transformation.cpp transformation.h)

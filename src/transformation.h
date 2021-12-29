@@ -107,7 +107,7 @@ class LinearTransformation: public Transformation {
 
 class ActivationTransformation: public Transformation {
     private:
-        Function _function;
+        Function _function; // TODO: better to use a smart pointer?
 
     public:
         // constructor
@@ -118,7 +118,6 @@ class ActivationTransformation: public Transformation {
             
         // transform methods
         Eigen::VectorXd Transform(Eigen::VectorXd);
-        //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
 
         // Summary of transformation
         std::string Summary(); 

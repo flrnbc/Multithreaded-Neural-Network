@@ -138,7 +138,13 @@ Eigen::VectorXd ActivationTransformation::Transform(Eigen::VectorXd inputVector)
     // TODO: optimize with vectorization? (OpenMP?)
 
     for (int i = 0; i < inputVector.rows(); i++) {
-        inputVector(i) = _function(inputVector(i)); // NOTE: range-based did not modify the values (even when using &)?!
+        inputVector(i) = _function(inputVector(i)); // TODO: range-based did not modify the values (even when using &)?!
+    }
+
+    if (_type == "softmax") {
+        for (auto d: inputVector) {
+            d /= (d/inputVector.sum()); // Note: this is safe because _function = exp for softmax
+        }
     }
 
     return inputVector;

@@ -1,6 +1,7 @@
 #ifndef FUNCTION_H_
 #define FUNCTION_H_
 
+#include <cmath>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -43,6 +44,12 @@ public:
             else if (fct_name == "sigmoid") {
                 function = &sigmoid;
                 derivative = &sigmoid_derivative;
+            }
+            // TODO: the following is just for convenience for implementing 
+            // the actual softmax
+            else if (fct_name == "softmax") { 
+                function = &exp;
+                derivative = &exp;
             }
             else if (fct_name == "tanh") {
                 function = &tanh;

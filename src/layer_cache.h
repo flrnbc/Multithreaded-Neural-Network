@@ -76,7 +76,7 @@ class LayerCache {
 
         // backward
         void SetBackwardInput(std::shared_ptr<Eigen::RowVectorXd> backward_input_ptr);
-        void SetBackwardOutput(std::shared_ptr<Eigen::VectorXd> output_ptr);
+        void SetBackwardOutput(std::shared_ptr<Eigen::RowVectorXd> output_ptr);
         std::shared_ptr<Eigen::RowVectorXd> GetBackwardOutput();
         std::shared_ptr<Eigen::RowVectorXd> GetBackwardInput();
 

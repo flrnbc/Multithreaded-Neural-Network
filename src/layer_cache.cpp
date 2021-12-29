@@ -25,17 +25,17 @@ std::shared_ptr<Eigen::VectorXd> LayerCache::GetForwardInput() {
 }
 
 // backward pass
-void LayerCache::SetBackwardInput(std::shared_ptr<Eigen::VectorXd> backward_input_ptr) {
+void LayerCache::SetBackwardInput(std::shared_ptr<Eigen::RowVectorXd> backward_input_ptr) {
     _backward_input = std::move(backward_input_ptr);
 }
-void LayerCache::SetBackwardOutput(std::shared_ptr<Eigen::VectorXd> backward_output_ptr) {
+void LayerCache::SetBackwardOutput(std::shared_ptr<Eigen::RowVectorXd> backward_output_ptr) {
     _backward_output = std::move(backward_output_ptr);
 }
 
-std::shared_ptr<Eigen::VectorXd> LayerCache::GetBackwardInput() { 
+std::shared_ptr<Eigen::RowVectorXd> LayerCache::GetBackwardInput() { 
     return _backward_input;
 }
-std::shared_ptr<Eigen::VectorXd> LayerCache::GetBackwardOutput() { 
+std::shared_ptr<Eigen::RowVectorXd> LayerCache::GetBackwardOutput() { 
     return _backward_output;
 }
 

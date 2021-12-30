@@ -11,6 +11,8 @@
  * LAYER *
  *********/
 
+// TODO #A: needs to be refactored at some point
+
 void Layer::Input(Eigen::VectorXd input_vector) {
         _layer_cache->SetForwardInput(std::make_shared<Eigen::VectorXd>(input_vector));
 }
@@ -28,6 +30,21 @@ void Layer::SetLayerCache(std::unique_ptr<LayerCache> layer_cache) {
         // does it implicitly use the std::vector move (assignment) operator?
         _layer_cache = std::move(layer_cache);
 }
+
+void Layer::BackwardInput(Eigen::RowVectorXd input_vector) {
+        _layer_cache->SetBackwardInput(std::make_shared<Eigen::RowVectorXd>(input_vector));
+}
+
+Eigen::RowVectorXd Layer::BackwardOutput() {
+        if (_layer_cache->GetBackwardOutput() != nullptr) {
+                return *(_layer_cache->GetBackwardOutput());
+        } else {
+                throw std::invalid_argument("Output pointer is null!");
+        }
+}
+
+
+// TODO #A: Both Forward() and Backward() need to be refactored at some point
 
 /*******************************
  * LINEAR LAYER IMPLEMENTATION *
@@ -48,7 +65,7 @@ void LinearLayer::Forward() {
                 if (GetLayerCache().GetForwardOutput() == nullptr){
                         GetLayerCache().SetForwardOutput(std::make_shared<Eigen::VectorXd>(transformed_vector));
                 } else {
-                        // TODO: do we create an unecessary copy of _backward_output here
+                        // TODO: do we create an unecessary copy here?
                         *(GetLayerCache().GetForwardOutput()) = transformed_vector;
                 }
         } else {
@@ -59,6 +76,22 @@ void LinearLayer::Forward() {
 void LinearLayer::Initialize(std::string initialization_type) {
         _transformation->Initialize(initialization_type);
         //->Initialize(initialization_type);
+}
+
+void LinearLayer::Backward() {
+        // get backward input which is the Delta of the previous layer of the backward pass
+        if (GetLayerCache().GetBackwardInput() != nullptr) {
+                // TODO: do we copy the transformed vector too often?
+                Eigen::RowVectorXd transformed_vector = _transformation->UpdateDelta(*(GetLayerCache().GetBackwardInput()));
+                if (GetLayerCache().GetBackwardOutput() == nullptr){
+                        GetLayerCache().SetBackwardOutput(std::make_shared<Eigen::RowVectorXd>(transformed_vector));
+                } else {
+                        // TODO: do we create an unecessary copy here
+                        *(GetLayerCache().GetBackwardOutput()) = transformed_vector;
+                }
+        } else {
+                throw std::invalid_argument("Pointer is null!");
+        }          
 }
 
 
@@ -81,6 +114,21 @@ void ActivationLayer::Forward() {
         }          
 }
 
+void ActivationLayer::Backward() {
+        // get backward input which is the Delta of the previous layer of the backward pass
+        if (GetLayerCache().GetBackwardInput() != nullptr) {
+                // TODO: do we copy the transformed vector too often?
+                Eigen::RowVectorXd transformed_vector = _transformation->UpdateDelta(*(GetLayerCache().GetBackwardInput()));
+                if (GetLayerCache().GetBackwardOutput() == nullptr){
+                        GetLayerCache().SetBackwardOutput(std::make_shared<Eigen::RowVectorXd>(transformed_vector));
+                } else {
+                        // TODO: do we create an unecessary copy here
+                        *(GetLayerCache().GetBackwardOutput()) = transformed_vector;
+                }
+        } else {
+                throw std::invalid_argument("Pointer is null!");
+        }          
+}
 
 // // flatten layer
 // std::vector<double> Layer::Flatten(const std::vector<std::vector<double> >& matrix) {

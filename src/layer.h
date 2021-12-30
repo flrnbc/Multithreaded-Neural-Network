@@ -88,7 +88,9 @@ class Layer {
         Eigen::VectorXd Output(); // TODO: better to return const ref?
 
         // backward pass
-        //virtual void Backward() = 0;
+        void BackwardInput(Eigen::RowVectorXd);
+        virtual void Backward() = 0;
+        Eigen::RowVectorXd BackwardOutput();
 };
 
 
@@ -118,7 +120,7 @@ class LinearLayer: public Layer {
         void Forward();
         
         // backward pass AND updating weights
-        //void Backward();
+        void Backward();
 };
 
 
@@ -149,7 +151,7 @@ class ActivationLayer: public Layer {
         void Forward();
         
         // backward pass AND updating weights
-        //void Backward();
+        void Backward();
 };
 
 

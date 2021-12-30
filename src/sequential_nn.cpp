@@ -85,11 +85,11 @@ void SequentialNN::Initialize() {
 }
 
 std::string SequentialNN::Summary() {
-    std::string summary = "Summary of sequential neural network: ";
+    std::string summary = "Summary of sequential neural network: \n";
     int N = _layers.size();
 
     for (int i=0; i < N; i++) {
-        summary += "\nLayer " + std::to_string(i) + ":\n" + _layers[i]->Summary();
+        summary += "\nLayer " + std::to_string(i) + ":\n" + _layers[i]->Summary() + "\n";
     }
 
     return summary;

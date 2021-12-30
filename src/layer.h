@@ -21,10 +21,14 @@ class Layer {
         // TODO: better would be to include a std::unique_ptr<Transformation> _transformation.
         // But this caused some issues (e.g. could not make _transformation.Transform() work).
 
+        // derivative of transformation
+        std::unique_ptr<Eigen::MatrixXd> _derivative;
+
         // constructor (needed for all concrete derived classes)
         Layer(std::shared_ptr<Transformation> transformation): 
             _layer_cache(std::make_shared<LayerCache>()),
-            _transformation(transformation)
+            _transformation(transformation),
+            _derivative(nullptr)
             {}
 
     public:
@@ -69,6 +73,7 @@ class Layer {
 
         // setter
         void SetLayerCache(std::unique_ptr<LayerCache>);
+        void SetDerivative(std::unique_ptr<Eigen::MatrixXd>);
 
         // getters
         // NOTE: this is safe because we initialize _layer_cache (not as a nullptr) in 
@@ -83,12 +88,19 @@ class Layer {
         std::string Summary() { return _transformation->Summary(); } // TODO: this might change in the future to contain more specific data
 
         // forward pass
-        void Input(Eigen::VectorXd); // TODO: do we copy too often here?
         virtual void Forward() = 0; // TODO: use _transformation to rewrite in a coherent way, not for each layer type
+        void Input(Eigen::VectorXd); // TODO: do we copy too often here?
         Eigen::VectorXd Output(); // TODO: better to return const ref?
 
         // backward pass
-        //virtual void Backward() = 0;
+        virtual void Backward() = 0;
+        // input for backward pass
+        void Input(Eigen::RowVectorXd); 
+        // output of backward pass not necessary (only needed for weight update)
+        // update derivative
+        void UpdateDerivative();
+
+        // weight update
 };
 
 

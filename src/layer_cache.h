@@ -8,12 +8,17 @@
  * LAYER CACHE *
  ****************/
 
+/*
+    The LayerCache class is the storage of a layer for the forward/backward input and output. Of course, we could save
+    these in the Layer class themselves. However, this is inefficient since e.g. the forward output of one layer is the
+    forward input of the next layer. The LayerCache only points to the corresponding data and we can connect two LayerCaches
+    together by pointing to the same data. That's why we have to use shared_ptrs.
+
+    Improvement: use templates (e.g. for col and row vectors) so that we can separate the forward and backward cache. 
+*/ 
+
 class LayerCache {
     private:
-        // ownership important: the corresponding resources will be shared with different pointers
-        // (namely in layers of sequential neural nets)
-        // TODO: might be better to split in forward and backward cache
-
         // cache for forward pass
         // NOTE: each data point is a column vector here
         std::shared_ptr<Eigen::VectorXd> _forward_input;

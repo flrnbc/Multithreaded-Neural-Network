@@ -69,7 +69,9 @@ class LinearTransformation: public Transformation {
             Transformation(weights.rows(), weights.cols(), "LinearTransformation"),
             _weights(weights),
             _bias(bias),
-            _derivative(std::make_unique<Eigen::MatrixXd>(weights)) // derivative coincides with weights
+            // derivative coincides with weights
+            // since weights will be updated, need to point to _weights
+            _derivative(std::make_unique<Eigen::MatrixXd>(_weights)) 
             {}
 
         // constructor (all zeros)

@@ -95,7 +95,6 @@ void LinearTransformation::Initialize(std::string initialization_type) {
 
 }
 
-
 // transform method
 Eigen::VectorXd LinearTransformation::Transform(Eigen::VectorXd inputVector) {
     if (inputVector.rows() != Cols()) {
@@ -106,9 +105,9 @@ Eigen::VectorXd LinearTransformation::Transform(Eigen::VectorXd inputVector) {
     }
 }
 
-
 // Summary
 std::string LinearTransformation::Summary() {
+    std::string type = Type() + "\n";
     std::string rows = std::to_string(Rows());
     std::string cols = std::to_string(Cols());
     std::string shape = "Shape: (" + rows + ", " + cols + ")" + "\n";
@@ -125,7 +124,13 @@ std::string LinearTransformation::Summary() {
     ss_bias << _bias;
     bias_string += ss_bias.str();
 
-    return shape + weights_string + "\n" + bias_string;
+    std::string derivative_string = "Derivative:\n";
+    // convert matrix to string
+    std::stringstream ss_derivative;
+    ss_derivative << *_derivative;
+    derivative_string += ss_derivative.str();
+
+    return type + shape + weights_string + "\n" + bias_string + derivative_string;
 }
 
 
@@ -151,10 +156,52 @@ Eigen::VectorXd ActivationTransformation::Transform(Eigen::VectorXd inputVector)
     return inputVector;
 }
 
+// update derivative
+void ActivationTransformation::UpdateDerivative(Eigen::VectorXd vector) {
+    // TODO: this has to change if we introduce more activation functions which are not vectorizations
+    if (vector.size() != Cols()) {
+        throw std::domain_error("Vector size does not match with the derivative.");
+    }
+
+    if (_type != "softmax") {
+        for (int j=0; j<Cols(); j++) {
+            // safe because we initialize to a zero matrix
+            (*_derivative)(j, j) = _function.Derivative(vector(j));
+        }
+    }
+
+    if (_type == "softmax") {
+        /* 
+        NOTE: Here we assume that the vector is the output of softmax, i.e.
+        vector = softmax(x_1, ... , x_N) = (s_1, ... , s_N). Then the jacobian J is given by 
+
+            J(i, i) = -s_i*(1-s_i)       
+            J(i, j) = -s_i*s_j          if i != j.
+
+        */
+        for (int i=0; i<Rows(); i++) {
+            for (int j=0; j<Cols(); j++) {
+                if (i == j) {
+                    (*_derivative)(i, j) = -vector(i)*(1-vector(i));
+                }
+                else {
+                    (*_derivative)(i, j) = -vector(i)*vector(j);
+                }
+            }
+        }
+    }
+}
+
 std::string ActivationTransformation::Summary() {
     std::string rows = std::to_string(Rows());
     std::string cols = std::to_string(Cols());
     std::string shape = "Shape: (" + rows + ", " + cols + ")" + "\n";
 
-    return shape + "Function name: " + Type();
+    std::string derivative_string = "Derivative:\n";
+    // convert matrix to string
+    std::stringstream ss_derivative;
+    ss_derivative << *_derivative;
+    derivative_string += ss_derivative.str();
+
+    return shape + "Function name: " + Type() + "\n" + derivative_string;
 }

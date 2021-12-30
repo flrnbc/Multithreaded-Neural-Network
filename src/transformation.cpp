@@ -124,13 +124,7 @@ std::string LinearTransformation::Summary() {
     ss_bias << _bias;
     bias_string += ss_bias.str();
 
-    std::string derivative_string = "Derivative:\n";
-    // convert matrix to string
-    std::stringstream ss_derivative;
-    ss_derivative << *_derivative;
-    derivative_string += ss_derivative.str();
-
-    return type + shape + weights_string + "\n" + bias_string + derivative_string;
+    return type + shape + weights_string + "\n" + bias_string;
 }
 
 

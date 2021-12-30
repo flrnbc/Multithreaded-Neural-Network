@@ -41,6 +41,9 @@ class Transformation {
         virtual Eigen::VectorXd Transform(Eigen::VectorXd) = 0;
         //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
         
+        // update Delta (of a layer), which is a row vector, by right multiplication with the derivative
+        virtual Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd) = 0;
+
         // update derivative/jacobian from a given vector
         virtual void UpdateDerivative(Eigen::VectorXd) = 0;
 
@@ -60,7 +63,6 @@ class LinearTransformation: public Transformation {
     private:    
         Eigen::MatrixXd _weights;
         Eigen::VectorXd _bias;
-        std::unique_ptr<Eigen::MatrixXd> _derivative; // more precisely jacobian
 
     public:
         // constructors
@@ -68,27 +70,21 @@ class LinearTransformation: public Transformation {
         LinearTransformation(Eigen::MatrixXd weights, Eigen::VectorXd bias): 
             Transformation(weights.rows(), weights.cols(), "LinearTransformation"),
             _weights(weights),
-            _bias(bias),
-            // derivative coincides with weights
-            // since weights will be updated, need to point to _weights
-            _derivative(std::make_unique<Eigen::MatrixXd>(_weights)) 
+            _bias(bias)
             {}
 
         // constructor (all zeros)
         LinearTransformation(int rows, int cols): 
             Transformation(rows, cols, "LinearTransformation"),
             _weights(Eigen::MatrixXd::Zero(rows, cols)), 
-            _bias(Eigen::VectorXd::Zero(rows)),
-            _derivative(std::make_unique<Eigen::MatrixXd>(_weights))
+            _bias(Eigen::VectorXd::Zero(rows))
             {}
 
         // TODO: the default copy and move constructors/assignment operators should be enough?!?
 
         // setters & getters
         Eigen::MatrixXd Weights() { return _weights; }
-        void SetWeights(Eigen::MatrixXd weight_matrix) {
-            _weights = weight_matrix;
-        }
+        void SetWeights(Eigen::MatrixXd weight_matrix) { _weights = weight_matrix; }
         Eigen::VectorXd Bias() { return _bias; }
         void SetBias(Eigen::VectorXd bias) { _bias = bias; }
 
@@ -102,8 +98,13 @@ class LinearTransformation: public Transformation {
         // NOTE: we do _not_ work with transpose etc. because we consider our data points as column vectors
         Eigen::VectorXd Transform(Eigen::VectorXd); 
 
-        // update derivative (trivial here)
+        // update derivative (trivial here because it coincides with weights)
         void UpdateDerivative(Eigen::VectorXd) {}
+
+        // update Delta
+        Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd rowVector) {
+            return rowVector*(_weights);
+        }
 
         // summaries
         std::string Summary();
@@ -130,8 +131,13 @@ class ActivationTransformation: public Transformation {
         // transform methods
         Eigen::VectorXd Transform(Eigen::VectorXd);
 
-        // update derivative
+        // update derivative at a point/vector
         void UpdateDerivative(Eigen::VectorXd);
+
+        // update Delta
+        Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd rowVector) {
+            return rowVector*(*(_derivative));
+        }
 
         // Summary of transformation
         std::string Summary(); 

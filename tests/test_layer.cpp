@@ -18,30 +18,36 @@ void test_LinearLayer() {
     ll.Input(e1);
     ll.Forward();
     
-    std::cout << "Transform e1: " << std::endl;
-    for (int i=0; i<5; i++) {
-        std::cout << ll.Output()[i] << std::endl;
-    }
+    std::cout << "Transform e1: \n" << ll.Output() <<  std::endl;
 
     //std::cout << ll.Summary() << std::endl;
 }
 
 void test_ActivationLayer() {
-    ActivationLayer al(8, "relu");
+    ActivationLayer al(8, "tanh");
     std::cout << al.Summary() << std::endl;
 
     Eigen::VectorXd v{{1, -5, 0, 1, 3, -6, -8, 0}};
+    Eigen::VectorXd w{{1, 0, 1, 0, 1, 0, 1, 0}};
 
+    // forward pass
     al.Input(v);
     al.Forward();
 
-    std::cout << "Transform v: " << std::endl;
-    for (int i=0; i<8; i++) {
-        std::cout << al.Output()[i] << std::endl;
-    }
+    std::cout << "Transform v: \n" << al.Output() << std::endl;
+
+    // update derivative
+    al.GetTransformation()->UpdateDerivative(al.Output());
+    std::cout << "After update: \n" << al.Summary() << std::endl;
+
+    // backward pass
+    al.BackwardInput(w);
+    al.Backward();
+
+    std::cout << "Backward output: \n" << al.BackwardOutput() << std::endl;
 }
 
 int main() {
-    test_LinearLayer();
-    //test_ActivationLayer();
+    //test_LinearLayer();
+    test_ActivationLayer();
 }

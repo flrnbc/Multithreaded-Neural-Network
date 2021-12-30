@@ -31,42 +31,6 @@ class Layer {
         // destructor 
         virtual ~Layer() {}
 
-        // NOTE: we only want to move Layers into std::vectors so that we 
-        // only implement move semantics. Following the rule of five, we delete
-        // the copy operators.
-        // TODO: might change in the future, if we want to be able to copy layers etc. ...
-
-        // copy constructor
-        // Layer(const Layer &source) {
-        //     _layer_cache = std::make_unique<LayerCache>(*(source._layer_cache)); 
-        // }
-
-        // // copy assignment operator
-        // Layer& operator=(const Layer &source) {
-        //     if (this == &source) {
-        //         return *this;
-        //     }
-        //     _layer_cache = std::make_unique<LayerCache>(*(source._layer_cache));
-
-        //     return *this;
-        // }
-       
-        // // move constructor
-        // Layer(Layer &&source) {
-        //     _layer_cache = std::move(source._layer_cache); // just moves the unique_ptr
-        //     // TODO: hence no need to set _layer_cache to null?
-        // }
-
-        // // move assignment operator
-        // Layer& operator=(Layer &&source) {
-        //     if (this == &source) {
-        //         return *this;
-        //     }
-        //     _layer_cache = std::move(source._layer_cache);
-
-        //     return *this;
-        // }
-
         // setter
         void SetLayerCache(std::unique_ptr<LayerCache>);
 
@@ -101,9 +65,6 @@ class Layer {
 // possible IDEA for refactoring: use a factory pattern for creating various layers?
 
 class LinearLayer: public Layer {
-    //private:
-    //    std::shared_ptr<LinearTransformation> _transformation;
-
     public:
         // constructor
         LinearLayer(int rows, int cols): 
@@ -113,14 +74,16 @@ class LinearLayer: public Layer {
         // TODO: always needed?
         ~LinearLayer() {};
 
-        // initialize
+        // initialize weights
         void Initialize(std::string initialization_type);
 
         // forward pass
         void Forward();
         
-        // backward pass AND updating weights
+        // backward pass
         void Backward();
+
+        // TODO: update weights?
 };
 
 
@@ -150,13 +113,8 @@ class ActivationLayer: public Layer {
         // forward pass
         void Forward();
         
-        // backward pass AND updating weights
+        // backward pass
         void Backward();
 };
-
-
-// flatten layer --> extra layer class
-        //static std::vector<double> Flatten(const std::vector<std::vector<double> >& matrix);
-
 
 #endif // LAYER_H_

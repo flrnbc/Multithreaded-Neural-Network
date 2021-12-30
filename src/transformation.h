@@ -24,7 +24,7 @@ class Transformation {
         Transformation(int rows, int cols, std::string type):
             _rows(rows),
             _cols(cols),
-            _type(type),
+            _type(type)
             {}
 
     public:
@@ -100,7 +100,7 @@ class LinearTransformation: public Transformation {
         // NOTE: we do _not_ work with transpose etc. because we consider our data points as column vectors
         Eigen::VectorXd Transform(Eigen::VectorXd); 
 
-        // derivative remains constant (we keep the weights fixed)
+        // update derivative (trivial here)
         void UpdateDerivative(Eigen::VectorXd) {}
 
         // summaries
@@ -115,16 +115,21 @@ class LinearTransformation: public Transformation {
 class ActivationTransformation: public Transformation {
     private:
         Function _function; // TODO: better to use a smart pointer?
+        std::unique_ptr<Eigen::MatrixXd> _derivative;
 
     public:
         // constructor
         ActivationTransformation(int size, std::string fct_name): 
             Transformation(size, size, fct_name),
-            _function(Function(fct_name)) 
+            _function(Function(fct_name)),
+            _derivative(std::make_unique<Eigen::MatrixXd>(Eigen::MatrixXd::Zero(size, size))) 
             {} 
             
         // transform methods
         Eigen::VectorXd Transform(Eigen::VectorXd);
+
+        // update derivative
+        void UpdateDerivative(Eigen::VectorXd);
 
         // Summary of transformation
         std::string Summary(); 

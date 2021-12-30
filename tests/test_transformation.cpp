@@ -38,11 +38,12 @@ void test_LinearTransform() {
     std::cout << "After updating weights: \n" << t.Summary() << std::endl;
 }
 
+// tests for ActivationTransformation
+// TODO: use reference because copy constructor implicitly deleted (might have to change that)
 void test_UpdateDelta(ActivationTransformation& t, Eigen::RowVectorXd delta) {
     std::cout << "Updated Delta: \n" << t.UpdateDelta(delta) << std::endl;
 }
 
-// TODO: use reference because copy constructor implicitly deleted (might have to change that)
 void test_ActivationTransformation(ActivationTransformation& a, Eigen::VectorXd vector, Eigen::RowVectorXd delta) {
     std::cout << "Initial summary \n" << a.Summary() << std::endl;
     std::cout << "Transform vector: " << std::endl;

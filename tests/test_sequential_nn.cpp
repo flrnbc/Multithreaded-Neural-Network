@@ -49,13 +49,13 @@ void test_SequentialNN() {
     snn.Input(w);
     snn.Forward();
 
-    std::cout << snn.Output() << std::endl;
+    std::cout << "Output: \n" << snn.Output() << std::endl;
 }
 
 int main() {
-    test_ConnectLayers();
+    //test_ConnectLayers();
     test_SequentialNN();
-    test_GetInitializationType();
+    //test_GetInitializationType();
 
     return 0;
 }

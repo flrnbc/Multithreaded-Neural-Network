@@ -15,13 +15,14 @@ void test_RandomWeightInitialization() {
     std::cout << t2.Summary() << std::endl;
 }
 
-void test_LinearTransform () {
+void test_LinearTransform() {
     auto t = LinearTransformation(3, 6);
     t.Initialize("He");
     Eigen::VectorXd e1{{1.0, 0, 0, 0, 0, 0}};
     Eigen::VectorXd e2{{0, 1.0, 0, 0, 0, 0}};
 
     std::cout << "Transformation t: " << std::endl;
+    t.UpdateDerivative(e1);
     std::cout << t.Summary() << std::endl;
 
     std::cout << "Transform e1: " << std::endl;
@@ -29,43 +30,51 @@ void test_LinearTransform () {
 
     std::cout << "Transform e2: " << std::endl;
     std::cout << t.Transform(e2) << std::endl;
+
+    // check if derivative is correctly updated
+    auto random_matrix = Eigen::MatrixXd::Random(3, 6);
+    t.SetWeights(random_matrix);
+    t.UpdateDerivative(e1);
+    std::cout << "After updating weights: \n" << t.Summary() << std::endl;
 }
 
-void test_ActivationTransform () {
+void test_UpdateDelta(ActivationTransformation& t, Eigen::RowVectorXd delta) {
+    std::cout << "Updated Delta: \n" << t.UpdateDelta(delta) << std::endl;
+}
+
+// TODO: use reference because copy constructor implicitly deleted (might have to change that)
+void test_ActivationTransformation(ActivationTransformation& a, Eigen::VectorXd vector, Eigen::RowVectorXd delta) {
+    std::cout << "Initial summary \n" << a.Summary() << std::endl;
+    std::cout << "Transform vector: " << std::endl;
+    std::cout << a.Transform(vector) << std::endl;
+
+    // update derivative
+    a.UpdateDerivative(a.Transform(vector));
+    std::cout << "After updating derivative \n" << a.Summary() << std::endl;
+
+    // update delta
+    test_UpdateDelta(a, delta);
+}
+
+void test_ActivationTransforms() {
+    Eigen::VectorXd e1{{1.0, 0, 0, 0, 0}};
+    Eigen::VectorXd vector{{0, 1.0, -1.0, -1.0, 0}};
+
     auto a = ActivationTransformation(5, "relu");
     auto a2 = ActivationTransformation(5, "sigmoid");
     auto a3 = ActivationTransformation(5, "tanh");
     auto a4 = ActivationTransformation(5, "softmax");
 
-    Eigen::VectorXd e1{{1.0, 0, 0, 0, 0}};
-    Eigen::VectorXd e2{{0, 1.0, -1.0, -1.0, 0}};
-
-    // TODO: better: loop over a vector (a bit tricky because of incomplete types)
-    std::cout << "Transformation a: " << std::endl;
-    std::cout << a.Summary() << std::endl;
-    std::cout << "Transform e2: " << std::endl;
-    std::cout << a.Transform(e2) << std::endl;
-
-    std::cout << "Transformation a2: " << std::endl;
-    std::cout << a2.Summary() << std::endl;
-    std::cout << "Transform e2: " << std::endl;
-    std::cout << a2.Transform(e2) << std::endl;
-
-    std::cout << "Transformation a3: " << std::endl;
-    std::cout << a3.Summary() << std::endl;
-    std::cout << "Transform e2: " << std::endl;
-    std::cout << a3.Transform(e2) << std::endl;
-
-    std::cout << "Transformation a4: " << std::endl;
-    std::cout << a4.Summary() << std::endl;
-    std::cout << "Transform e2: " << std::endl;
-    std::cout << a4.Transform(e1) << std::endl;
-    std::cout << "Sum of entries: " << a4.Transform(e1).sum() << std::endl;
-
+    test_ActivationTransformation(a, vector, e1);
+    test_ActivationTransformation(a2, vector, e1);
+    test_ActivationTransformation(a3, vector, e1);
+    test_ActivationTransformation(a4, vector, e1);
 }
 
+
 int main() {
-    test_RandomWeightInitialization();
-    test_LinearTransform();
-    test_ActivationTransform();
+    //test_RandomWeightInitialization();
+    //test_LinearTransform();
+
+    test_ActivationTransforms();
 }

@@ -24,7 +24,7 @@ class Transformation {
         Transformation(int rows, int cols, std::string type):
             _rows(rows),
             _cols(cols),
-            _type(type)
+            _type(type),
             {}
 
     public:
@@ -41,12 +41,13 @@ class Transformation {
         virtual Eigen::VectorXd Transform(Eigen::VectorXd) = 0;
         //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
         
-        // TODO #A: backward/derivative
+        // update derivative/jacobian from a given vector
+        virtual void UpdateDerivative(Eigen::VectorXd) = 0;
 
         // initialize transformation (many transformations have empty implementation)
         virtual void Initialize(std::string initialize_type="") {}
         
-        // Summary of transformation
+        // summary of transformation
         virtual std::string Summary() = 0;
 };
 
@@ -59,6 +60,7 @@ class LinearTransformation: public Transformation {
     private:    
         Eigen::MatrixXd _weights;
         Eigen::VectorXd _bias;
+        std::unique_ptr<Eigen::MatrixXd> _derivative; // more precisely jacobian
 
     public:
         // constructors
@@ -66,14 +68,16 @@ class LinearTransformation: public Transformation {
         LinearTransformation(Eigen::MatrixXd weights, Eigen::VectorXd bias): 
             Transformation(weights.rows(), weights.cols(), "LinearTransformation"),
             _weights(weights),
-            _bias(bias)
+            _bias(bias),
+            _derivative(std::make_unique<Eigen::MatrixXd>(weights)) // derivative coincides with weights
             {}
 
         // constructor (all zeros)
         LinearTransformation(int rows, int cols): 
             Transformation(rows, cols, "LinearTransformation"),
             _weights(Eigen::MatrixXd::Zero(rows, cols)), 
-            _bias(Eigen::VectorXd::Zero(rows))
+            _bias(Eigen::VectorXd::Zero(rows)),
+            _derivative(std::make_unique<Eigen::MatrixXd>(_weights))
             {}
 
         // TODO: the default copy and move constructors/assignment operators should be enough?!?
@@ -89,12 +93,15 @@ class LinearTransformation: public Transformation {
         // random initialize (either via "He" or "Normalized Xavier")
         void Initialize(std::string);
 
+        // transpose weight matrix
         void Transpose();
 
         // transform methods (just right matrix multiplication with input)
-        // NOTE: 
-        //    - we do _not_ work with transpose etc.
+        // NOTE: we do _not_ work with transpose etc. because we consider our data points as column vectors
         Eigen::VectorXd Transform(Eigen::VectorXd); 
+
+        // derivative remains constant (we keep the weights fixed)
+        void UpdateDerivative(Eigen::VectorXd) {}
 
         // summaries
         std::string Summary();

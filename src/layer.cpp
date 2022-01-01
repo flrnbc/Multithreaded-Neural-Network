@@ -11,26 +11,36 @@
  * LAYER *
  *********/
 
-// TODO #A: needs to be refactored at some point
-
-void Layer::Input(Eigen::VectorXd input_vector) {
-        _layer_cache->SetForwardInput(std::make_shared<Eigen::VectorXd>(input_vector));
-}
-
-Eigen::VectorXd Layer::Output() {
-        if (_layer_cache->GetForwardOutput() != nullptr) {
-                return *(_layer_cache->GetForwardOutput());
-        } else {
-                throw std::invalid_argument("Output pointer is null!");
-        }
-}
-
 void Layer::SetLayerCache(std::unique_ptr<LayerCache> layer_cache) {
         // TODO: this seems to work even though we did not define a move (assignment) operator
         // does it implicitly use the std::vector move (assignment) operator?
         _layer_cache = std::move(layer_cache);
 }
 
+// TODO #A: setting the in-/output of for-/backward pass needs to be refactored at some point
+
+// in-/output for forward pass
+void Layer::Input(Eigen::VectorXd input_vector) {
+        _layer_cache->SetForwardInput(std::make_shared<Eigen::VectorXd>(input_vector));
+}
+
+Eigen::VectorXd Layer::Output() {
+        if (_layer_cache->GetForwardOutput() == nullptr) {
+                throw std::invalid_argument("Forward output pointer is null!");       
+        } 
+        return *(_layer_cache->GetForwardOutput());
+}
+
+// update derivative for backward pass
+void Layer::UpdateDerivative() {
+        if (_layer_cache->GetForwardOutput() == nullptr) {
+                throw std::invalid_argument("Forward output pointer is null!");   
+        } 
+        _transformation->UpdateDerivative(*(_layer_cache->GetForwardOutput()));
+}
+
+
+// in-/output for backward pass
 void Layer::BackwardInput(Eigen::RowVectorXd input_vector) {
         _layer_cache->SetBackwardInput(std::make_shared<Eigen::RowVectorXd>(input_vector));
 }

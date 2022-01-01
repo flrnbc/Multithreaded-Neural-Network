@@ -52,6 +52,7 @@ class Layer {
         Eigen::VectorXd Output(); // TODO: better to return const ref?
 
         // backward pass
+        void UpdateDerivative();
         void BackwardInput(Eigen::RowVectorXd);
         virtual void Backward() = 0;
         Eigen::RowVectorXd BackwardOutput();

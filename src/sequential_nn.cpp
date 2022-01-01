@@ -35,7 +35,7 @@ std::string SequentialNN::GetInitializationType(const std::shared_ptr<Layer>& la
         return "";
     }
 
-    std::vector<std::string> approximate_linear = {"identity", "sigmoid", "tanh"};
+    std::vector<std::string> approximate_linear = {"identity", "sigmoid", "tanh", "softmax"};
     std::vector<std::string> other_activation = {"relu", "prelu"};
 
     // search for different activations
@@ -95,22 +95,42 @@ std::string SequentialNN::Summary() {
     return summary;
 }
 
-void SequentialNN::Forward() {
-    for (int i = 0; i < Length(); i++) {
-        _layers[i]->Forward();
-        //std::cout << "input (in Forward): " << Perceptron::PrintDoubleVector(_pointers_layers[i]->InputData()) << std::endl;
-        //std::cout << "output (in Forward): " << Perceptron::PrintDoubleVector(_pointers_layers[i]->OutputData()) << std::endl;
-    }
-}
-
+// TODO: again refactor the forward and backward pass at some point
+// Forward pass
 void SequentialNN::Input(Eigen::VectorXd input) {
     _layers[0]->Input(input);
 }
 
+void SequentialNN::Forward() {
+    for (int i = 0; i < Length(); i++) {
+        _layers[i]->Forward();
+    }
+}
+
 Eigen::VectorXd SequentialNN::Output() {
     if ((_layers.back())->GetLayerCache().GetForwardOutput() == nullptr) {
-        throw std::invalid_argument("Backward output is null.");
+        throw std::invalid_argument("Forward output is null.");
     }
     
     return *((_layers.back())->GetLayerCache().GetForwardOutput());
+}
+
+
+// Backward pass
+void SequentialNN::BackwardInput(Eigen::RowVectorXd backward_input) {
+    _layers.back()->BackwardInput(backward_input);
+}
+
+void SequentialNN::Backward() {
+    for (int i = Length()-1; i <= 0; i--) {
+        _layers[i]->Backward();
+    }
+}
+
+Eigen::RowVectorXd SequentialNN::BackwardOutput() {
+     if (_layers[0]->GetLayerCache().GetBackwardOutput() == nullptr) {
+        throw std::invalid_argument("Backward output is null.");
+    }
+    
+    return *(_layers[0]->GetLayerCache().GetBackwardOutput());
 }

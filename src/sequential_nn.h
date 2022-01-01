@@ -34,6 +34,11 @@ class SequentialNN
         void Forward();
         Eigen::VectorXd Output();
 
+        // backward pass
+        void BackwardInput(Eigen::RowVectorXd);
+        void Backward();
+        Eigen::RowVectorXd BackwardOutput();
+
         // summary
         std::string Summary();
         

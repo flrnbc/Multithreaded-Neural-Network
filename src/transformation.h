@@ -39,7 +39,6 @@ class Transformation {
         
         // transform method (want to keep input, so no pass by reference)
         virtual Eigen::VectorXd Transform(Eigen::VectorXd) = 0;
-        //std::vector<std::vector<double> > Transform(std::vector<std::vector<double> >);
         
         // update Delta (of a layer), which is a row vector, by right multiplication with the derivative
         virtual Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd) = 0;
@@ -106,7 +105,7 @@ class LinearTransformation: public Transformation {
             return rowVector*(_weights);
         }
 
-        // summaries
+        // summary
         std::string Summary();
 };
 

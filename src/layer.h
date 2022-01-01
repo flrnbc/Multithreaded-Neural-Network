@@ -84,7 +84,7 @@ class LinearLayer: public Layer {
         // backward pass
         void Backward();
 
-        // TODO: update weights?
+        // update weights?
 };
 
 

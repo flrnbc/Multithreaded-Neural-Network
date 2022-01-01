@@ -24,7 +24,7 @@ void test_LinearLayer() {
 }
 
 void test_ActivationLayer() {
-    ActivationLayer al(8, "tanh");
+    ActivationLayer al(8, "softmax");
     std::cout << al.Summary() << std::endl;
 
     Eigen::VectorXd v{{1, -5, 0, 1, 3, -6, -8, 0}};
@@ -37,7 +37,8 @@ void test_ActivationLayer() {
     std::cout << "Transform v: \n" << al.Output() << std::endl;
 
     // update derivative
-    al.GetTransformation()->UpdateDerivative(al.Output());
+    al.UpdateDerivative();
+    //al.GetTransformation()->UpdateDerivative(al.Output());
     std::cout << "After update: \n" << al.Summary() << std::endl;
 
     // backward pass

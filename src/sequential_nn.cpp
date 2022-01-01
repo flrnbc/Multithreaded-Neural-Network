@@ -69,8 +69,10 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
             _layers.emplace_back(std::move(layers[i])); // TODO: move necessary?
         }
 
+        // connect layers
         for (int i = 0; i < N-1; i++) {
             _layers[i]->GetLayerCache().ConnectForward(_layers[i]->Rows(), _layers[i+1]->GetLayerCache());
+            _layers[i]->GetLayerCache().ConnectBackward(_layers[i]->Rows(), _layers[i+1]->GetLayerCache());
         }
     }
 }

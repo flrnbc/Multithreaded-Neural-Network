@@ -36,7 +36,7 @@ class SequentialNN
 
         // backward pass
         void BackwardInput(Eigen::RowVectorXd);
-        void Backward();
+        void Backward(); // also updates derivatives
         Eigen::RowVectorXd BackwardOutput();
 
         // summary

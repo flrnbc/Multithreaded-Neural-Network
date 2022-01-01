@@ -66,7 +66,7 @@ void test_SequentialNNBackward() {
     snn.Initialize();
     std::cout << snn.Summary() << std::endl;
 
-    snn.BackwardInput(w);
+    snn.BackwardInput(gradL);
     snn.Backward();
 
     std::cout << "Output: \n" << snn.BackwardOutput() << std::endl;

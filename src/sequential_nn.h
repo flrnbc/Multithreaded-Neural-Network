@@ -35,8 +35,9 @@ class SequentialNN
         Eigen::VectorXd Output();
 
         // backward pass
+        void UpdateDerivative(); // update derivative with forward LayerCache
         void BackwardInput(Eigen::RowVectorXd);
-        void Backward(); // also updates derivatives
+        void Backward();
         Eigen::RowVectorXd BackwardOutput();
 
         // summary

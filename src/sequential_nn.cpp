@@ -63,7 +63,7 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
     if (ComposabilityCheck(layers) == false) {
         throw std::invalid_argument("Layers are not composable.");
     } else {
-        int N = this->Length();
+        int N = layers.size();
 
         for (int i = 0; i < N; i++) {
             _layers.emplace_back(std::move(layers[i])); // TODO: move necessary?
@@ -74,7 +74,7 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
             // TODO: use reference to LayerCache?
             _layers[i]->GetLayerCache().ConnectForward(_layers[i]->Rows(), _layers[i+1]->GetLayerCache());
             // causes BUG (seg fault) but why?
-            _layers[(N-1)-i]->GetLayerCache().ConnectBackward(_layers[(N-1)-i]->Cols(), _layers[(N-2)-i]->GetLayerCache());
+            //_layers[(N-1)-i]->GetLayerCache().ConnectBackward(_layers[(N-1)-i]->Cols(), _layers[(N-2)-i]->GetLayerCache());
         }
     }
 }
@@ -121,13 +121,18 @@ Eigen::VectorXd SequentialNN::Output() {
 
 
 // Backward pass
+void SequentialNN::UpdateDerivative() {
+    for (int i = 0; i < Length(); i++) {
+        _layers[i]->UpdateDerivative();
+    }
+}
+
 void SequentialNN::BackwardInput(Eigen::RowVectorXd backward_input) {
     _layers.back()->BackwardInput(backward_input);
 }
 
 void SequentialNN::Backward() {
     for (int i = Length()-1; i <= 0; i--) {
-        _layers[i]->UpdateDerivative();
         _layers[i]->Backward();
     }
 }

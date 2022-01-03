@@ -4,7 +4,7 @@ CppNN.monopic
 src/.vscode/
 src/a.out.dSYM/
 tests/a.out.dSYM/
-eigen/
 build/
+eigen/
 .vscode/
 

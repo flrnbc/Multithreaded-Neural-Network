@@ -12,7 +12,10 @@
     The LayerCache class is the storage of a layer for the forward/backward input and output. Of course, we could save
     these in the Layer class themselves. However, this is inefficient since e.g. the forward output of one layer is the
     forward input of the next layer. The LayerCache only points to the corresponding data and we can connect two LayerCaches
-    together by pointing to the same data. That's why we have to use shared_ptrs.
+    together by pointing to the same data. That's why we use shared_ptrs.
+
+    Note: it might be sufficient to work with references for sequential neural networks. But LayerCache is more flexible. 
+    For example, we could use it for other network topologies.
 
     Improvement: use templates (e.g. for col and row vectors) so that we can separate the forward and backward cache. 
 */ 

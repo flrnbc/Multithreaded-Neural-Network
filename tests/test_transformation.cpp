@@ -36,6 +36,10 @@ void test_LinearTransform() {
     t.SetWeights(random_matrix);
     t.UpdateDerivative(e1);
     std::cout << "After updating weights: \n" << t.Summary() << std::endl;
+
+    // update delta
+    Eigen::RowVectorXd w{{1, 0, 0}};
+    std::cout << "Update Delta:" << t.UpdateDelta(w) << std::endl;
 }
 
 // tests for ActivationTransformation
@@ -75,7 +79,7 @@ void test_ActivationTransforms() {
 
 int main() {
     //test_RandomWeightInitialization();
-    //test_LinearTransform();
+    test_LinearTransform();
 
-    test_ActivationTransforms();
+    //test_ActivationTransforms();
 }

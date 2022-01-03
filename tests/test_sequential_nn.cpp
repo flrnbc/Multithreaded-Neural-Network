@@ -19,7 +19,9 @@ void test_ConnectLayers() {
     auto ll_ptr = std::make_shared<LinearLayer>(2, 5);
     auto al_ptr = std::make_shared<ActivationLayer>(2, "tanh"); 
 
-    ll_ptr->GetLayerCache().ConnectForward(2, al_ptr->GetLayerCache());
+    //ll_ptr->GetLayerCache().ConnectForward(2, al_ptr->GetLayerCache());
+    ll_ptr->GetLayerCache().Connect(2, 5, al_ptr->GetLayerCache());
+
     ll_ptr->Initialize("Xavier");
     Eigen::VectorXd w{{1, 2, 3, 4, 5}};
 
@@ -49,7 +51,10 @@ void test_SequentialNNForward() {
     snn.Input(w);
     snn.Forward();
 
-    std::cout << "Output: \n" << snn.Output() << std::endl;
+    std::cout << "Forward output: \n" << snn.Output() << std::endl;
+
+    snn.UpdateDerivative();
+    std::cout << "After update: " << snn.Summary() << std::endl;
 }
 
 void test_SequentialNNBackward() {
@@ -61,20 +66,26 @@ void test_SequentialNNBackward() {
     std::cout << snn.Summary() << std::endl;
 
     Eigen::VectorXd w{{1, 2, 3, 4, 5}};
-    Eigen::RowVectorXd gradL{{5, 6}}; // typically gradient of loss function
+    Eigen::RowVectorXd gradL{{1, 0}}; // typically gradient of loss function
 
     snn.Initialize();
     std::cout << snn.Summary() << std::endl;
 
+    snn.Input(w);
+    snn.Forward();
+    snn.UpdateDerivative();
+
     snn.BackwardInput(gradL);
     snn.Backward();
 
-    std::cout << "Output: \n" << snn.BackwardOutput() << std::endl;
+    std::cout << snn.Summary() << std::endl;
+
+    std::cout << "Backward output: \n" << snn.BackwardOutput() << std::endl;
 }
 
 int main() {
     //test_ConnectLayers();
-    // test_SequentialNNForward();
+    //test_SequentialNNForward();
     test_SequentialNNBackward();
     //test_GetInitializationType();
 

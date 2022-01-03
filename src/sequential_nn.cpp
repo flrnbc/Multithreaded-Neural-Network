@@ -10,8 +10,6 @@
 #include "transformation.h"
 #include "sequential_nn.h"
 
-class LayerCache;
-
 /********************
  * HELPER FUNCTIONS *
  ********************/
@@ -74,14 +72,10 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
         // connect layers
         for (int i = 0; i < N-1; i++) {
             // TODO: use reference to LayerCache?
-            //&LayerCache next_layer_cache(_layers[i+1]->GetLayerCache);
             _layers[i]->GetLayerCache().ConnectForward(_layers[i]->Rows(), _layers[i+1]->GetLayerCache());
-            _layers[i]->GetLayerCache().ConnectBackward(_layers[i+1]->Cols(), _layers[i+1]->GetLayerCache());
+            // causes BUG (seg fault) but why?
+            //_layers[(N-1)-i]->GetLayerCache().ConnectBackward(_layers[(N-1)-i]->Cols(), _layers[(N-2)-i]->GetLayerCache());
         }
-
-        //for (int i = N-1; i > 0; i--) {
-        //    _layers[i]->GetLayerCache().ConnectBackward(_layers[i]->Cols(), _layers[i-1]->GetLayerCache());
-        //}
     }
 }
 
@@ -100,8 +94,6 @@ std::string SequentialNN::Summary() {
 
     for (int i=0; i < N; i++) {
         summary += "\nLayer " + std::to_string(i) + ":\n" + _layers[i]->Summary() + "\n";
-        std::cout << "Backward output: " << _layers[i]->BackwardOutput() << std::endl;
-        std::cout << "Backward input: " << *(_layers[i]->GetLayerCache().GetBackwardInput()) << std::endl;
     }
 
     return summary;
@@ -140,7 +132,7 @@ void SequentialNN::BackwardInput(Eigen::RowVectorXd backward_input) {
 }
 
 void SequentialNN::Backward() {
-    for (int i = Length()-1; i >= 0; i--) {
+    for (int i = Length()-1; i <= 0; i--) {
         _layers[i]->Backward();
     }
 }

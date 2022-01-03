@@ -31,6 +31,30 @@ Eigen::VectorXd Layer::Output() {
         return *(_layer_cache->GetForwardOutput());
 }
 
+// forward pass
+void Layer::Forward() {
+        // NOTE: for 'connected' layers we have _forward_output != nullptr by the initialization
+        // of a (sequential) neural network. Moreover, two layers share _forward_input and _forward_output 
+        // respectively. We do not want to break this connection by setting the shared_ptr via 
+        // std::make_shared<Eigen::VectorXd > ... (which creates a new shared_ptr).
+        // Instead we simply change the object owned by the shared_ptr.
+
+        // TODO: need to include this function into the Transformation class since we use it over and over again.
+
+        if (GetLayerCache().GetForwardInput() != nullptr) {
+                // TODO: do we copy the transformed vector too often?
+                Eigen::VectorXd transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
+                if (GetLayerCache().GetForwardOutput() == nullptr){
+                        GetLayerCache().SetForwardOutput(std::make_shared<Eigen::VectorXd>(transformed_vector));
+                } else {
+                        // TODO: do we create an unecessary copy here?
+                        *(GetLayerCache().GetForwardOutput()) = transformed_vector;
+                }
+        } else {
+                throw std::invalid_argument("Pointer is null!");
+        }          
+}
+
 // update derivative for backward pass
 void Layer::UpdateDerivative() {
         if (_layer_cache->GetForwardOutput() == nullptr) {
@@ -54,34 +78,13 @@ Eigen::RowVectorXd Layer::BackwardOutput() {
 }
 
 
+
+
 // TODO #A: Both Forward() and Backward() need to be refactored at some point
 
 /*******************************
  * LINEAR LAYER IMPLEMENTATION *
  *******************************/
-
-void LinearLayer::Forward() {
-        // NOTE: for 'connected' layers we have _forward_output != nullptr by the initialization
-        // of a (sequential) neural network. Moreover, two layers share _forward_input and _forward_output 
-        // respectively. We do not want to break this connection by setting the shared_ptr via 
-        // std::make_shared<Eigen::VectorXd > ... (which creates a new shared_ptr).
-        // Instead we simply change the object owned by the shared_ptr.
-
-        // TODO: need to include this function into the Transformation class since we use it over and over again.
-
-        if (GetLayerCache().GetForwardInput() != nullptr) {
-                // TODO: do we copy the transformed vector too often?
-                Eigen::VectorXd transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
-                if (GetLayerCache().GetForwardOutput() == nullptr){
-                        GetLayerCache().SetForwardOutput(std::make_shared<Eigen::VectorXd>(transformed_vector));
-                } else {
-                        // TODO: do we create an unecessary copy here?
-                        *(GetLayerCache().GetForwardOutput()) = transformed_vector;
-                }
-        } else {
-                throw std::invalid_argument("Pointer is null!");
-        }          
-}
 
 void LinearLayer::Initialize(std::string initialization_type) {
         _transformation->Initialize(initialization_type);
@@ -108,21 +111,6 @@ void LinearLayer::Backward() {
 /********************
  * ACTIVATION LAYER *
  ********************/
-
-void ActivationLayer::Forward() {
-        if (GetLayerCache().GetForwardInput() != nullptr) {
-                // TODO: do we copy the transformed vector too often?
-                Eigen::VectorXd transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
-                if (GetLayerCache().GetForwardOutput() == nullptr){
-                        GetLayerCache().SetForwardOutput(std::make_shared<Eigen::VectorXd>(transformed_vector));
-                } else {
-                        // TODO: do we create an unecessary copy of _backward_output here
-                        *(GetLayerCache().GetForwardOutput()) = transformed_vector;
-                }
-        } else {
-                throw std::invalid_argument("Pointer is null!");
-        }          
-}
 
 void ActivationLayer::Backward() {
         // get backward input which is the Delta of the previous layer of the backward pass

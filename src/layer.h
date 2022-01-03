@@ -48,7 +48,7 @@ class Layer {
 
         // forward pass
         void Input(Eigen::VectorXd); // TODO: do we copy too often here?
-        virtual void Forward() = 0; // TODO: use _transformation to rewrite in a coherent way, not for each layer type
+        void Forward(); // TODO: use _transformation to rewrite in a coherent way, not for each layer type
         Eigen::VectorXd Output(); // TODO: better to return const ref?
 
         // backward pass
@@ -78,9 +78,6 @@ class LinearLayer: public Layer {
         // initialize weights
         void Initialize(std::string initialization_type);
 
-        // forward pass
-        void Forward();
-        
         // backward pass
         void Backward();
 
@@ -111,9 +108,6 @@ class ActivationLayer: public Layer {
         // setters/getters
         std::string GetActivationString() { return _activation; }
 
-        // forward pass
-        void Forward();
-        
         // backward pass
         void Backward();
 };

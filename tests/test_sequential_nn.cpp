@@ -58,15 +58,15 @@ void test_SequentialNNForward() {
 }
 
 void test_SequentialNNBackward() {
-    auto ll_ptr = std::make_shared<LinearLayer>(2, 5);
-    auto al_ptr = std::make_shared<ActivationLayer>(2, "softmax"); 
+    auto ll_ptr = std::make_shared<LinearLayer>(3, 5);
+    auto al_ptr = std::make_shared<ActivationLayer>(3, "softmax"); 
     //std::vector<Layer> v{std::move(ll), std::move(al)};
 
     SequentialNN snn({ll_ptr, al_ptr});
     std::cout << snn.Summary() << std::endl;
 
     Eigen::VectorXd w{{1, 2, 3, 4, 5}};
-    Eigen::RowVectorXd gradL{{1, 0}}; // typically gradient of loss function
+    Eigen::RowVectorXd gradL{{1, 0, 0}}; // typically gradient of loss function
 
     snn.Initialize();
     std::cout << snn.Summary() << std::endl;

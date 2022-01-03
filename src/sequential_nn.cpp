@@ -71,11 +71,7 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
 
         // connect layers
         for (int i = 0; i < N-1; i++) {
-            // TODO: use reference to LayerCache?
             _layers[i]->GetLayerCache().Connect(_layers[i]->Rows(), _layers[i+1]->Cols(), _layers[i+1]->GetLayerCache());
-            //_layers[i]->GetLayerCache().ConnectForward(_layers[i]->Rows(), _layers[i+1]->GetLayerCache());
-            // causes BUG (seg fault) but why?
-            //_layers[(N-1)-i]->GetLayerCache().ConnectBackward(_layers[(N-1)-i]->Cols(), _layers[(N-2)-i]->GetLayerCache());
         }
     }
 }

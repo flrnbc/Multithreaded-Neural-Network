@@ -28,7 +28,7 @@ void test_ActivationLayer() {
     std::cout << al.Summary() << std::endl;
 
     Eigen::VectorXd v{{1, -5, 0, 1, 3, -6, -8, 0}};
-    Eigen::VectorXd w{{1, 0, 1, 0, 1, 0, 1, 0}};
+    Eigen::RowVectorXd w{{1, 0, 1, 0, 1, 0, 1, 0}};
 
     // forward pass
     al.Input(v);

@@ -113,11 +113,11 @@ void ActivationLayer::Forward() {
         if (GetLayerCache().GetForwardInput() != nullptr) {
                 // TODO: do we copy the transformed vector too often?
                 Eigen::VectorXd transformed_vector = _transformation->Transform(*(GetLayerCache().GetForwardInput()));
-                if (GetLayerCache().GetBackwardOutput() == nullptr){
+                if (GetLayerCache().GetForwardOutput() == nullptr){
                         GetLayerCache().SetForwardOutput(std::make_shared<Eigen::VectorXd>(transformed_vector));
                 } else {
                         // TODO: do we create an unecessary copy of _backward_output here
-                        *(GetLayerCache().GetBackwardOutput()) = transformed_vector;
+                        *(GetLayerCache().GetForwardOutput()) = transformed_vector;
                 }
         } else {
                 throw std::invalid_argument("Pointer is null!");

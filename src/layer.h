@@ -54,7 +54,7 @@ class Layer {
         // backward pass
         void UpdateDerivative();
         void BackwardInput(Eigen::RowVectorXd);
-        virtual void Backward() = 0;
+        void Backward();
         Eigen::RowVectorXd BackwardOutput();
 };
 
@@ -78,10 +78,7 @@ class LinearLayer: public Layer {
         // initialize weights
         void Initialize(std::string initialization_type);
 
-        // backward pass
-        void Backward();
-
-        // update weights?
+        // update weights and bias?
 };
 
 
@@ -108,8 +105,6 @@ class ActivationLayer: public Layer {
         // setters/getters
         std::string GetActivationString() { return _activation; }
 
-        // backward pass
-        void Backward();
 };
 
 #endif // LAYER_H_

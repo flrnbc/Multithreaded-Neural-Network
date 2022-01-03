@@ -77,10 +77,23 @@ Eigen::RowVectorXd Layer::BackwardOutput() {
         }
 }
 
+// backward pass
+void Layer::Backward() {
+        // get backward input which is the Delta of the previous layer of the backward pass
+        if (GetLayerCache().GetBackwardInput() != nullptr) {
+                // TODO: do we copy the transformed vector too often?
+                Eigen::RowVectorXd transformed_vector = _transformation->UpdateDelta(*(GetLayerCache().GetBackwardInput()));
+                if (GetLayerCache().GetBackwardOutput() == nullptr){
+                        GetLayerCache().SetBackwardOutput(std::make_shared<Eigen::RowVectorXd>(transformed_vector));
+                } else {
+                        // TODO: do we create an unecessary copy here
+                        *(GetLayerCache().GetBackwardOutput()) = transformed_vector;
+                }
+        } else {
+                throw std::invalid_argument("Pointer is null!");
+        }          
+}
 
-
-
-// TODO #A: Both Forward() and Backward() need to be refactored at some point
 
 /*******************************
  * LINEAR LAYER IMPLEMENTATION *
@@ -91,59 +104,6 @@ void LinearLayer::Initialize(std::string initialization_type) {
         //->Initialize(initialization_type);
 }
 
-void LinearLayer::Backward() {
-        // get backward input which is the Delta of the previous layer of the backward pass
-        if (GetLayerCache().GetBackwardInput() != nullptr) {
-                // TODO: do we copy the transformed vector too often?
-                Eigen::RowVectorXd transformed_vector = _transformation->UpdateDelta(*(GetLayerCache().GetBackwardInput()));
-                if (GetLayerCache().GetBackwardOutput() == nullptr){
-                        GetLayerCache().SetBackwardOutput(std::make_shared<Eigen::RowVectorXd>(transformed_vector));
-                } else {
-                        // TODO: do we create an unecessary copy here
-                        *(GetLayerCache().GetBackwardOutput()) = transformed_vector;
-                }
-        } else {
-                throw std::invalid_argument("Pointer is null!");
-        }          
-}
-
-
-/********************
- * ACTIVATION LAYER *
- ********************/
-
-void ActivationLayer::Backward() {
-        // get backward input which is the Delta of the previous layer of the backward pass
-        if (GetLayerCache().GetBackwardInput() != nullptr) {
-                // TODO: do we copy the transformed vector too often?
-                Eigen::RowVectorXd transformed_vector = _transformation->UpdateDelta(*(GetLayerCache().GetBackwardInput()));
-                if (GetLayerCache().GetBackwardOutput() == nullptr){
-                        GetLayerCache().SetBackwardOutput(std::make_shared<Eigen::RowVectorXd>(transformed_vector));
-                } else {
-                        // TODO: do we create an unecessary copy here
-                        *(GetLayerCache().GetBackwardOutput()) = transformed_vector;
-                }
-        } else {
-                throw std::invalid_argument("Pointer is null!");
-        }          
-}
-
-// // flatten layer
-// std::vector<double> Layer::Flatten(const std::vector<std::vector<double> >& matrix) {
-//         int rows = matrix.size();
-//         int cols = matrix[0].size();
-//         int output_size = rows*cols;
-
-//         std::vector<double> output(output_size, 0);
-
-//         for (int i=0; i<rows; i++) {
-//                 for (int j=0; j<cols; j++) {
-//                         output[i+j] = matrix[i][j];
-//                 }
-//         }
-
-//         return output;
-// }
 
 
 

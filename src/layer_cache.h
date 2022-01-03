@@ -90,6 +90,8 @@ class LayerCache {
         void ConnectForward(int, LayerCache&); 
         // backward
         void ConnectBackward(int, LayerCache&);
+        // both 
+        void Connect(int, int, LayerCache&);
 };
 
 #endif // LAYER_CACHE_H_

@@ -37,6 +37,7 @@ class Transformation {
         int Rows() { return _rows; }
         std::string Type() { return _type; }
         
+        // TODO: can the following be improved using references?
         // transform method (want to keep input, so no pass by reference)
         virtual Eigen::VectorXd Transform(Eigen::VectorXd) = 0;
         
@@ -130,7 +131,7 @@ class ActivationTransformation: public Transformation {
         // transform methods
         Eigen::VectorXd Transform(Eigen::VectorXd);
 
-        // update derivative at a point/vector
+        // update derivative at a point/vector (trivial here)
         void UpdateDerivative(Eigen::VectorXd);
 
         // update Delta
@@ -141,6 +142,7 @@ class ActivationTransformation: public Transformation {
         // Summary of transformation
         std::string Summary(); 
 };
+
 
 // TODO: to include: Flatten layer
 

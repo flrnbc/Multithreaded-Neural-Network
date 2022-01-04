@@ -3,7 +3,7 @@
 #include "../src/loss_function.h"
 
 void test_MSE() {
-    auto mse = MSE(5);
+    auto mse = LossFunction("mse", 5);
     Eigen::VectorXd y{{1, 2, 2, 1, 0}};
     Eigen::VectorXd yLabel{{1, 1, 0, 1, -1}};
 

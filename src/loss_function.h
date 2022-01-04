@@ -5,12 +5,9 @@
 #include "function.h"
 #include <string>
 
-/***********************
- * ABSTRACT BASE CLASS *
- ***********************/
 
 class LossFunction {
-    protected:
+    private:
     // input dimension
     int _cols;
     // name of loss function
@@ -18,15 +15,9 @@ class LossFunction {
     // gradient
     std::unique_ptr<Eigen::RowVectorXd> _gradient;
 
-    LossFunction(int cols, std::string name):
-        _cols(cols),
-        _name(name),
-        _gradient(std::make_unique<Eigen::RowVectorXd>(Eigen::RowVectorXd::Zero(cols)))
-        {}
-
     public: 
-        // virtual destructor
-        virtual ~LossFunction() {}
+        // constructor
+        LossFunction(std::string name, int cols); 
 
         // getters
         int Cols() { return _cols; }
@@ -34,22 +25,9 @@ class LossFunction {
         Eigen::RowVectorXd& Gradient() { return *(_gradient); }
 
         // compute loss
-        virtual double ComputeLoss(Eigen::VectorXd&, const Eigen::VectorXd&) = 0;
-
-        // update derivative/gradient (see below)
-        virtual void UpdateGradient(Eigen::VectorXd&, const Eigen::VectorXd&) = 0;
-};
-
-class MSE: public LossFunction {
-    public: 
-        MSE(int cols):
-            LossFunction(cols, "Mean error square")
-            {}
-        
-        // compute loss for pair (y, yLabel) where y is the prediction and yLabel
         double ComputeLoss(Eigen::VectorXd&, const Eigen::VectorXd&);
 
-        // update derivative/gradient at (y, yLabel)
+        // update derivative/gradient (see below)
         void UpdateGradient(Eigen::VectorXd&, const Eigen::VectorXd&);
 };
 

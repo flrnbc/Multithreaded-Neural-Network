@@ -33,7 +33,7 @@ class SequentialNN
         // TODO #B: overload ()-operator
         void Input(Eigen::VectorXd);
         void Forward();
-        Eigen::VectorXd Output();
+        Eigen::VectorXd& Output();
 
         // backward pass
         void UpdateDerivative(); // update derivative with forward LayerCache

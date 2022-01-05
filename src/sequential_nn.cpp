@@ -109,7 +109,7 @@ void SequentialNN::Forward() {
     }
 }
 
-Eigen::VectorXd SequentialNN::Output() {
+Eigen::VectorXd& SequentialNN::Output() {
     if ((_layers.back())->GetLayerCache().GetForwardOutput() == nullptr) {
         throw std::invalid_argument("Forward output is null.");
     }

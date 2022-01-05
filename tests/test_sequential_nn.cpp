@@ -1,5 +1,6 @@
 #include "../src/layer.h"
 #include "../src/layer_cache.h"
+#include "../src/loss_function.h"
 #include "../src/transformation.h"
 #include "../src/sequential_nn.h"
 #include <Eigen/Dense>
@@ -83,11 +84,41 @@ void test_SequentialNNBackward() {
     std::cout << "Backward output: \n" << snn.BackwardOutput() << std::endl;
 }
 
+void test_SequentialNNLoss() {
+    auto ll_ptr = std::make_shared<LinearLayer>(5, 10);
+    auto al_ptr = std::make_shared<ActivationLayer>(5, "softmax"); 
+    auto mse = LossFunction("mse", 5);
+    //std::vector<Layer> v{std::move(ll), std::move(al)};
+
+    SequentialNN snn({ll_ptr, al_ptr});
+    std::cout << snn.Summary() << std::endl;
+
+    Eigen::VectorXd w{{1, 2, 3, 4, 5, 6, 2, 3, 6, 9}};
+    Eigen::VectorXd wLabel{{0, 0.5, 0.6, 0.3, 1.2}};
+    Eigen::VectorXd w1{{2, 6, 3, 1, 4, 6, 2, 7, 3, 1}};
+    Eigen::VectorXd w1Label{{1.4, 5.2, 2.1, 1.8, 2.9}};
+
+    snn.Initialize();
+    std::cout << snn.Summary() << std::endl;
+
+    snn.Input(w);
+    snn.Forward();
+    snn.UpdateDerivative();
+
+    std::cout << "Loss: " << snn.Loss(mse, wLabel) << std::endl;
+
+    snn.UpdateBackwardInput(mse, wLabel);
+    snn.Backward();
+
+    std::cout << snn.Summary() << std::endl;
+    std::cout << "Backward output: \n" << snn.BackwardOutput() << std::endl;
+}
+
 int main() {
     //test_ConnectLayers();
     //test_SequentialNNForward();
-    test_SequentialNNBackward();
+    //test_SequentialNNBackward();
     //test_GetInitializationType();
-
+    test_SequentialNNLoss();
     return 0;
 }

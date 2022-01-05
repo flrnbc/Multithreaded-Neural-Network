@@ -7,6 +7,7 @@
 
 #include "layer.h"
 #include "layer_cache.h"
+#include "loss_function.h"
 #include "transformation.h"
 #include "sequential_nn.h"
 
@@ -140,4 +141,14 @@ Eigen::RowVectorXd SequentialNN::BackwardOutput() {
     }
     
     return *(_layers[0]->GetLayerCache().GetBackwardOutput());
+}
+
+// compute loss
+double SequentialNN::Loss(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
+    return lossFct.ComputeLoss(this->Output(), yLabel);
+}
+
+// update gradient of loss function
+void SequentialNN::LossGradient(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
+    return lossFct.UpdateGradient(this->Output(), yLabel);   
 }

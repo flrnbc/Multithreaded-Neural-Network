@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "layer.h"
+#include "loss_function.h"
 
 class Layer;
 
@@ -39,6 +40,10 @@ class SequentialNN
         void BackwardInput(Eigen::RowVectorXd);
         void Backward();
         Eigen::RowVectorXd BackwardOutput();
+
+        // compute loss
+        double Loss(LossFunction&, const Eigen::VectorXd& yLabel);
+        void LossGradient(LossFunction&, const Eigen::VectorXd& yLabel);
 
         // summary
         std::string Summary();

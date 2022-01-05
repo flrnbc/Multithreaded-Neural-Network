@@ -43,7 +43,7 @@ class SequentialNN
 
         // compute loss
         double Loss(LossFunction&, const Eigen::VectorXd& yLabel);
-        void UpdateLossGradient(LossFunction&, const Eigen::VectorXd& yLabel);
+        void UpdateBackwardInput(LossFunction&, const Eigen::VectorXd& yLabel);
 
         // summary
         std::string Summary();

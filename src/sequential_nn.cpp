@@ -149,6 +149,7 @@ double SequentialNN::Loss(LossFunction& lossFct, const Eigen::VectorXd& yLabel) 
 }
 
 // update gradient of loss function
-void SequentialNN::UpdateLossGradient(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
-    return lossFct.UpdateGradient(this->Output(), yLabel);   
+void SequentialNN::UpdateBackwardInput(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
+    lossFct.UpdateGradient(this->Output(), yLabel);
+    this->BackwardInput(lossFct.Gradient());
 }

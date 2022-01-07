@@ -10,17 +10,20 @@
 void test_LinearLayer() {
     LinearLayer ll(5, 3);
     std::cout << ll.Summary() << std::endl;
-
     Eigen::VectorXd e1{{1, 0, 0}};
+    Eigen::RowVectorXd w{{1, 0, 2, 0, 1}};
 
     ll.GetTransformation()->Initialize("Xavier"); 
     std::cout << ll.Summary() << std::endl;
+
     ll.Input(e1);
     ll.Forward();
-    
     std::cout << "Transform e1: \n" << ll.Output() <<  std::endl;
 
-    //std::cout << ll.Summary() << std::endl;
+    // test UpdateWeights
+    ll.BackwardInput(w);
+    ll.UpdateWeights();
+    std::cout << "After updating weights: " << ll.Summary() << std::endl;
 }
 
 void test_ActivationLayer() {
@@ -49,6 +52,6 @@ void test_ActivationLayer() {
 }
 
 int main() {
-    //test_LinearLayer();
-    test_ActivationLayer();
+    test_LinearLayer();
+    //test_ActivationLayer();
 }

@@ -39,7 +39,7 @@ class Layer {
         // concrete derived classes
         // TODO: this might be confusing though because GetTransformation returns a shared_ptr...
         LayerCache& GetLayerCache() { return *_layer_cache; }
-        std::shared_ptr<Transformation> GetTransformation() { return _transformation; }
+        std::shared_ptr<Transformation>& GetTransformation() { return _transformation; }
         
         // getters to simplify access to data members of transformation
         int Cols() { return _transformation->Cols(); }
@@ -78,7 +78,8 @@ class LinearLayer: public Layer {
         // initialize weights
         void Initialize(std::string initialization_type);
 
-        // update weights and bias?
+        // update weights and bias
+        void UpdateWeights();
 };
 
 

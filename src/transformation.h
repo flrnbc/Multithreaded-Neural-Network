@@ -49,7 +49,12 @@ class Transformation {
 
         // initialize transformation (many transformations have empty implementation)
         virtual void Initialize(std::string initialize_type="") {}
-        
+
+        // update weights (actually only needed for LinearTransformations)
+        // TODO: it might be better to use templates for the Layers to avoid 
+        // empty virtual functions?
+        virtual void UpdateWeights(Eigen::MatrixXd Delta_weights) {}
+
         // summary of transformation
         virtual std::string Summary() = 0;
 };
@@ -83,9 +88,9 @@ class LinearTransformation: public Transformation {
         // TODO: the default copy and move constructors/assignment operators should be enough?!?
 
         // setters & getters
-        Eigen::MatrixXd Weights() { return _weights; }
+        Eigen::MatrixXd& Weights() { return _weights; }
         void SetWeights(Eigen::MatrixXd weight_matrix) { _weights = weight_matrix; }
-        Eigen::VectorXd Bias() { return _bias; }
+        Eigen::VectorXd& Bias() { return _bias; }
         void SetBias(Eigen::VectorXd bias) { _bias = bias; }
 
         // random initialize (either via "He" or "Normalized Xavier")
@@ -102,8 +107,14 @@ class LinearTransformation: public Transformation {
         void UpdateDerivative(Eigen::VectorXd) {}
 
         // update Delta
+        // used to compute the gradient of a loss function successively via backpropagation
         Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd rowVector) {
             return rowVector*(_weights);
+        }
+
+        // update weights
+        void UpdateWeights(Eigen::MatrixXd deltaWeights) {
+            _weights += deltaWeights;
         }
 
         // summary

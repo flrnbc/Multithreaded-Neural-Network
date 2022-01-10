@@ -80,6 +80,7 @@ class LinearLayer: public Layer {
 
         // update weights and bias
         void UpdateWeights();
+        void UpdateBias();
 };
 
 

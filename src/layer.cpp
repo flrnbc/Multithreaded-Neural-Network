@@ -125,5 +125,16 @@ void LinearLayer::UpdateWeights() {
         GetTransformation()->UpdateWeights(deltaWeights);
 }
 
+void LinearLayer::UpdateBias() {
+        if (GetLayerCache().GetBackwardInput() == nullptr) {
+                throw std::invalid_argument("Pointer to backward input is null!");
+        }
+        
+        Eigen::RowVectorXd& backward_input = *(GetLayerCache().GetBackwardInput());
+
+        // TODO: check!
+        GetTransformation()->UpdateBias(backward_input.transpose());
+}
+
 
 

@@ -50,10 +50,10 @@ class Transformation {
         // initialize transformation (many transformations have empty implementation)
         virtual void Initialize(std::string initialize_type="") {}
 
-        // update weights (actually only needed for LinearTransformations)
+        // update weights/bias (actually only needed for LinearTransformations)
         // TODO: it might be better to use templates for the Layers to avoid 
-        // empty virtual functions?
         virtual void UpdateWeights(Eigen::MatrixXd Delta_weights) {}
+        virtual void UpdateBias(Eigen::VectorXd Delta_bias) {}
 
         // summary of transformation
         virtual std::string Summary() = 0;
@@ -112,9 +112,12 @@ class LinearTransformation: public Transformation {
             return rowVector*(_weights);
         }
 
-        // update weights
+        // update weights/bias
         void UpdateWeights(Eigen::MatrixXd deltaWeights) {
             _weights += deltaWeights;
+        }
+        void UpdateBias(Eigen::VectorXd deltaBias) {
+            _bias += deltaBias;
         }
 
         // summary

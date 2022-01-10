@@ -23,7 +23,9 @@ void test_LinearLayer() {
     // test UpdateWeights
     ll.BackwardInput(w);
     ll.UpdateWeights();
-    std::cout << "After updating weights: " << ll.Summary() << std::endl;
+    ll.UpdateBias();
+    
+    std::cout << "After updating weights and bias: " << ll.Summary() << std::endl;
 }
 
 void test_ActivationLayer() {

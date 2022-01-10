@@ -132,7 +132,7 @@ void LinearLayer::UpdateBias() {
         
         Eigen::RowVectorXd& backward_input = *(GetLayerCache().GetBackwardInput());
 
-        // TODO: check!
+        // TODO: check computation!
         GetTransformation()->UpdateBias(backward_input.transpose());
 }
 

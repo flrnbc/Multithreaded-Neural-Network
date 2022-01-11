@@ -14,6 +14,16 @@ void test_MSE() {
     std::cout << mse.Gradient() << std::endl;
 }
 
+void test_MSE2() {
+    auto mse = LossFunction("mse", 1);
+
+    Eigen::VectorXd y{{2}};
+    Eigen::VectorXd yLabel{{1}};
+
+    std::cout << mse.ComputeLoss(y, yLabel) << std::endl;
+}
+
 int main() {
-    test_MSE();
+    //test_MSE();
+    test_MSE2();
 }

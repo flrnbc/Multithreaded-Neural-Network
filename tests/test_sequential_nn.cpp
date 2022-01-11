@@ -114,11 +114,90 @@ void test_SequentialNNLoss() {
     std::cout << "Backward output: \n" << snn.BackwardOutput() << std::endl;
 }
 
+void test_SequentialTest() {
+    auto ll_ptr = std::make_shared<LinearLayer>(5, 10);
+    auto al_ptr = std::make_shared<ActivationLayer>(5, "softmax"); 
+    auto mse = LossFunction("mse", 5);
+    //std::vector<Layer> v{std::move(ll), std::move(al)};
+
+    SequentialNN snn({ll_ptr, al_ptr});
+
+    Eigen::VectorXd w{{1, 2, 3, 4, 5, 6, 2, 3, 6, 9}};
+    Eigen::VectorXd wLabel{{0, 0.5, 0.6, 0.3, 1.2}};
+
+    //snn.Initialize();
+    std::cout << "Before training: " << snn.Summary() << std::endl;
+
+    snn.Train(mse, 0.0001, w, wLabel);
+    
+    std::cout << "After training: " << snn.Summary() << std::endl;
+}
+
+void test_TrainLinearRegression() {
+    auto ll_ptr = std::make_shared<LinearLayer>(1, 1);
+    auto mse = LossFunction("mse", 1);
+
+    SequentialNN linear({ll_ptr});
+
+    std::cout << linear.Summary() << std::endl;
+
+    // assume y = a*x + c
+    double a = 15.0;
+    double c = 3.0;
+
+    // 
+    int data_points = 20;
+    
+
+    Eigen::MatrixXd X(1, data_points);
+    Eigen::MatrixXd yLabel(1, data_points);
+
+    for (int i=0; i<data_points; i++) {
+        X(0, i) = i;
+    }
+
+    for (int i=0; i<data_points; i++) {
+        yLabel(0, i) = a*X(0, i) + c;
+    }
+
+    std::cout << X << std::endl;
+
+    for (int j=0; j<500; j++) {
+        std::cout << "----------- Epoch " << j << " -----------" << std::endl;
+        for (int i=0; i<data_points; i++) {
+            linear.Train(mse, 0.001, X.col(i), yLabel.col(i));
+        }
+    }
+
+    std::cout << linear.Summary() << std::endl;
+
+    // by hand
+    // double w=0;
+    // double b=0;
+    // double x=0;
+    // double y=0;
+
+    // for (int j=0; j<1000; j++) {
+    //     for (int i=0; i<50; i++) {
+    //         x = X(0, i);
+    //         y = w*x+b;
+    //         w += -0.001*2*(y - yLabel(0, i))*x;
+    //         b += -0.001*2*(y - yLabel(0, i));
+    //         std::cout << w << "\t" << b << std::endl;
+    //     }
+    // }
+
+    // std::cout << "By hand: \n" << "weight: " << w << "\nbias: " << b << std::endl;
+}
+
 int main() {
     //test_ConnectLayers();
     //test_SequentialNNForward();
     //test_SequentialNNBackward();
     //test_GetInitializationType();
-    test_SequentialNNLoss();
+    //test_SequentialNNLoss();
+    //test_SequentialTest();
+    test_TrainLinearRegression();
+
     return 0;
 }

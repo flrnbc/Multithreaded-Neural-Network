@@ -101,7 +101,7 @@ Eigen::VectorXd LinearTransformation::Transform(Eigen::VectorXd inputVector) {
         // TODO #A: catch exception somewhere?
         throw std::domain_error("Vector cannot be evaluated.");
     } else {
-        return _weights*inputVector;
+        return _weights*inputVector + _bias;
     }
 }
 

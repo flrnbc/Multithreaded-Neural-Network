@@ -75,6 +75,9 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
             _layers[i]->GetLayerCache().Connect(_layers[i]->Rows(), _layers[i+1]->Cols(), _layers[i+1]->GetLayerCache());
         }
     }
+
+    // finally initialize the weights
+    Initialize();
 }
 
 void SequentialNN::Initialize() {
@@ -124,17 +127,14 @@ void SequentialNN::UpdateDerivative() {
         _layers[i]->UpdateDerivative();
     }
 }
-
 void SequentialNN::BackwardInput(Eigen::RowVectorXd backward_input) {
     _layers.back()->BackwardInput(backward_input);
 }
-
 void SequentialNN::Backward() {
     for (int i = Length()-1; i >= 0; i--) {
         _layers[i]->Backward();
     }
 }
-
 Eigen::RowVectorXd SequentialNN::BackwardOutput() {
      if (_layers[0]->GetLayerCache().GetBackwardOutput() == nullptr) {
         throw std::invalid_argument("Backward output is null.");
@@ -147,9 +147,41 @@ Eigen::RowVectorXd SequentialNN::BackwardOutput() {
 double SequentialNN::Loss(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
     return lossFct.ComputeLoss(this->Output(), yLabel);
 }
-
 // update gradient of loss function
 void SequentialNN::UpdateBackwardInput(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
     lossFct.UpdateGradient(this->Output(), yLabel);
     this->BackwardInput(lossFct.Gradient());
+}
+
+// update weights/bias
+void SequentialNN::UpdateWeights(double learning_rate=1.0) {
+    for (int i = 0; i < Length(); i++) {
+        _layers[i]->UpdateWeights(learning_rate);
+    }
+}
+void SequentialNN::UpdateBias(double learning_rate=1.0) {
+    for (int i = 0; i < Length(); i++) {
+        _layers[i]->UpdateBias(learning_rate);
+    }
+}
+
+// train cycle
+void SequentialNN::Train(LossFunction& lossFct, double learning_rate, const Eigen::VectorXd& input, const Eigen::VectorXd& yLabel) {
+    // forward pass
+    Input(input);
+    Forward();
+
+    // loss
+    // TODO: output to file?
+    std::cout << "Output: " << Output() << std::endl;
+    std::cout << "Loss: " << Loss(lossFct, yLabel) << std::endl;
+
+    // backward propagation 
+    UpdateDerivative(); // update derivative in all layers
+    UpdateBackwardInput(lossFct, yLabel); // compute gradient of lossFct with yLabel and update the backward input of last layer
+    Backward(); // backward pass
+
+    // update weights/bias
+    UpdateWeights(learning_rate);
+    UpdateBias(learning_rate);
 }

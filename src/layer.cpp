@@ -104,7 +104,7 @@ void LinearLayer::Initialize(std::string initialization_type) {
         //->Initialize(initialization_type);
 }
 
-void LinearLayer::UpdateWeights() {
+void LinearLayer::UpdateWeights(double learning_rate=1.0) {
         if (GetLayerCache().GetForwardInput() == nullptr || GetLayerCache().GetBackwardInput() == nullptr) {
                 throw std::invalid_argument("Pointer to forward or backward input is null!");
         }
@@ -122,10 +122,10 @@ void LinearLayer::UpdateWeights() {
                 }
         }
 
-        GetTransformation()->UpdateWeights(deltaWeights);
+        GetTransformation()->UpdateWeights(-learning_rate*deltaWeights);
 }
 
-void LinearLayer::UpdateBias() {
+void LinearLayer::UpdateBias(double learning_rate=1.0) {
         if (GetLayerCache().GetBackwardInput() == nullptr) {
                 throw std::invalid_argument("Pointer to backward input is null!");
         }
@@ -133,7 +133,7 @@ void LinearLayer::UpdateBias() {
         Eigen::RowVectorXd& backward_input = *(GetLayerCache().GetBackwardInput());
 
         // TODO: check computation!
-        GetTransformation()->UpdateBias(backward_input.transpose());
+        GetTransformation()->UpdateBias(-learning_rate*backward_input.transpose());
 }
 
 

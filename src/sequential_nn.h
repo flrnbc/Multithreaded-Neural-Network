@@ -18,6 +18,7 @@ class SequentialNN
     public: 
         // constructor
         // TODO: need to change to std::vector<Layer> 
+        // NOTE: the constructor automatically initializes the weights (He/Xavier initialization)
         SequentialNN(std::vector<std::shared_ptr<Layer> > layers); 
         
         // setters/getters
@@ -31,6 +32,7 @@ class SequentialNN
 
         // forward pass
         // TODO #B: overload ()-operator
+        // TODO: better use (const) reference/move semantics?
         void Input(Eigen::VectorXd);
         void Forward();
         Eigen::VectorXd& Output();
@@ -45,11 +47,16 @@ class SequentialNN
         double Loss(LossFunction&, const Eigen::VectorXd& yLabel);
         void UpdateBackwardInput(LossFunction&, const Eigen::VectorXd& yLabel);
 
+        // update weights/bias
+        void UpdateWeights(double);
+        void UpdateBias(double);
+
+        // single train cycle
+        void Train(LossFunction& lossFct, double learning_rate, const Eigen::VectorXd& input, const Eigen::VectorXd& yLabel);
+
         // summary
         std::string Summary();
-        
-        // evaluate
-        //Eigen::VectorXd Evaluate(Eigen::VectorXd);
+
 
         // helper functions
         // check for composability of layers in a SequentialNN

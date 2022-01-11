@@ -56,6 +56,10 @@ class Layer {
         void BackwardInput(Eigen::RowVectorXd);
         void Backward();
         Eigen::RowVectorXd BackwardOutput();
+
+        // update weights/bias (empty for ActivationLayers)
+        virtual void UpdateWeights(double learning_rate) {}
+        virtual void UpdateBias(double learning_rate) {}
 };
 
 
@@ -79,8 +83,8 @@ class LinearLayer: public Layer {
         void Initialize(std::string initialization_type);
 
         // update weights and bias
-        void UpdateWeights();
-        void UpdateBias();
+        void UpdateWeights(double);
+        void UpdateBias(double);
 };
 
 

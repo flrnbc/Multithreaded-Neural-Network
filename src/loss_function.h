@@ -3,26 +3,35 @@
 
 #include <Eigen/Dense>
 #include "function.h"
+#include <memory>
 #include <string>
 
 
 class LossFunction {
     private:
-    // input dimension
-    int _cols;
     // name of loss function
     std::string _name;
+    
+    // input size
+    int _cols;
+    
     // gradient
-    std::unique_ptr<Eigen::RowVectorXd> _gradient;
+    std::unique_ptr<Eigen::RowVectorXd> _gradient = nullptr;
 
     public: 
         // constructor
         LossFunction(std::string name, int cols); 
 
+        // setters
+        void SetCols(int cols);
+        
         // getters
         int Cols() { return _cols; }
         std::string Name() { return _name; }
         Eigen::RowVectorXd& Gradient() { return *(_gradient); }
+
+        // check size of input vectors
+        void CheckSize(Eigen::VectorXd&, const Eigen::VectorXd&);
 
         // compute loss
         double ComputeLoss(Eigen::VectorXd&, const Eigen::VectorXd&);

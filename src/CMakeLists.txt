@@ -6,6 +6,7 @@ add_library(LibTransformation transformation.cpp)
 add_library(LibLayerCache layer_cache.cpp)
 add_library(LibLayer layer.cpp)
 add_library(LibSequentialNN sequential_nn.cpp)
+add_library(LibOptimizer optimizer.cpp)
 
 # include paths TODO: how to streamline?
 target_include_directories(LibLossFunction PUBLIC
@@ -25,6 +26,10 @@ target_include_directories(LibLayer PUBLIC
                             "${PROJECT_SOURCE_DIR}/eigen"
 )
 target_include_directories(LibSequentialNN PUBLIC
+                            "${PROJECT_BINARY_DIR}"
+                            "${PROJECT_SOURCE_DIR}/eigen"
+)
+target_include_directories(LibOptimizer PUBLIC
                             "${PROJECT_BINARY_DIR}"
                             "${PROJECT_SOURCE_DIR}/eigen"
 )

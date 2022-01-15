@@ -19,6 +19,7 @@ add_executable(TestTransformation tests/test_transformation.cpp)
 add_executable(TestLayerCache tests/test_layer_cache.cpp)
 add_executable(TestLayer tests/test_layer.cpp)
 add_executable(TestSequentialNN tests/test_sequential_nn.cpp)
+add_executable(TestOptimizer tests/test_optimizer.cpp)
 
 # linking libraries
 target_link_libraries(TestFunction PUBLIC LibFunction)
@@ -27,3 +28,4 @@ target_link_libraries(TestTransformation PUBLIC LibFunction LibTransformation)
 target_link_libraries(TestLayerCache PUBLIC LibLayerCache)
 target_link_libraries(TestLayer PUBLIC LibFunction LibTransformation LibLayerCache LibLayer)
 target_link_libraries(TestSequentialNN PUBLIC LibFunction LibLossFunction LibTransformation LibLayer LibLayerCache LibSequentialNN)
+target_link_libraries(TestOptimizer PUBLIC LibOptimizer LibFunction LibLossFunction LibTransformation LibLayer LibLayerCache LibSequentialNN)

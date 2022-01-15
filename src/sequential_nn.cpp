@@ -83,13 +83,13 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
 
 // getters
 int SequentialNN::InputSize() {
-    if (_layers == nullptr) {
+    if (_layers[0] == nullptr || _layers.empty()) {
         throw std::invalid_argument("Layers are empty.");
     }
     return _layers[0]->Cols();
 }
 int SequentialNN::OutputSize() {
-    if (_layers == nullptr) {
+    if (_layers[0] == nullptr || _layers.empty()) {
         throw std::invalid_argument("Layers are empty.");
     }
     return _layers.back()->Rows();

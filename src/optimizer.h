@@ -12,7 +12,7 @@
 
 class SDG {
     private:
-        std::unique<LossFunction> _lossFct;
+        std::unique_ptr<LossFunction> _lossFct;
         double _learningRate;
         int _numberEpochs;
 
@@ -20,9 +20,11 @@ class SDG {
         // constructor
         SDG(std::string lossFctName, double learningRate, int numberEpochs): 
             _lossFct(std::make_unique<LossFunction>(LossFunction(lossFctName))),
-            SetLearningRate(learningRate),
-            SetNumberEpochs(numberEpochs)
-            {}
+            _learningRate(learningRate),
+            _numberEpochs(numberEpochs)
+            {
+                if (numberEpochs < 0) _numberEpochs = 0; // TODO: better way to deal with negative input?
+            }
 
         // setters
         void SetLearningRate(double a) {
@@ -43,7 +45,7 @@ class SDG {
         double NumberEpochs() { return _numberEpochs; }
 
         // optimize
-        Train(SequentialNN&, const Eigen::MatrixXd&, const Eigen::MatrixXd&);
+        void Train(SequentialNN&, const Eigen::MatrixXd&, const Eigen::MatrixXd&);
 };
 
 #endif // OPTIMIZER_H_

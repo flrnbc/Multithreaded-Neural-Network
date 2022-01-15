@@ -1,16 +1,19 @@
+#include "loss_function.h"
 #include "optimizer.h"
 #include "sequential_nn.h"
 #include <Eigen/Dense>
+#include <iostream>
 #include <string>
 #include <stdexcept>
+#include <random>
 
 // train method
-SDG::Train(SequentialNN& snn, const Eigen::MatrixXd& X, const Eigen::MatrixXd& yLabel) {
+void SDG::Train(SequentialNN& snn, const Eigen::MatrixXd& X, const Eigen::MatrixXd& yLabel) {
     // number of data points/samples
     int N = X.cols();
 
     if (N != yLabel.cols()) {
-        throw std::invalid_argument("Number of samples and labels do not coincide.")
+        throw std::invalid_argument("Number of samples and labels do not coincide.");
     }
     // set input size (and hence size of gradient) of loss function
     _lossFct->SetCols(snn.OutputSize());

@@ -11,16 +11,14 @@ class LossFunction {
     private:
     // name of loss function
     std::string _name;
-    
     // input size
     int _cols;
-    
     // gradient
     std::unique_ptr<Eigen::RowVectorXd> _gradient = nullptr;
 
     public: 
         // constructor
-        LossFunction(std::string name, int cols); 
+        LossFunction(std::string name); 
 
         // setters
         void SetCols(int cols);

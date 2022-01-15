@@ -24,13 +24,11 @@ void LossFunction::SetCols(int cols) {
 // constructor
 std::vector<std::string> loss_functions = {"mse"};
 
-LossFunction::LossFunction(std::string name, int cols=0) {
+LossFunction::LossFunction(std::string name) {
     auto find_loss_fct = std::find(std::begin(loss_functions), std::end(loss_functions), name);
     if (find_loss_fct == loss_functions.end()) {
         throw std::invalid_argument("Unknown loss function.");
     }
-
-    SetCols(cols);
     _name = name;
 }
 

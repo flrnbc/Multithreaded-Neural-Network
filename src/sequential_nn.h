@@ -4,6 +4,7 @@
 #include <memory>
 #include "layer.h"
 #include "loss_function.h"
+#include <stdexcept>
 
 class Layer;
 
@@ -21,11 +22,11 @@ class SequentialNN
         // NOTE: the constructor automatically initializes the weights (He/Xavier initialization)
         SequentialNN(std::vector<std::shared_ptr<Layer> > layers); 
         
-        // setters/getters
-        // NOTE: return by reference to modify layers 'in place'.
-        // TODO: check!
-        //std::vector<Layer> GetLayers() { return _layers; }     
+        // setters/getters   
         int Length() { return _layers.size(); }
+        // get input and output size
+        int InputSize();
+        int OutputSize();
 
         // initialize the sequential network
         void Initialize();

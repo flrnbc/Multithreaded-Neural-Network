@@ -60,6 +60,7 @@ std::string SequentialNN::GetInitializationType(const std::shared_ptr<Layer>& la
  * SEQUENTIAL NEURAL NETWORK IMPLEMENTATION *
  ********************************************/
 
+// constructor
 SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
     if (ComposabilityCheck(layers) == false) {
         throw std::invalid_argument("Layers are not composable.");
@@ -80,6 +81,21 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
     Initialize();
 }
 
+// getters
+int SequentialNN::InputSize() {
+    if (_layers == nullptr) {
+        throw std::invalid_argument("Layers are empty.");
+    }
+    return _layers[0]->Cols();
+}
+int SequentialNN::OutputSize() {
+    if (_layers == nullptr) {
+        throw std::invalid_argument("Layers are empty.");
+    }
+    return _layers.back()->Rows();
+}
+
+// methods
 void SequentialNN::Initialize() {
     int N = _layers.size();
 
@@ -100,8 +116,11 @@ std::string SequentialNN::Summary() {
     return summary;
 }
 
-// TODO: again refactor the forward and backward pass at some point
-// Forward pass
+
+// TODO: refactor the forward and backward pass at some point
+/****************
+ * FORWARD PASS *
+ ****************/
 void SequentialNN::Input(Eigen::VectorXd input) {
     _layers[0]->Input(input);
 }
@@ -121,7 +140,9 @@ Eigen::VectorXd& SequentialNN::Output() {
 }
 
 
-// Backward pass
+/*****************
+ * BACKWARD PASS *
+ *****************/
 void SequentialNN::UpdateDerivative() {
     for (int i = 0; i < Length(); i++) {
         _layers[i]->UpdateDerivative();
@@ -143,7 +164,10 @@ Eigen::RowVectorXd SequentialNN::BackwardOutput() {
     return *(_layers[0]->GetLayerCache().GetBackwardOutput());
 }
 
-// compute loss
+
+/****************
+ * COMPUTE LOSS *
+ ****************/
 double SequentialNN::Loss(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
     return lossFct.ComputeLoss(this->Output(), yLabel);
 }
@@ -165,7 +189,9 @@ void SequentialNN::UpdateBias(double learning_rate=1.0) {
     }
 }
 
-// train cycle
+/***************
+ * TRAIN CYCLE *
+ ***************/
 void SequentialNN::Train(LossFunction& lossFct, double learning_rate, const Eigen::VectorXd& input, const Eigen::VectorXd& yLabel) {
     // forward pass
     Input(input);

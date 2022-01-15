@@ -12,6 +12,8 @@ SDG::Train(SequentialNN& snn, const Eigen::MatrixXd& X, const Eigen::MatrixXd& y
     if (N != yLabel.cols()) {
         throw std::invalid_argument("Number of samples and labels do not coincide.")
     }
+    // set input size (and hence size of gradient) of loss function
+    _lossFct->SetCols(snn.OutputSize());
 
     // needed for stochastic gradient descent
     int randomCol;

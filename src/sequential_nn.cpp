@@ -135,7 +135,6 @@ Eigen::VectorXd& SequentialNN::Output() {
     if ((_layers.back())->GetLayerCache().GetForwardOutput() == nullptr) {
         throw std::invalid_argument("Forward output is null.");
     }
-    
     return *((_layers.back())->GetLayerCache().GetForwardOutput());
 }
 
@@ -160,24 +159,13 @@ Eigen::RowVectorXd SequentialNN::BackwardOutput() {
      if (_layers[0]->GetLayerCache().GetBackwardOutput() == nullptr) {
         throw std::invalid_argument("Backward output is null.");
     }
-    
     return *(_layers[0]->GetLayerCache().GetBackwardOutput());
 }
 
 
-/****************
- * COMPUTE LOSS *
- ****************/
-double SequentialNN::Loss(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
-    return lossFct.ComputeLoss(this->Output(), yLabel);
-}
-// update gradient of loss function
-void SequentialNN::UpdateBackwardInput(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
-    lossFct.UpdateGradient(this->Output(), yLabel);
-    this->BackwardInput(lossFct.Gradient());
-}
-
-// update weights/bias
+/*************************
+ * UPDATE WEIGHTS & BIAS *
+ *************************/
 void SequentialNN::UpdateWeights(double learning_rate=1.0) {
     for (int i = 0; i < Length(); i++) {
         _layers[i]->UpdateWeights(learning_rate);
@@ -189,9 +177,19 @@ void SequentialNN::UpdateBias(double learning_rate=1.0) {
     }
 }
 
+
 /***************
  * TRAIN CYCLE *
  ***************/
+double SequentialNN::Loss(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
+    return lossFct.ComputeLoss(this->Output(), yLabel);
+}
+// update gradient of loss function
+void SequentialNN::UpdateBackwardInput(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
+    lossFct.UpdateGradient(this->Output(), yLabel);
+    this->BackwardInput(lossFct.Gradient());
+}
+
 void SequentialNN::Train(LossFunction& lossFct, double learning_rate, const Eigen::VectorXd& input, const Eigen::VectorXd& yLabel) {
     // forward pass
     Input(input);

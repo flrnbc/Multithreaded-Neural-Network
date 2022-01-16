@@ -49,9 +49,8 @@ double LossFunction::ComputeLoss(Eigen::VectorXd& y, const Eigen::VectorXd& yLab
 
     // any of the following cases is guaranteed by the constructor
     if (Name() == "mse") {
-        Eigen::VectorXd e = y-yLabel;
         double avg = 1/double(y.size());
-        double scalar_prod = (e.transpose()*e)(0);
+        double scalar_prod = ((y-yLabel).transpose()*(y-yLabel))(0);
 
         return avg*scalar_prod;
     }

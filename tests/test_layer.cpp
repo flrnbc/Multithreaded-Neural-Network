@@ -6,6 +6,7 @@
 #include "../src/transformation.h"
 #include "../src/layer.h"
 #include "../src/layer_cache.h"
+#include "../src/loss_function.h"
 
 void test_LinearLayer() {
     LinearLayer ll(5, 3);
@@ -22,10 +23,41 @@ void test_LinearLayer() {
 
     // test UpdateWeights
     ll.BackwardInput(w);
-    ll.UpdateWeights();
-    ll.UpdateBias();
+    ll.UpdateWeights(0.1);
+    ll.UpdateBias(0.1);
     
     std::cout << "After updating weights and bias: " << ll.Summary() << std::endl;
+}
+
+void test_LinearLayer2() {
+    LinearLayer ll(1, 1);
+    auto mse = LossFunction("mse");
+    mse.SetCols(1);
+
+    ll.GetTransformation()->Initialize("Xavier");
+    std::cout << ll.Summary() << std::endl;
+
+    // training test
+    Eigen::VectorXd x{{3}};
+    Eigen::VectorXd yLabel{{2}};
+
+    ll.Input(x);
+    ll.Forward();
+    ll.UpdateDerivative();
+
+    Eigen::VectorXd y = ll.Output();
+    std::cout << "Output: " << y << std::endl;
+    std::cout << "Loss: " << mse.ComputeLoss(y, yLabel) << std::endl;
+
+    mse.UpdateGradient(y, yLabel);
+    std::cout << "Gradient of mse: " << mse.Gradient() << std::endl;
+
+    ll.BackwardInput(mse.Gradient());
+    ll.Backward();
+    ll.UpdateWeights(0.1);
+    ll.UpdateBias(0.1);
+
+    std::cout << "Summary after training: " << ll.Summary() << std::endl;
 }
 
 void test_ActivationLayer() {
@@ -54,6 +86,6 @@ void test_ActivationLayer() {
 }
 
 int main() {
-    test_LinearLayer();
+    test_LinearLayer2();
     //test_ActivationLayer();
 }

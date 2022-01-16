@@ -1,7 +1,5 @@
 #include "../src/layer.h"
-#include "../src/layer_cache.h"
 #include "../src/loss_function.h"
-#include "../src/transformation.h"
 #include "../src/sequential_nn.h"
 #include <Eigen/Dense>
 #include <iostream>
@@ -87,7 +85,8 @@ void test_SequentialNNBackward() {
 void test_SequentialNNLoss() {
     auto ll_ptr = std::make_shared<LinearLayer>(5, 10);
     auto al_ptr = std::make_shared<ActivationLayer>(5, "softmax"); 
-    auto mse = LossFunction("mse", 5);
+    auto mse = LossFunction("mse");
+    mse.SetCols(5);
     //std::vector<Layer> v{std::move(ll), std::move(al)};
 
     SequentialNN snn({ll_ptr, al_ptr});
@@ -117,7 +116,8 @@ void test_SequentialNNLoss() {
 void test_SequentialTest() {
     auto ll_ptr = std::make_shared<LinearLayer>(5, 10);
     auto al_ptr = std::make_shared<ActivationLayer>(5, "softmax"); 
-    auto mse = LossFunction("mse", 5);
+    auto mse = LossFunction("mse");
+    mse.SetCols(5);
     //std::vector<Layer> v{std::move(ll), std::move(al)};
 
     SequentialNN snn({ll_ptr, al_ptr});
@@ -135,7 +135,8 @@ void test_SequentialTest() {
 
 void test_TrainLinearRegression() {
     auto ll_ptr = std::make_shared<LinearLayer>(1, 1);
-    auto mse = LossFunction("mse", 1);
+    auto mse = LossFunction("mse");
+    mse.SetCols(1);
 
     SequentialNN linear({ll_ptr});
 
@@ -145,8 +146,8 @@ void test_TrainLinearRegression() {
     double a = 15.0;
     double c = 3.0;
 
-    // 
-    int data_points = 20;
+    // number of generated data points
+    int data_points = 50;
     
 
     Eigen::MatrixXd X(1, data_points);
@@ -162,32 +163,34 @@ void test_TrainLinearRegression() {
 
     std::cout << X << std::endl;
 
-    for (int j=0; j<500; j++) {
+    for (int j=0; j<100; j++) {
         std::cout << "----------- Epoch " << j << " -----------" << std::endl;
         for (int i=0; i<data_points; i++) {
             linear.Train(mse, 0.001, X.col(i), yLabel.col(i));
         }
+        //std::cout << "Summary: " << linear.Summary() << std::endl;
     }
 
-    std::cout << linear.Summary() << std::endl;
+    // std::cout << linear.Summary() << std::endl;
 
-    // by hand
-    // double w=0;
-    // double b=0;
-    // double x=0;
-    // double y=0;
+    //by hand
+    double w=0;
+    double b=0;
+    double x=0;
+    double y=0;
 
-    // for (int j=0; j<1000; j++) {
-    //     for (int i=0; i<50; i++) {
-    //         x = X(0, i);
-    //         y = w*x+b;
-    //         w += -0.001*2*(y - yLabel(0, i))*x;
-    //         b += -0.001*2*(y - yLabel(0, i));
-    //         std::cout << w << "\t" << b << std::endl;
-    //     }
-    // }
+    for (int j=0; j<100; j++) {
+        for (int i=0; i<50; i++) {
+            x = X(0, i);
+            y = w*x+b;
+            w += -0.001*2*(y - yLabel(0, i))*x;
+            b += -0.001*2*(y - yLabel(0, i));
+            //std::cout << w << "\t" << b << std::endl;
+        }
+    }
 
-    // std::cout << "By hand: \n" << "weight: " << w << "\nbias: " << b << std::endl;
+    std::cout << "By hand: \n" << "weight: " << w << "\nbias: " << b << std::endl;
+    std::cout << "With our implementation: " << linear.Summary() << std::endl;
 }
 
 int main() {

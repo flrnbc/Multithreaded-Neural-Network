@@ -19,7 +19,7 @@ void test_OptimizeLinearRegression() {
     double c = 3.0;
 
     // define data points
-    int data_points = 20;
+    int data_points = 50;
 
     Eigen::MatrixXd X(1, data_points);
     Eigen::MatrixXd yLabel(1, data_points);
@@ -35,12 +35,11 @@ void test_OptimizeLinearRegression() {
     std::cout << X << std::endl;
 
     // train with SDG optimizer
-    auto sdg = SDG("mse", 0.001, 500);
+    auto sdg = SDG("mse", 0.001, 5000);
 
     sdg.Train(linear, X, yLabel);
 
     std::cout << linear.Summary() << std::endl;
-
 }
 
 

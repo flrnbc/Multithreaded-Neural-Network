@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include "function.h"
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 
@@ -26,7 +27,12 @@ class LossFunction {
         // getters
         int Cols() { return _cols; }
         std::string Name() { return _name; }
-        Eigen::RowVectorXd& Gradient() { return *(_gradient); }
+        Eigen::RowVectorXd& Gradient() { 
+            if (_gradient == nullptr) {
+                throw std::invalid_argument("Gradient pointer is null.");
+            }
+            return *(_gradient); 
+        }
 
         // check size of input vectors
         void CheckSize(Eigen::VectorXd&, const Eigen::VectorXd&);
@@ -34,7 +40,7 @@ class LossFunction {
         // compute loss
         double ComputeLoss(Eigen::VectorXd&, const Eigen::VectorXd&);
 
-        // update derivative/gradient (see below)
+        // update derivative/gradient
         void UpdateGradient(Eigen::VectorXd&, const Eigen::VectorXd&);
 };
 

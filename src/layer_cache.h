@@ -12,7 +12,8 @@
     The LayerCache class is the storage of a layer for the forward/backward input and output. Of course, we could save
     these in the Layer class themselves. However, this is inefficient since e.g. the forward output of one layer is the
     forward input of the next layer. The LayerCache only points to the corresponding data and we can connect two LayerCaches
-    together by pointing to the same data. That's why we use shared_ptrs.
+    together by pointing to the same data. That's why we use shared_ptrs. Moreover, we separate the data (handled in LayerCache)
+    from the transformations in a layer.
 
     Note: it might be sufficient to work with references for sequential neural networks. But LayerCache is more flexible. 
     For example, we could use it for other network topologies.
@@ -27,7 +28,7 @@ class LayerCache {
         std::shared_ptr<Eigen::VectorXd> _forward_input;
         std::shared_ptr<Eigen::VectorXd> _forward_output;
 
-        // cache for backward pass, i.e. keeps track of the gradients (\Delta_i in documentation)
+        // cache for backward pass, i.e. keeps track of the gradients
         // NOTE: we consider gradients as row vectors
         std::shared_ptr<Eigen::RowVectorXd> _backward_input;
         std::shared_ptr<Eigen::RowVectorXd> _backward_output;
@@ -44,7 +45,7 @@ class LayerCache {
         ~LayerCache() {}
 
         // copy and move semantics
-        // TODO: don't the default ones suffice?
+        // TODO: don't the default ones from Eigen suffice?
 
         //copy constructor
         LayerCache(const LayerCache& source) {
@@ -88,13 +89,18 @@ class LayerCache {
         std::shared_ptr<Eigen::RowVectorXd> GetBackwardOutput();
         std::shared_ptr<Eigen::RowVectorXd> GetBackwardInput();
 
-        // connecting Layer's 
+        /** connecting this LayerCache with another one from 'left to right', i.e. 
+            the forward output of *this will be connected to the forward input of 
+            next_layer_cache etc.
+            NOTE: Also instantiates a zero vector of the given size at which the 
+            pointers point.
+        */
         // forward
-        void ConnectForward(int, LayerCache&); 
+        void ConnectForward(int size_forward_output, LayerCache& next_layer_cache); 
         // backward
-        void ConnectBackward(int, LayerCache&);
+        void ConnectBackward(int size_backward_output, LayerCache& next_layer_cache);
         // both 
-        void Connect(int, int, LayerCache&);
+        void Connect(int size_forward_output, int size_backward_output, LayerCache&);
 };
 
 #endif // LAYER_CACHE_H_

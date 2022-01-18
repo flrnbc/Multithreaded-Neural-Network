@@ -9,7 +9,9 @@
 #include <vector>
 
 
-// helper function for random numbers
+/**************************************
+ * HELPER FUNCTION FOR RANDOM NUMBERS *
+ **************************************/
 // TODO: is there a performance issue? (since we create a generator etc. each time)?
 double RandomNumberUniform(double min, double max) {
     std::random_device rd;

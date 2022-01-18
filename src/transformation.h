@@ -8,6 +8,10 @@
 #include <vector>
 #include <string>
 
+/******************
+ * TRANSFORMATION *
+ ******************/
+
 /** 
     Class for transformations used in layers of neural networks. It not only keeps track
     of the parameters for the transformation but also of its derivative (similar to Tensors

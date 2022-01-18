@@ -8,6 +8,35 @@
 #include <vector>
 #include <string>
 
+/** 
+    Class for transformations used in layers of neural networks. It not only keeps track
+    of the parameters for the transformation but also of its derivative (similar to Tensors
+    in PyTorch).
+    
+    The abstract base class has three attributes:
+        * cols (dimension of input)
+        * rows (dimension of output)
+        * type of transformation.
+    By using an abstract base class, we can easily add further concrete implementations.
+        
+    The most important member functions, which need to be implemented by derived concrete classes, are:
+        * ~Transform~: transforms the input, typically a vector or matrix 
+          (NOTE: we work with _column vectors_ as our input. This might be a bit unconvential because often row vectors are used.)
+        * ~Initialize~: initializes the parameters of the transformation (so far only for LinearTransformation)
+        * ~UpdateDerivative~: updates the derivative of the transformation at a data point
+        * ~UpdateDelta~: used for backward pass/backpropagation (TODO: better suited in Layer class?)
+        * ~Summary~: summarizes most important parameters (TODO: too verbose at the moment)
+    
+    The following methods have an empty implementation by default and do not have to be implemented by derived concrete classes:
+        * ~UpdateWeights~ / ~UpdateBias~: only needed for linear transformations (TODO: could be replaced with 
+          a more general member function e.g. ~UpdateParameters~)
+
+    The concrete implementations of the abstract base class are:
+        * ~LinearTransforamtion~: encapsulates an affine-linear transformation with weights and biases
+        * ~ActivationTransformation~: could be a vectorized activation function or others, e.g. softmax.
+    
+*/
+
 /***********************
  * ABSTRACT BASE CLASS *
  ***********************/
@@ -21,6 +50,7 @@ class Transformation {
         // type of transformation
         std::string _type;
 
+        // constructor (needed for concrete implementations to initialize the above member variables)
         Transformation(int rows, int cols, std::string type):
             _rows(rows),
             _cols(cols),
@@ -38,20 +68,19 @@ class Transformation {
         std::string Type() { return _type; }
         
         // TODO: can the following be improved using references?
-        // transform method (want to keep input, so no pass by reference)
         virtual Eigen::VectorXd Transform(Eigen::VectorXd) = 0;
         
         // update Delta (of a layer), which is a row vector, by right multiplication with the derivative
+        // TODO: might move to Layer class
         virtual Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd) = 0;
 
-        // update derivative/jacobian from a given vector
+        // update derivative/jacobian of the transformation at a given vector
         virtual void UpdateDerivative(Eigen::VectorXd) = 0;
 
-        // initialize transformation (many transformations have empty implementation)
+        // initialize transformation
         virtual void Initialize(std::string initialize_type="") {}
 
-        // update weights/bias (actually only needed for LinearTransformations)
-        // TODO: it might be better to use templates for the Layers to avoid 
+        // update weights/bias (only needed for LinearTransformations)
         virtual void UpdateWeights(Eigen::MatrixXd Delta_weights) {}
         virtual void UpdateBias(Eigen::VectorXd Delta_bias) {}
 
@@ -85,8 +114,6 @@ class LinearTransformation: public Transformation {
             _bias(Eigen::VectorXd::Zero(rows))
             {}
 
-        // TODO: the default copy and move constructors/assignment operators should be enough?!?
-
         // setters & getters
         Eigen::MatrixXd& Weights() { return _weights; }
         void SetWeights(Eigen::MatrixXd weight_matrix) { _weights = weight_matrix; }
@@ -99,8 +126,7 @@ class LinearTransformation: public Transformation {
         // transpose weight matrix
         void Transpose();
 
-        // transform methods (just right matrix multiplication with input)
-        // NOTE: we do _not_ work with transpose etc. because we consider our data points as column vectors
+        // transform methods (just right matrix multiplication with input (a column vector))
         Eigen::VectorXd Transform(Eigen::VectorXd); 
 
         // update derivative (trivial here because it coincides with weights)
@@ -158,6 +184,9 @@ class ActivationTransformation: public Transformation {
 };
 
 
-// TODO: to include: Flatten layer
+/** Possible future transformations:
+        * Flatten layer
+
+*/
 
 #endif // TRANSFORMATION_H_

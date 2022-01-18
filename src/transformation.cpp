@@ -28,35 +28,14 @@ double RandomNumberNormal(double min, double max) {
 }
 
 
-/******************
- * TRANSFORMATION *
- ******************/
-
-// Transformation::Transformation() {
-//     // not meant to be called directly
-//     SetCols(0);
-//     SetRows(0);
-// }
-
-// std::vector<double> Transformation::Transform(std::vector<double> input) {
-//     // just the identity
-//     return input;
-// }
-
-// std::string Transformation::Summary() {
-//     return "Identity transformation.";
-// }
-
-
 /*************************
  * LINEAR TRANSFORMATION *
  *************************/
 
-// random initialization (used for different activation functions)
+// random initialization (according to the previous activation layer)
 // either He or normalized Xavier initialization
 void LinearTransformation::Initialize(std::string initialization_type) {
     if (initialization_type != "He" && initialization_type != "Xavier") {
-        // TODO #A: need to catch it somewhere?
         throw std::domain_error("Initialization type is unknown.");
     }
 
@@ -67,13 +46,12 @@ void LinearTransformation::Initialize(std::string initialization_type) {
     if (initialization_type == "Xavier") {      
         // use normalized Xavier weight initialization
         int inputPlusOutputSize = cols + rows;
-        // NOTE: uniform_real_distribution(a, b) generates for [a, b) (half-open interval)
+        // uniform_real_distribution(a, b) generates for a real number in the half-open interval [a, b)
         double min = -(sqrt(6)/sqrt(inputPlusOutputSize));
         double max = sqrt(6)/sqrt(inputPlusOutputSize);
 
         // randomly initialize weights
         // NOTE: be careful with cache-friendliness (outer loop over rows)
-        // TODO #A: would be nicer to put this for-loop after the else-block (but then would have to declare dis before; but as what?)
         for (int i=0; i<rows; i++) {
             for (int j=0; j<cols; j++) {
                 _weights(i, j) = RandomNumberUniform(min, max); 
@@ -98,7 +76,6 @@ void LinearTransformation::Initialize(std::string initialization_type) {
 // transform method
 Eigen::VectorXd LinearTransformation::Transform(Eigen::VectorXd inputVector) {
     if (inputVector.rows() != Cols()) {
-        // TODO #A: catch exception somewhere?
         throw std::domain_error("Vector cannot be evaluated.");
     } else {
         return _weights*inputVector + _bias;
@@ -114,6 +91,7 @@ std::string LinearTransformation::Summary() {
 
     std::string weights_string = "Weights:\n";
     // convert matrix to string
+    // TODO: at the moment a bit verbose (matrices might be large...)
     std::stringstream ss_weights;
     ss_weights << _weights;
     weights_string += ss_weights.str();
@@ -134,10 +112,9 @@ std::string LinearTransformation::Summary() {
 
 // transform methods for ActivationTransformation
 Eigen::VectorXd ActivationTransformation::Transform(Eigen::VectorXd inputVector) {
-    // TODO: optimize with vectorization? (OpenMP?)
-
+    // TODO: optimize with Eigen's  unaryExpr?
     for (int i = 0; i < inputVector.rows(); i++) {
-        inputVector(i) = _function(inputVector(i)); // TODO: range-based did not modify the values (even when using &)?!
+        inputVector(i) = _function(inputVector(i));
     }
 
     if (_type == "softmax") {
@@ -152,7 +129,6 @@ Eigen::VectorXd ActivationTransformation::Transform(Eigen::VectorXd inputVector)
 
 // update derivative
 void ActivationTransformation::UpdateDerivative(Eigen::VectorXd vector) {
-    // TODO: this has to change if we introduce more activation functions which are not vectorizations
     if (vector.size() != Cols()) {
         throw std::domain_error("Vector size does not match with the derivative.");
     }
@@ -165,9 +141,9 @@ void ActivationTransformation::UpdateDerivative(Eigen::VectorXd vector) {
     }
 
     if (_type == "softmax") {
-        /* 
-        NOTE: Here we assume that the vector is the output of softmax, i.e.
-        vector = softmax(x_1, ... , x_N) = (s_1, ... , s_N). Then the jacobian J is given by 
+        /** 
+            NOTE: Here we assume that the vector is the output of softmax, i.e.
+            vector = softmax(x_1, ... , x_N) = (s_1, ... , s_N). Then the jacobian J is given by 
 
             J(i, i) = -s_i*(1-s_i)       
             J(i, j) = -s_i*s_j          if i != j.

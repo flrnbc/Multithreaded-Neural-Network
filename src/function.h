@@ -6,7 +6,12 @@
 #include <string>
 #include <vector>
 
-// collect functions
+/**  
+    Class for (differentiable) functions (double -> double) which also encapsulates their derivatives.  
+*/
+
+
+// collect functions we will be using
 double identity(double);
 double identity_derivative(double); 
 double prelu(double, double);
@@ -21,8 +26,11 @@ double tanh_derivative(double);
 
 class Function{
 private:
-    std::string _name;
-    double (*function)(double); // function pointer seems to be needed
+    // name of function
+    std::string _name; 
+    // actual function (function pointer is needed)
+    double (*function)(double);
+    // derivative of function
     double (*derivative)(double); 
 
 public:
@@ -31,12 +39,12 @@ public:
         function(&identity),
         derivative(&identity_derivative)
         {
-            // how to improve?
+            // TODO: is there a better way to deal with conditionals in initialization lists?
             if (fct_name == "identity") {
                 function = &identity;
                 derivative = &identity_derivative;
                 }
-            // TODO #B: to simplify, only offer relu and not prelu at the moment
+            // NOTE: to simplify, only offer relu and not prelu at the moment
             else if (fct_name == "relu") {
                 function = &relu;
                 derivative = &relu_derivative;
@@ -45,8 +53,7 @@ public:
                 function = &sigmoid;
                 derivative = &sigmoid_derivative;
             }
-            // TODO: the following is just for convenience for implementing 
-            // the actual softmax
+            // NOTE: the following is just for convenience for implementing the actual softmax
             else if (fct_name == "softmax") { 
                 function = &exp;
                 derivative = &exp;
@@ -61,6 +68,9 @@ public:
         }
     
     // methods/operators
+    // TODO: the checks for nullptr do not seem to be necessary, arey they? Because we 
+    // initialize both function and derivative in the constructor and have no setters
+    // for the functions.
     double operator()(double input) {
         if (function == nullptr) {
             throw std::invalid_argument("Function not set.");
@@ -84,7 +94,6 @@ public:
     void SetName(std::string fct_name) {
         _name = fct_name;
     }
-
 };
 
 #endif // FUNCTION_H_

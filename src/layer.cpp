@@ -109,13 +109,13 @@ void LinearLayer::UpdateWeights(double learning_rate=1.0) {
                 throw std::invalid_argument("Pointer to forward or backward input is null!");
         }
 
-        Eigen::MatrixXd deltaWeights = Eigen::MatrixXd::Zero(Rows(), Cols());
+        // TODO: better update directly? i.e. without deltaWeights
+        Eigen::MatrixXd deltaWeights = Eigen::MatrixXd::Zero(Rows(), Cols()); 
         Eigen::VectorXd& forward_input = *(GetLayerCache().GetForwardInput());
         Eigen::RowVectorXd& backward_input = *(GetLayerCache().GetBackwardInput());
 
         // this formula follows from the backpropagation algorithm
         // TODO: reference?
-        
         for (int i=0; i < Rows(); i++) {
                 for (int j=0; j < Cols(); j++) {
                         deltaWeights(i, j) = backward_input(i)*forward_input(j);

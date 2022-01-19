@@ -125,33 +125,33 @@ class LinearTransformation: public Transformation {
         void SetBias(Eigen::VectorXd bias) { _bias = bias; }
 
         // random initialize (either via "He" or "Normalized Xavier")
-        void Initialize(std::string);
+        void Initialize(std::string) override;
 
         // transpose weight matrix
         void Transpose();
 
         // transform methods (just right matrix multiplication with input (a column vector))
-        Eigen::VectorXd Transform(Eigen::VectorXd); 
+        Eigen::VectorXd Transform(Eigen::VectorXd) override; 
 
         // update derivative (trivial here because it coincides with weights)
-        void UpdateDerivative(Eigen::VectorXd) {}
+        void UpdateDerivative(Eigen::VectorXd) override {}
 
         // update Delta
         // used to compute the gradient of a loss function successively via backpropagation
-        Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd rowVector) {
+        Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd rowVector) override {
             return rowVector*(_weights);
         }
 
         // update weights/bias
-        void UpdateWeights(Eigen::MatrixXd deltaWeights) {
+        void UpdateWeights(Eigen::MatrixXd deltaWeights) override {
             _weights += deltaWeights;
         }
-        void UpdateBias(Eigen::VectorXd deltaBias) {
+        void UpdateBias(Eigen::VectorXd deltaBias) override {
             _bias += deltaBias;
         }
 
         // summary
-        std::string Summary();
+        std::string Summary() override;
 };
 
 
@@ -173,22 +173,23 @@ class ActivationTransformation: public Transformation {
             {} 
             
         // transform methods
-        Eigen::VectorXd Transform(Eigen::VectorXd);
+        Eigen::VectorXd Transform(Eigen::VectorXd) override;
 
-        // update derivative at a point/vector (trivial here)
-        void UpdateDerivative(Eigen::VectorXd);
+        // update derivative at a point/vector
+        void UpdateDerivative(Eigen::VectorXd) override;
 
         // update Delta
-        Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd rowVector) {
+        Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd rowVector) override {
             return rowVector*(*(_derivative));
         }
 
         // Summary of transformation
-        std::string Summary(); 
+        std::string Summary() override; 
 };
 
 
-/** Possible future transformations:
+/** 
+    Possible future transformations:
         * Flatten layer
 
 */

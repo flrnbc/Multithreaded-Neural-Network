@@ -2,6 +2,10 @@
 #include <stdexcept>
 #include "function.h"
 
+/************
+ * FUNCTION *
+ ************/
+
 // Functions which will be used
 double identity(double x) {
     return x;

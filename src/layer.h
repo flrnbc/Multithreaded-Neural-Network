@@ -6,6 +6,41 @@
 #include "transformation.h"
 #include <string>
 
+/*********
+ * LAYER *
+ *********/
+
+/** 
+    Class which represents a layer in a neural network and allows the forward pass
+    of data (done with a Transformation) and the backward pass (essentially with the
+    derivative of the Transformation).
+
+    The two member variables of the abstract base class are
+        * _transformation_: shared pointer to the Transformation of the corresponding layer,
+        * _layer_cache: shared pointer to a LayerCache to store the data of the forward and backward pass.
+
+    The most important member functions are
+        * ~Input~: sets the vector in forward input of the LayerCache
+        * ~Forward~: applies the transformation to the input and stores it in forward output
+        * ~Output~: returns the vector in forward output
+        
+        * ~UpdateDerivative~: updates the derivative of the transformation at the vector in forward output
+        * ~BackwardInput~, ~Backward~ and ~BackwardOutput: work analogously as ~Input~, ~Forward~ and ~Output~
+          only with the derivative of the transformation
+    
+    NOTE: some of the member variables, e.g. ~Cols~, ~Rows~, ~UpdateWeights~, just simplify the access
+    to the corresponding member functions of Transformation.
+
+    NOTE: Both the forward pass (using ~Forward~) and backward pass (using ~Backward~)
+    transform the data and update the corresponding LayerCaches. In particular, applying
+    ~Forward~ and ~Backward~ does not return a vector. Instead we have to use ~Output~ and
+    ~BackwardOutput~. This is ok because the user usually does not work with Layers directly.
+
+
+*/
+
+// forward declarations
+// TODO: really needed here?
 class LayerCache;
 class Transformation;
 class LinearTransformation;
@@ -37,18 +72,18 @@ class Layer {
         // getters
         // NOTE: this is safe because we initialize _layer_cache (not as a nullptr) in 
         // concrete derived classes
-        // TODO: this might be confusing though because GetTransformation returns a shared_ptr...
         LayerCache& GetLayerCache() { return *_layer_cache; }
         std::shared_ptr<Transformation>& GetTransformation() { return _transformation; }
+        // TODO: this might be confusing though because GetTransformation returns a shared_ptr...
         
         // getters to simplify access to data members of transformation
         int Cols() { return _transformation->Cols(); }
         int Rows() { return _transformation->Rows(); }
-        std::string Summary() { return _transformation->Summary(); } // TODO: this might change in the future to contain more specific data
+        std::string Summary() { return _transformation->Summary(); } // TODO: this might change in the future to contain more specific data of the layer
 
         // forward pass
         void Input(Eigen::VectorXd); // TODO: do we copy too often here?
-        void Forward(); // TODO: use _transformation to rewrite in a coherent way, not for each layer type
+        void Forward();
         Eigen::VectorXd Output(); // TODO: better to return const ref?
 
         // backward pass
@@ -67,7 +102,7 @@ class Layer {
  * LINEAR LAYER CLASS *
  **********************/
  
-// possible IDEA for refactoring: use a factory pattern for creating various layers?
+// NOTE: possible IDEA for refactoring: use a factory pattern for creating various layers?
 
 class LinearLayer: public Layer {
     public:
@@ -75,16 +110,12 @@ class LinearLayer: public Layer {
         LinearLayer(int rows, int cols): 
             Layer(std::make_shared<LinearTransformation>(rows, cols)) {}
             
-        // destructor
-        // TODO: always needed?
-        ~LinearLayer() {};
-
         // initialize weights
         void Initialize(std::string initialization_type);
 
         // update weights and bias
-        void UpdateWeights(double);
-        void UpdateBias(double);
+        void UpdateWeights(double) override;
+        void UpdateBias(double) override;
 };
 
 
@@ -94,23 +125,17 @@ class LinearLayer: public Layer {
 
 class ActivationLayer: public Layer {
     private:
-    //    std::shared_ptr<ActivationTransformation> _transformation;
         std::string _activation;
 
     public:
-        // default constructor
+        // constructor
         ActivationLayer(int m, std::string activation_fct): 
             Layer(std::make_shared<ActivationTransformation>(m, activation_fct)),
             _activation(activation_fct) 
             {}
-           
-        // destructor
-        // TODO: always needed?
-        ~ActivationLayer() {};
 
-        // setters/getters
+        // getters
         std::string GetActivationString() { return _activation; }
-
 };
 
 #endif // LAYER_H_

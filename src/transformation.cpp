@@ -8,6 +8,9 @@
 #include <string>
 #include <vector>
 
+/******************
+ * TRANSFORMATION *
+ ******************/
 
 /**************************************
  * HELPER FUNCTION FOR RANDOM NUMBERS *

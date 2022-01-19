@@ -6,10 +6,13 @@
 #include <string>
 #include <vector>
 
+/************
+ * FUNCTION *
+ ************/
+
 /**  
     Class for (differentiable) functions (double -> double) which also encapsulates their derivatives.  
 */
-
 
 // collect functions we will be using
 double identity(double);

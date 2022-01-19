@@ -6,22 +6,46 @@
 #include "loss_function.h"
 #include <stdexcept>
 
+/*****************************
+ * SEQUENTIAL NEURAL NETWORK *
+ *****************************/
+
+/**
+    Class to encapsulate a sequential neural network. Here 'sequential' means that we have a stack
+    of Layers, i.e. all hidden Layers have precisely one input and output Layer. 
+
+    TODO: Change initialization!
+ */
+
+
+// forward declaration
 class Layer;
 
-class SequentialNN
-/*
-    Class encapsulating a sequential neural network.
-*/
-{
+class SequentialNN {
     private:
-        std::vector<std::shared_ptr<Layer> > _layers;
+        // shared_ptrs to Layers of sequential NN
+        std::vector<std::shared_ptr<Layer> > _layers; // TODO: use unique_ptrs instead?
+        
+        // helper functions //
+        // check for composability of layers in a SequentialNN
+        static bool ComposabilityCheck(const std::vector<std::shared_ptr<Layer> >&);
+        // convert vector of Layers to pass to second constructor
+        static std::vector<std::shared_ptr<Layer> > ConvertToSharedPtrs(const std::vector<Layer>& vlayers) {
+            std::vector<std::shared_ptr<Layer>> ptrs_layers;
+            for (int i=0; i<vlayers.size(); i++) {
+                ptrs_layers.emplace_back(std::make_shared<Layer>(vlayers[i]));
+            }
+            return ptrs_layers;
+        }
 
     public: 
-        // constructor
-        // TODO: need to change to std::vector<Layer> 
+        // constructor with vector of shared_ptrs to Layers
         // NOTE: the constructor automatically initializes the weights (He/Xavier initialization)
-        SequentialNN(std::vector<std::shared_ptr<Layer> > layers); 
-        
+        SequentialNN(std::vector<std::shared_ptr<Layer> >); 
+
+        // constructor with vector of Layers (using delegating constructor (introduced in C++11))
+        SequentialNN(std::vector<Layer> vlayers): SequentialNN(ConvertToSharedPtrs(vlayers)) {}
+
         // setters/getters   
         int Length() { return _layers.size(); }
         // get input and output size
@@ -58,10 +82,7 @@ class SequentialNN
         // summary
         std::string Summary();
 
-
-        // helper functions
-        // check for composability of layers in a SequentialNN
-        static bool ComposabilityCheck(const std::vector<std::shared_ptr<Layer> >&);
+        // helper function
         // get initialization type of layers
         static std::string GetInitializationType(const std::shared_ptr<Layer>&, const std::shared_ptr<Layer>&);
 };

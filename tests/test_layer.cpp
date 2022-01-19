@@ -94,6 +94,7 @@ void test_LayerVector() {
     }
 
     std::cout << w[1]->Summary() << std::endl;
+    std::cout << "Count of objects: " << w[1].use_count() << std::endl;
 }
 
 int main() {

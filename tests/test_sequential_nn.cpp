@@ -34,6 +34,17 @@ void test_ConnectLayers() {
     std::cout << "Output of al_ptr: " << al_ptr->Output() << std::endl;
 }
 
+void test_VectorInitialization() {
+    std::vector<Layer> vlayers{{LinearLayer(4, 8), 
+                                ActivationLayer(4, "relu"), 
+                                LinearLayer(2, 4),
+                                ActivationLayer(2, "softmax")
+                                }};
+    SequentialNN snn(vlayers);
+
+    std::cout << snn.Summary() << std::endl;
+}
+
 void test_SequentialNNForward() {
     auto ll_ptr = std::make_shared<LinearLayer>(2, 5);
     auto al_ptr = std::make_shared<ActivationLayer>(2, "relu"); 
@@ -168,10 +179,7 @@ void test_TrainLinearRegression() {
         for (int i=0; i<data_points; i++) {
             linear.Train(mse, 0.001, X.col(i), yLabel.col(i));
         }
-        //std::cout << "Summary: " << linear.Summary() << std::endl;
     }
-
-    // std::cout << linear.Summary() << std::endl;
 
     //by hand
     double w=0;
@@ -190,7 +198,7 @@ void test_TrainLinearRegression() {
     }
 
     std::cout << "By hand: \n" << "weight: " << w << "\nbias: " << b << std::endl;
-    std::cout << "With our implementation: " << linear.Summary() << std::endl;
+    std::cout << "With our implementation: \n" << linear.Summary() << std::endl;
 }
 
 int main() {
@@ -200,7 +208,9 @@ int main() {
     //test_GetInitializationType();
     //test_SequentialNNLoss();
     //test_SequentialTest();
-    test_TrainLinearRegression();
+    //test_TrainLinearRegression();
+
+    test_VectorInitialization();
 
     return 0;
 }

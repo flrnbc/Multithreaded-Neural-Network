@@ -197,7 +197,7 @@ void SequentialNN::Train(LossFunction& lossFct, double learning_rate, const Eige
 
     // loss
     // TODO: output to file?
-    //std::cout << "Loss: " << Loss(lossFct, yLabel) << std::endl;
+    std::cout << "Loss: " << Loss(lossFct, yLabel) << std::endl;
 
     // backward propagation 
     UpdateDerivative(); // update derivatives in all layers

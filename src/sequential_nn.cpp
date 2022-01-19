@@ -138,6 +138,13 @@ Eigen::VectorXd& SequentialNN::Output() {
     return *((_layers.back())->GetLayerCache().GetForwardOutput());
 }
 
+Eigen::VectorXd SequentialNN::operator()(Eigen::VectorXd input) {
+    Input(input);
+    Forward();
+    Eigen::VectorXd output = Output();
+    return output;
+}
+
 
 /*****************
  * BACKWARD PASS *

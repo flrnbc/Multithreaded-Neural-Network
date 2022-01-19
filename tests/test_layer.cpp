@@ -85,7 +85,19 @@ void test_ActivationLayer() {
     std::cout << "Backward output: \n" << al.BackwardOutput() << std::endl;
 }
 
+void test_LayerVector() {
+    std::vector<Layer> v{{LinearLayer(4, 8), ActivationLayer(4, "softmax")}};
+    std::vector<std::shared_ptr<Layer> > w;
+
+    for (int i=0; i<2; i++) {
+        w.emplace_back(std::make_shared<Layer>(v[i]));
+    }
+
+    std::cout << w[1]->Summary() << std::endl;
+}
+
 int main() {
-    test_LinearLayer2();
+    //test_LinearLayer2();
     //test_ActivationLayer();
+    test_LayerVector();
 }

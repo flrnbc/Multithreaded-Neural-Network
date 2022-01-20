@@ -47,7 +47,7 @@ void test_LinearLayer2() {
 
     Eigen::VectorXd y = ll.Output();
     std::cout << "Output: " << y << std::endl;
-    std::cout << "Loss: " << mse.ComputeLoss(y, yLabel) << std::endl;
+    std::cout << "Loss: " << mse(y, yLabel) << std::endl;
 
     mse.UpdateGradient(y, yLabel);
     std::cout << "Gradient of mse: " << mse.Gradient() << std::endl;

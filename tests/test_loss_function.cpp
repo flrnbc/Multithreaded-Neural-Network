@@ -10,7 +10,7 @@ void test_MSE() {
 
     std::cout << yLabel.size() << std::endl;
 
-    std::cout << mse.ComputeLoss(y, yLabel) << std::endl;
+    std::cout << mse(y, yLabel) << std::endl;
     mse.UpdateGradient(y, yLabel);
     std::cout << mse.Gradient() << std::endl;
 }
@@ -22,7 +22,7 @@ void test_MSE2() {
     Eigen::VectorXd y{{3}};
     Eigen::VectorXd yLabel{{1}};
 
-    std::cout << mse.ComputeLoss(y, yLabel) << std::endl;
+    std::cout << mse(y, yLabel) << std::endl;
 
     mse.UpdateGradient(y, yLabel);
     std::cout << "Gradient: " << mse.Gradient() << std::endl;

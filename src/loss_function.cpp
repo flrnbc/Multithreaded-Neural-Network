@@ -44,7 +44,7 @@ void LossFunction::CheckSize(Eigen::VectorXd& y, const Eigen::VectorXd& yLabel) 
 
 
 
-double LossFunction::ComputeLoss(Eigen::VectorXd& y, const Eigen::VectorXd& yLabel) {
+double LossFunction::operator()(Eigen::VectorXd& y, const Eigen::VectorXd& yLabel) {
     CheckSize(y, yLabel);
 
     // any of the following cases is guaranteed by the constructor

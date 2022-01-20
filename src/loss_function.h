@@ -38,7 +38,7 @@ class LossFunction {
         void CheckSize(Eigen::VectorXd&, const Eigen::VectorXd&);
 
         // compute loss
-        double ComputeLoss(Eigen::VectorXd&, const Eigen::VectorXd&);
+        double operator()(Eigen::VectorXd&, const Eigen::VectorXd&);
 
         // update derivative/gradient
         void UpdateGradient(Eigen::VectorXd&, const Eigen::VectorXd&);

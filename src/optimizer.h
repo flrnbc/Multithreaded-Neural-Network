@@ -12,40 +12,28 @@
 
 class SDG {
     private:
-        std::unique_ptr<LossFunction> _lossFct;
+        // loss function for optimzation
+        std::unique_ptr<LossFunction> _lossFct; 
         double _learningRate;
-        int _numberEpochs;
 
     public:
         // constructor
-        SDG(std::string lossFctName, double learningRate, int numberEpochs): 
+        SDG(std::string lossFctName, double learningRate): 
             _lossFct(std::make_unique<LossFunction>(LossFunction(lossFctName))),
-            _learningRate(learningRate),
-            _numberEpochs(numberEpochs)
-            {
-                if (numberEpochs < 0) _numberEpochs = 0; // TODO: better way to deal with negative input?
-            }
+            _learningRate(learningRate) {}
 
         // setters
-        void SetLearningRate(double a) {
-            if (a <= 0) {
-                throw std::invalid_argument("Learning rate is not positive.");
-            } 
-            _learningRate = a; 
-        }
-        void SetNumberEpochs(int N) { 
-            if (N < 1) {
-                throw std::invalid_argument("Number of epoch has to be at least 1.");
-            }
-            _numberEpochs = N; 
-        }
-
+        void SetLearningRate(double a) { _learningRate = a; }
+        
         // getters
         double LearningRate() { return _learningRate; }
-        double NumberEpochs() { return _numberEpochs; }
 
         // optimize
-        void Train(SequentialNN&, const Eigen::MatrixXd&, const Eigen::MatrixXd&);
+        // single training step
+        void Step(SequentialNN&, const Eigen::VectorXd&, const Eigen::VectorXd&);
+
+        // here training is just online learning (i.e. mini-batch learning with batch size = 1)
+        void Train(SequentialNN&, const Eigen::MatrixXd&, const Eigen::MatrixXd&, int epochs);
 };
 
 #endif // OPTIMIZER_H_

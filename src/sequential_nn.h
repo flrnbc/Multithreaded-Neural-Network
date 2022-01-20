@@ -101,16 +101,9 @@ class SequentialNN {
         void Backward();
         Eigen::RowVectorXd BackwardOutput();
 
-        // compute loss
-        //double Loss(LossFunction&, const Eigen::VectorXd& yLabel); // here the saved output in the last Layer(Cache) is used
-        //void UpdateBackwardInput(LossFunction&, const Eigen::VectorXd& yLabel);
-
         // update weights/bias
         void UpdateWeights(double);
         void UpdateBias(double);
-
-        // single train cycle
-        //void Train(LossFunction& lossFct, double learning_rate, const Eigen::VectorXd& input, const Eigen::VectorXd& yLabel);
 
         // helper function
         // get initialization type of layers

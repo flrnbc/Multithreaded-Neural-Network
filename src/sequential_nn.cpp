@@ -184,34 +184,3 @@ void SequentialNN::UpdateBias(double learning_rate=1.0) {
     }
 }
 
-
-/***************
- * TRAIN CYCLE *
- ***************/
-// double SequentialNN::Loss(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
-//     return lossFct.ComputeLoss(this->Output(), yLabel);
-// }
-// // update gradient of loss function
-// void SequentialNN::UpdateBackwardInput(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
-//     lossFct.UpdateGradient(this->Output(), yLabel);
-//     this->BackwardInput(lossFct.Gradient());
-// }
-
-// void SequentialNN::Train(LossFunction& lossFct, double learning_rate, const Eigen::VectorXd& input, const Eigen::VectorXd& yLabel) {
-//     // forward pass
-//     Input(input);
-//     Forward();
-
-//     // loss
-//     // TODO: output to file?
-//     std::cout << "Loss: " << Loss(lossFct, yLabel) << std::endl;
-
-//     // backward propagation 
-//     UpdateDerivative(); // update derivatives in all layers
-//     UpdateBackwardInput(lossFct, yLabel); // compute gradient of lossFct with yLabel and update the backward input of last layer
-//     Backward(); // backward pass
-
-//     // update weights/bias
-//     UpdateWeights(learning_rate);
-//     UpdateBias(learning_rate);
-// }

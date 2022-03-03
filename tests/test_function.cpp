@@ -4,18 +4,9 @@
 #include <vector>
 #include <cassert>
 
-// void test_softmax() {
-//     auto softmax_activation = ActivationFct("softmax");
-//     std::vector<double> v{1, 2, 3, 4};
-//     std::vector<double> w = softmax_activation.Evaluate(v);
-//     double sum = 0.0;
-
-//     for (double d: w) {
-//         sum += d;
-//     }
-
-//     assert(sum == 1);
-// }
+/**
+ * Simple smoke test for Function class. 
+ */
 
 void test_functions() {
     auto f1 = Function("identity");

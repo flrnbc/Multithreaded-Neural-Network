@@ -8,8 +8,13 @@
 #include <string>
 #include <vector>
 
+/******************
+ * TRANSFORMATION *
+ ******************/
 
-// helper function for random numbers
+/**************************************
+ * HELPER FUNCTION FOR RANDOM NUMBERS *
+ **************************************/
 // TODO: is there a performance issue? (since we create a generator etc. each time)?
 double RandomNumberUniform(double min, double max) {
     std::random_device rd;
@@ -28,35 +33,14 @@ double RandomNumberNormal(double min, double max) {
 }
 
 
-/******************
- * TRANSFORMATION *
- ******************/
-
-// Transformation::Transformation() {
-//     // not meant to be called directly
-//     SetCols(0);
-//     SetRows(0);
-// }
-
-// std::vector<double> Transformation::Transform(std::vector<double> input) {
-//     // just the identity
-//     return input;
-// }
-
-// std::string Transformation::Summary() {
-//     return "Identity transformation.";
-// }
-
-
 /*************************
  * LINEAR TRANSFORMATION *
  *************************/
 
-// random initialization (used for different activation functions)
+// random initialization (according to the previous activation layer)
 // either He or normalized Xavier initialization
 void LinearTransformation::Initialize(std::string initialization_type) {
     if (initialization_type != "He" && initialization_type != "Xavier") {
-        // TODO #A: need to catch it somewhere?
         throw std::domain_error("Initialization type is unknown.");
     }
 
@@ -67,15 +51,15 @@ void LinearTransformation::Initialize(std::string initialization_type) {
     if (initialization_type == "Xavier") {      
         // use normalized Xavier weight initialization
         int inputPlusOutputSize = cols + rows;
-        // NOTE: uniform_real_distribution(a, b) generates for [a, b) (half-open interval)
+        // uniform_real_distribution(a, b) generates for a real number in the half-open interval [a, b)
         double min = -(sqrt(6)/sqrt(inputPlusOutputSize));
         double max = sqrt(6)/sqrt(inputPlusOutputSize);
 
         // randomly initialize weights
-        // NOTE: be careful with cache-friendliness (outer loop over rows)
-        // TODO #A: would be nicer to put this for-loop after the else-block (but then would have to declare dis before; but as what?)
-        for (int i=0; i<rows; i++) {
-            for (int j=0; j<cols; j++) {
+        // NOTE: be careful with cache-friendliness (Eigen uses 'column major' storage by default, so outer loop over columns
+        // for cache-friendliness)
+        for (int j=0; j<cols; j++) {
+            for (int i=0; i<rows; i++) {
                 _weights(i, j) = RandomNumberUniform(min, max); 
             }
         }
@@ -86,22 +70,23 @@ void LinearTransformation::Initialize(std::string initialization_type) {
         double max = sqrt(2.0/cols);
 
         // randomly initialize weights
-        for (int i=0; i<rows; i++) {
-            for (int j=0; j<cols; j++) {
+        for (int j=0; j<cols; j++) {
+            for (int i=0; i<rows; i++) {
                 _weights(i, j) = RandomNumberNormal(min, max); 
             }
         }
     }
-
 }
 
 // transform method
-Eigen::VectorXd LinearTransformation::Transform(Eigen::VectorXd inputVector) {
-    if (inputVector.rows() != Cols()) {
-        // TODO #A: catch exception somewhere?
-        throw std::domain_error("Vector cannot be evaluated.");
+Eigen::MatrixXd LinearTransformation::Transform(Eigen::MatrixXd inputMatrix) {
+    if (inputMatrix.rows() != Cols()) {
+        throw std::domain_error("Matrix cannot be evaluated.");
     } else {
-        return _weights*inputVector;
+        Eigen::MatrixXd result = _weights*inputMatrix;
+        // apply broadcasting for adding the bias (add _bias to each column of result)
+        result.colwise() += _bias;
+        return result;
     }
 }
 
@@ -114,6 +99,7 @@ std::string LinearTransformation::Summary() {
 
     std::string weights_string = "Weights:\n";
     // convert matrix to string
+    // TODO: at the moment a bit verbose (matrices might be large...)
     std::stringstream ss_weights;
     ss_weights << _weights;
     weights_string += ss_weights.str();
@@ -133,26 +119,39 @@ std::string LinearTransformation::Summary() {
  *****************************/
 
 // transform methods for ActivationTransformation
-Eigen::VectorXd ActivationTransformation::Transform(Eigen::VectorXd inputVector) {
-    // TODO: optimize with vectorization? (OpenMP?)
+Eigen::MatrixXd ActivationTransformation::Transform(Eigen::MatrixXd inputMatrix) {
+    Eigen::MatrixXd outputMatrix = Eigen::MatrixXd::Zero(inputMatrix.rows(), inputMatrix.cols());
+    // correction term, see below
+    double correction = 0.0;
 
-    for (int i = 0; i < inputVector.rows(); i++) {
-        inputVector(i) = _function(inputVector(i)); // TODO: range-based did not modify the values (even when using &)?!
-    }
-
-    if (_type == "softmax") {
-        double vectorSum = inputVector.sum();
-        for (auto &d: inputVector) {
-            d /= vectorSum; // Note: this is safe because _function = exp for softmax
+    // TODO: optimize with Eigen's  unaryExpr?
+    // NOTE: Eigen uses 'column major' storage by default so that this is cache-friendly
+    for (int j=0; j < inputMatrix.cols(); j++) {
+        for (int i = 0; i < inputMatrix.rows(); i++) {
+            if (_type == "softmax") {
+                // substracting the max coefficient for numerical stability (see https://cs231n.github.io/linear-classify/#softmax-classifier)
+                // from each column
+                correction = inputMatrix.col(j).maxCoeff();
+            }
+            outputMatrix(i, j) = _function(inputMatrix(i, j)-correction); 
         }
     }
 
-    return inputVector;
+    if (_type == "softmax") {
+        double colSum = 0;
+        for (int j=0; j<outputMatrix.cols(); j++) {
+            colSum = outputMatrix.col(j).sum();
+            for (int i = 0; i < outputMatrix.rows(); i++) {
+                outputMatrix(i, j) /= colSum; // Note: this is safe because _function = exp for softmax
+            }
+        }
+    }
+
+    return outputMatrix;
 }
 
 // update derivative
-void ActivationTransformation::UpdateDerivative(Eigen::VectorXd vector) {
-    // TODO: this has to change if we introduce more activation functions which are not vectorizations
+void ActivationTransformation::Derivative(Eigen::VectorXd vector) {
     if (vector.size() != Cols()) {
         throw std::domain_error("Vector size does not match with the derivative.");
     }
@@ -165,21 +164,16 @@ void ActivationTransformation::UpdateDerivative(Eigen::VectorXd vector) {
     }
 
     if (_type == "softmax") {
-        /* 
-        NOTE: Here we assume that the vector is the output of softmax, i.e.
-        vector = softmax(x_1, ... , x_N) = (s_1, ... , s_N). Then the jacobian J is given by 
+        // TODO: it would be more efficient to retrieve this result from the forward output of the corresponding LayerCache
+        Eigen::VectorXd softmax = this->Transform(vector); 
 
-            J(i, i) = -s_i*(1-s_i)       
-            J(i, j) = -s_i*s_j          if i != j.
-
-        */
-        for (int i=0; i<Rows(); i++) {
-            for (int j=0; j<Cols(); j++) {
+        for (int j=0; j<Cols(); j++) {
+            for (int i=0; i<Rows(); i++) {
                 if (i == j) {
-                    (*_derivative)(i, j) = -vector(i)*(1-vector(i));
+                    (*_derivative)(i, i) = softmax(i)*(1-softmax(i));
                 }
                 else {
-                    (*_derivative)(i, j) = -vector(i)*vector(j);
+                    (*_derivative)(i, j) = -softmax(i)*softmax(j);
                 }
             }
         }

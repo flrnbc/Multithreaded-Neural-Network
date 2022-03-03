@@ -9,53 +9,88 @@
 // TODO: would it be better to give other options to set the corresponding vectors?
 
 // setters/getters
-// foward pass
-void LayerCache::SetForwardInput(std::shared_ptr<Eigen::VectorXd> input_ptr) {
+// foward 
+void LayerCache::SetForwardInput(std::shared_ptr<Eigen::MatrixXd> input_ptr) {
     _forward_input = std::move(input_ptr);
 }
-void LayerCache::SetForwardOutput(std::shared_ptr<Eigen::VectorXd> output_ptr) {
+void LayerCache::SetForwardOutput(std::shared_ptr<Eigen::MatrixXd> output_ptr) {
     _forward_output = std::move(output_ptr);
 }
 
-std::shared_ptr<Eigen::VectorXd> LayerCache::GetForwardOutput() {
+std::shared_ptr<Eigen::MatrixXd> LayerCache::GetForwardOutput() {
     return _forward_output;
 }
-std::shared_ptr<Eigen::VectorXd> LayerCache::GetForwardInput() {
+std::shared_ptr<Eigen::MatrixXd> LayerCache::GetForwardInput() {
     return _forward_input;
 }
 
-// backward pass
-void LayerCache::SetBackwardInput(std::shared_ptr<Eigen::RowVectorXd> backward_input_ptr) {
+// backward
+void LayerCache::SetBackwardInput(std::shared_ptr<Eigen::MatrixXd> backward_input_ptr) {
     _backward_input = std::move(backward_input_ptr);
 }
-void LayerCache::SetBackwardOutput(std::shared_ptr<Eigen::RowVectorXd> backward_output_ptr) {
+void LayerCache::SetBackwardOutput(std::shared_ptr<Eigen::MatrixXd> backward_output_ptr) {
     _backward_output = std::move(backward_output_ptr);
 }
 
-std::shared_ptr<Eigen::RowVectorXd> LayerCache::GetBackwardInput() { 
+std::shared_ptr<Eigen::MatrixXd> LayerCache::GetBackwardInput() { 
     return _backward_input;
 }
-std::shared_ptr<Eigen::RowVectorXd> LayerCache::GetBackwardOutput() { 
+std::shared_ptr<Eigen::MatrixXd> LayerCache::GetBackwardOutput() { 
     return _backward_output;
 }
 
+/** Change batch size and reset to the zero matrix of the corresponding size.
+    If rows=true, resize the rows to number_samples.
+    If rows=false, resize the cols to number_samples.
+    In case number_samples already coincides with the already set numbers, don't do anything.
+*/
+void ResizeAndZero(int number_samples, std::shared_ptr<Eigen::MatrixXd> matrix_ptr, bool rows) {
+    if (matrix_ptr == nullptr) {
+        // We do not throw an error here because we can ignore this case in our application to sequential NNs.
+        return; 
+    }
+    if ((rows) && (matrix_ptr->rows() != number_samples)) { 
+        matrix_ptr->setZero(number_samples, matrix_ptr->cols()); 
+    } 
+    else if (!(rows) && (matrix_ptr->cols() != number_samples)) {
+        matrix_ptr->setZero(matrix_ptr->rows(), number_samples);
+    }
+}
 
-// connecting layer caches
-void LayerCache::ConnectForward(int size_forward_output, LayerCache& next_layer_cache) {
-    Eigen::VectorXd zero_vector = Eigen::VectorXd::Zero(size_forward_output);
+void LayerCache::SetBatchSize(int number_samples) {
+    // batch size = number of cols in the forward pass; hence pass rows=false to ResizeAndZero
+    ResizeAndZero(number_samples, _forward_input, false);
+    ResizeAndZero(number_samples, _forward_output, false);
+    // batch size = number of rows in the backward pass; so row=true
+    ResizeAndZero(number_samples, _backward_input, true);
+    ResizeAndZero(number_samples, _backward_output, true);
 
-    this->SetForwardOutput(std::make_shared<Eigen::VectorXd>(zero_vector));
+}
+
+// connecting layer caches ('from left to right')
+// forward
+void LayerCache::ConnectForward(int size_forward_output, int number_samples, LayerCache& next_layer_cache) {
+    Eigen::MatrixXd zero_matrix = Eigen::MatrixXd::Zero(size_forward_output, number_samples);
+
+    // TODO: might need a check if SetForwardOutput is not null, e.g. if we add 
+    // the option to add/delete layers
+    this->SetForwardOutput(std::make_shared<Eigen::MatrixXd>(zero_matrix));
     next_layer_cache.SetForwardInput(this->GetForwardOutput());
 }
 
-void LayerCache::ConnectBackward(int size_backward_input, LayerCache& next_layer_cache) {
-    Eigen::RowVectorXd zero_vector = Eigen::RowVectorXd::Zero(size_backward_input);
+// backward
+// NOTE: since we propagate backwards, the backward input of *this points to the same
+// vector as the backward output of next_layer_cache.
+void LayerCache::ConnectBackward(int size_backward_input, int number_samples, LayerCache& next_layer_cache) {
+    Eigen::MatrixXd zero_matrix = Eigen::MatrixXd::Zero(number_samples, size_backward_input);
 
-    this->SetBackwardInput(std::make_shared<Eigen::RowVectorXd>(zero_vector));
+    this->SetBackwardInput(std::make_shared<Eigen::MatrixXd>(zero_matrix));
     next_layer_cache.SetBackwardOutput(this->GetBackwardInput());
 }
 
-void LayerCache::Connect(int size_forward_output, int size_backward_input, LayerCache& next_layer_cache) {
-    ConnectForward(size_forward_output, next_layer_cache);
-    ConnectBackward(size_backward_input, next_layer_cache);
+// connect both
+void LayerCache::Connect(int size_forward_output, int size_backward_input, int number_samples, LayerCache& next_layer_cache) {
+    ConnectForward(size_forward_output, number_samples, next_layer_cache);
+    ConnectBackward(size_backward_input, number_samples, next_layer_cache);
 }
+

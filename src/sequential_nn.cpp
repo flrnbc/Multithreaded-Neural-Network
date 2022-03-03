@@ -60,6 +60,7 @@ std::string SequentialNN::GetInitializationType(const std::shared_ptr<Layer>& la
  * SEQUENTIAL NEURAL NETWORK IMPLEMENTATION *
  ********************************************/
 
+// constructor
 SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
     if (ComposabilityCheck(layers) == false) {
         throw std::invalid_argument("Layers are not composable.");
@@ -72,15 +73,34 @@ SequentialNN::SequentialNN(std::vector<std::shared_ptr<Layer> > layers) {
 
         // connect layers
         for (int i = 0; i < N-1; i++) {
-            _layers[i]->GetLayerCache().Connect(_layers[i]->Rows(), _layers[i+1]->Cols(), _layers[i+1]->GetLayerCache());
+            // only one sample for initialization/connecting the layers
+            int batchSize = 1;
+            _layers[i]->GetLayerCache().Connect(_layers[i]->Rows(), batchSize, _layers[i+1]->Cols(), _layers[i+1]->GetLayerCache());
         }
     }
+    // finally initialize the weights
+    Initialize();
 }
 
+// getters
+int SequentialNN::InputSize() {
+    if (_layers[0] == nullptr || _layers.empty()) {
+        throw std::invalid_argument("Layers are empty.");
+    }
+    return _layers[0]->Cols();
+}
+int SequentialNN::OutputSize() {
+    if (_layers[0] == nullptr || _layers.empty()) {
+        throw std::invalid_argument("Layers are empty.");
+    }
+    return _layers.back()->Rows();
+}
+
+// methods
 void SequentialNN::Initialize() {
     int N = _layers.size();
 
-    for (int i = 0; i < N-1; i++) {
+    for (int i=0; i < N-1; i++) {
         _layers[i]->GetTransformation()->Initialize(SequentialNN::GetInitializationType(_layers[i], _layers[i+1]));
     }
     // TODO: here might be some room to optimize (e.g. jump over the ones which have "" as initialization type)
@@ -97,59 +117,66 @@ std::string SequentialNN::Summary() {
     return summary;
 }
 
-// TODO: again refactor the forward and backward pass at some point
-// Forward pass
-void SequentialNN::Input(Eigen::VectorXd input) {
+
+/****************
+ * FORWARD PASS *
+ ****************/
+void SequentialNN::Input(Eigen::MatrixXd input) {
     _layers[0]->Input(input);
+    // now adjust the batch size if necessary
+    int batchSize = input.cols();
+    for (int i=0; i < Length(); i++) {
+        _layers[i]->GetLayerCache().SetBatchSize(batchSize); 
+    }
 }
 
 void SequentialNN::Forward() {
-    for (int i = 0; i < Length(); i++) {
+    for (int i=0; i < Length(); i++) {
         _layers[i]->Forward();
     }
 }
-
-Eigen::VectorXd& SequentialNN::Output() {
+Eigen::MatrixXd& SequentialNN::Output() {
     if ((_layers.back())->GetLayerCache().GetForwardOutput() == nullptr) {
         throw std::invalid_argument("Forward output is null.");
     }
-    
     return *((_layers.back())->GetLayerCache().GetForwardOutput());
 }
+Eigen::MatrixXd SequentialNN::operator()(Eigen::MatrixXd input) {
+    Input(input);
+    Forward();
+    return Output();
+}
 
 
-// Backward pass
-void SequentialNN::UpdateDerivative() {
-    for (int i = 0; i < Length(); i++) {
-        _layers[i]->UpdateDerivative();
+/*****************
+ * BACKWARD PASS *
+ *****************/
+void SequentialNN::BackwardInput(Eigen::MatrixXd backward_input) {
+    _layers.back()->BackwardInput(backward_input);
+    // adjust the batch size if necessary 
+    int batchSize = backward_input.rows();
+    for (int i=0; i < Length(); i++) {
+        _layers[i]->GetLayerCache().SetBatchSize(batchSize); 
     }
 }
-
-void SequentialNN::BackwardInput(Eigen::RowVectorXd backward_input) {
-    _layers.back()->BackwardInput(backward_input);
-}
-
 void SequentialNN::Backward() {
     for (int i = Length()-1; i >= 0; i--) {
         _layers[i]->Backward();
     }
 }
-
-Eigen::RowVectorXd SequentialNN::BackwardOutput() {
+Eigen::MatrixXd SequentialNN::BackwardOutput() {
      if (_layers[0]->GetLayerCache().GetBackwardOutput() == nullptr) {
         throw std::invalid_argument("Backward output is null.");
     }
-    
     return *(_layers[0]->GetLayerCache().GetBackwardOutput());
 }
 
-// compute loss
-double SequentialNN::Loss(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
-    return lossFct.ComputeLoss(this->Output(), yLabel);
+/*************************
+ * UPDATE WEIGHTS & BIAS *
+ *************************/
+void SequentialNN::UpdateWeightsBias(double learning_rate=1.0) {
+    for (int i = 0; i < Length(); i++) {
+        _layers[i]->UpdateWeightsBias(learning_rate);
+    }
 }
 
-// update gradient of loss function
-void SequentialNN::UpdateBackwardInput(LossFunction& lossFct, const Eigen::VectorXd& yLabel) {
-    lossFct.UpdateGradient(this->Output(), yLabel);
-    this->BackwardInput(lossFct.Gradient());
-}

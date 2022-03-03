@@ -8,19 +8,54 @@
 #include <vector>
 #include <string>
 
+/******************
+ * TRANSFORMATION *
+ ******************/
+
+/** 
+    Class for transformations used in layers of neural networks. It not only keeps track
+    of the parameters for the transformation but also of its derivative (similar to Tensors
+    in PyTorch).
+    
+    The abstract base class has three attributes:
+        * cols (dimension of input)
+        * rows (dimension of output)
+        * type of transformation.
+    By using an abstract base class, we can easily add further concrete implementations.
+        
+    The most important member functions, which need to be implemented by derived concrete classes, are:
+        * ~Transform~: transforms the input, typically a vector or matrix 
+          (NOTE: we work with _column vectors_ as our input. This might be a bit unconvential because often row vectors are used.)
+        * ~Initialize~: initializes the parameters of the transformation (so far only for LinearTransformation)
+        * ~Derivative~: updates the derivative of the transformation at a data point
+        * ~BackwardTransform~: used for backward pass/backpropagation (TODO: better suited in Layer class?)
+        * ~Summary~: summarizes most important parameters (TODO: too verbose at the moment)
+    
+    The following methods have an _empty_ implementation by default and do not have to be implemented by derived concrete classes:
+        * ~UpdateWeightsBias~: only needed for linear transformations (TODO: could be replaced with 
+          a more general member function e.g. ~UpdateParameters~)
+
+    The concrete implementations of the abstract base class are:
+        * ~LinearTransforamtion~: encapsulates an affine-linear transformation with weights and biases
+        * ~ActivationTransformation~: could be a vectorized activation function or others, e.g. softmax.
+    
+    TODO: - ~BackwardTransform~ could be unified by including the derivative into the ~Transformation~ class.
+*/
+
 /***********************
  * ABSTRACT BASE CLASS *
  ***********************/
 
 class Transformation {
-    protected:
-        // output dimension
+    protected: // to make access easier for concrete derived classes
+        // output dimension of a single data sample = number of rows (in case of a linear transformation/matrix)
         int _rows;
-        // input dimension   
+        // input dimension of a single data sample = number of columns (in case of a linear transformation/matrix)
         int _cols;
         // type of transformation
         std::string _type;
 
+        // constructor (needed for concrete implementations to initialize the above member variables)
         Transformation(int rows, int cols, std::string type):
             _rows(rows),
             _cols(cols),
@@ -38,22 +73,21 @@ class Transformation {
         std::string Type() { return _type; }
         
         // TODO: can the following be improved using references?
-        // transform method (want to keep input, so no pass by reference)
-        virtual Eigen::VectorXd Transform(Eigen::VectorXd) = 0;
+        virtual Eigen::MatrixXd Transform(Eigen::MatrixXd) = 0;
         
-        // update Delta (of a layer), which is a row vector, by right multiplication with the derivative
-        virtual Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd) = 0;
+        // 'backward transformation' for backpropagation; depends on the derivative
+        // of the transformation at a given point (which is the first argument)
+        virtual Eigen::RowVectorXd BackwardTransform(Eigen::VectorXd, Eigen::RowVectorXd) = 0;
 
-        // update derivative/jacobian from a given vector
-        virtual void UpdateDerivative(Eigen::VectorXd) = 0;
+        // compute derivative/jacobian of the transformation at the given vector
+        virtual void Derivative(Eigen::VectorXd) = 0;
 
-        // initialize transformation (many transformations have empty implementation)
+        // initialize transformation
         virtual void Initialize(std::string initialize_type="") {}
 
-        // update weights/bias (actually only needed for LinearTransformations)
-        // TODO: it might be better to use templates for the Layers to avoid 
-        virtual void UpdateWeights(Eigen::MatrixXd Delta_weights) {}
-        virtual void UpdateBias(Eigen::VectorXd Delta_bias) {}
+        // update weights/bias (only non-trivial for LinearTransformations)
+        virtual void AddToWeights(Eigen::MatrixXd Delta_weights) {}
+        virtual void AddToBias(Eigen::VectorXd Delta_bias) {}
 
         // summary of transformation
         virtual std::string Summary() = 0;
@@ -85,8 +119,6 @@ class LinearTransformation: public Transformation {
             _bias(Eigen::VectorXd::Zero(rows))
             {}
 
-        // TODO: the default copy and move constructors/assignment operators should be enough?!?
-
         // setters & getters
         Eigen::MatrixXd& Weights() { return _weights; }
         void SetWeights(Eigen::MatrixXd weight_matrix) { _weights = weight_matrix; }
@@ -94,34 +126,32 @@ class LinearTransformation: public Transformation {
         void SetBias(Eigen::VectorXd bias) { _bias = bias; }
 
         // random initialize (either via "He" or "Normalized Xavier")
-        void Initialize(std::string);
+        void Initialize(std::string) override;
 
         // transpose weight matrix
         void Transpose();
 
-        // transform methods (just right matrix multiplication with input)
-        // NOTE: we do _not_ work with transpose etc. because we consider our data points as column vectors
-        Eigen::VectorXd Transform(Eigen::VectorXd); 
+        // transform methods (just right matrix multiplication with input (a column vector))
+        Eigen::MatrixXd Transform(Eigen::MatrixXd) override; 
 
-        // update derivative (trivial here because it coincides with weights)
-        void UpdateDerivative(Eigen::VectorXd) {}
+        // get derivative (trivial here because it coincides with weights)
+        void Derivative(Eigen::VectorXd) override {}
 
-        // update Delta
-        // used to compute the gradient of a loss function successively via backpropagation
-        Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd rowVector) {
+        // no dependence on the given point because the same applies to the derivative of an affine-linear transformation
+        Eigen::RowVectorXd BackwardTransform(Eigen::VectorXd point, Eigen::RowVectorXd rowVector) override {
             return rowVector*(_weights);
         }
 
         // update weights/bias
-        void UpdateWeights(Eigen::MatrixXd deltaWeights) {
+        void AddToWeights(Eigen::MatrixXd deltaWeights) override {
             _weights += deltaWeights;
         }
-        void UpdateBias(Eigen::VectorXd deltaBias) {
+        void AddToBias(Eigen::VectorXd deltaBias) override {
             _bias += deltaBias;
         }
 
         // summary
-        std::string Summary();
+        std::string Summary() override;
 };
 
 
@@ -132,7 +162,7 @@ class LinearTransformation: public Transformation {
 class ActivationTransformation: public Transformation {
     private:
         Function _function; // TODO: better to use a smart pointer?
-        std::unique_ptr<Eigen::MatrixXd> _derivative;
+        std::unique_ptr<Eigen::MatrixXd> _derivative; // derivative at a single vector (not at all data samples in a batch)
 
     public:
         // constructor
@@ -142,22 +172,21 @@ class ActivationTransformation: public Transformation {
             _derivative(std::make_unique<Eigen::MatrixXd>(Eigen::MatrixXd::Zero(size, size))) 
             {} 
             
-        // transform methods
-        Eigen::VectorXd Transform(Eigen::VectorXd);
+        // transform method
+        Eigen::MatrixXd Transform(Eigen::MatrixXd) override;
 
-        // update derivative at a point/vector (trivial here)
-        void UpdateDerivative(Eigen::VectorXd);
+        // set derivative at the given point
+        void Derivative(Eigen::VectorXd) override;
 
-        // update Delta
-        Eigen::RowVectorXd UpdateDelta(Eigen::RowVectorXd rowVector) {
-            return rowVector*(*(_derivative));
+        // backward transformation for backpropagation; depends on the given point where
+        // we take the derivative of the activation transformation
+        Eigen::RowVectorXd BackwardTransform(Eigen::VectorXd input, Eigen::RowVectorXd input_matrix) override {
+            Derivative(input);
+            return input_matrix*(*(_derivative));
         }
 
         // Summary of transformation
-        std::string Summary(); 
+        std::string Summary() override; 
 };
-
-
-// TODO: to include: Flatten layer
 
 #endif // TRANSFORMATION_H_

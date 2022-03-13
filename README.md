@@ -56,6 +56,41 @@ cmake --build /Users/fbeck/Documents/Rise/C++/udacity/CapstoneProject/CppND-Caps
 
 Here `TestName` is either `TestLossFunction`, `TestLayer` etc. `TestOptimizer` might be the most interesting because it contains a simple example (1-dimensional linear regression in the function `test_OptimizeLinearRegression1D()`) where this API does perform quite well.
 
+
+# Project requirements
+The project needs to fulfill several requirements to successfully pass the Capstone review process. Here we give the positions in our code where the respective requirement is satisfied. 
+
++ file and class structure?
+
+## Loops, Functions, I/O
++ *Demonstrate understanding of C++ functions and control structures*: 
+  For example see [src/layer.cpp](../src/layer.cpp) in the function `Layer::Forward()` (line 34 ff.) where conditionals are used to handle an exception.
++ *Reading data from a file and processing it*: 
+  This is fulfilled in [src/data_parser.h](../src/data_parser.h) in the function `LoadCSV` (see line 30 ff.) which reads data from a `.csv`-file and saes it in an `Eigen::Matrix` object.
+
+## Object Oriented Programming (OOP)
++ *Using OOP techniques*: 
+  The design of the sequential neural network API relies heavily on OOP methods. As an example, see the class `SequentialNN` in [src/sequential_nn.h](../src/sequential_nn.h), line 55 ff., which has several member variables and functions.
++ *Class access specifiers for class members*:
+  Used several times, for example in [src/transformation.h](../src/transformation.h), lines 49 - 94. There we use `protected` to facilitate the access to member variables for derived classes.
++ *Class constructors utilize member initialization lists*: 
+  Applied to several constructors (where appropriate), e.g. in [src/layer.h](../src/layer.h), lines 125 - 134.
++ *Classes follow an appropriate inheritance hierarchy*:
+  Multiple classes inherit from virtual base classes, for example the `LinearTransformation` class from `Transformation` in [src/transformation.h](../src/transformation.h), line 101 ff. Moreover, composition is used (albeit via smart pointers) e.g. in the `Layer` class, see [src/layer.h](../src/layer.h), line 47 ff.
++ *Derived class functions override virtual base class functions*: 
+  This is done, for example, in the function `ZeroDeltaWeights` of the `LinearLayer` class, see [src/layer.h](../src/layer.h), line 120.
++ *Templates generalize functions*:
+  See the function `LoadCSV` in [src/data_parser.h](../src/data_parser.h), line 31.
+
+## Memory Mangement
++ *Rule of 5*: 
+  See [src/layer_cache.cpp](../src/layer_cache.cpp), line 56 ff., even though we use the default move constructors/assignment operator (which seems to be ok because `LayerCache` is composed of member variables which admit move semantics).
++ *Using move semantics*: 
+  Applied in `LayerCache::SetForwardInput` in [src/layer_cache.cpp](../src/layer_cache.cpp), line 13.
++ *Use of smart pointers*: 
+  For example in the `Layer` class, see [src/layer.h](../src/layer.h), line 50 and 53.
+
+
 [^1]: This terminology might be unconvential but comes from `Sequential` models of `Keras`. 
 [^2]: The nice thing about Udacity Nanodegrees is that the final (Capstone) projects are entirely up to the student. 
 [^3]: There might be an issue with vanishing gradients of the softmax activation function. Or even some tricky mistake in the implementation of the backpropagation algorithm.

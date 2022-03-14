@@ -5,7 +5,7 @@ The aim of this project is to implement a basic but flexible API in modern `C++`
 At the beginning, I tried to do everything from scratch but then quickly realized that would be too much. For example, it would have required the implementation of a fully functioning matrix class (with matrix multiplication etc.). Hence the only external dependency is the excellent [Eigen library](https://eigen.tuxfamily.org/) which deals with the necessary matrix calculus. 
 
 ## Instantiating a (sequential) neural network
-We provide two types of layers, a `LinearLayer` and an `ActivationLayer`. They just encapsulate an affine-linear transformation and activation function respectively. To instantiate a sequential neural network with just a `LinearLayer` followed by an `ActivationLayer` with the ReLu activation function (so we create a [Percpetron](https://en.wikipedia.org/wiki/Perceptron)), we use the following code. The includes should be the same as in [main.cpp](../main.cpp) and are omitted for clarity:
+We provide two types of layers, a `LinearLayer` and an `ActivationLayer`. They just encapsulate an affine-linear transformation and activation function respectively. To instantiate a sequential neural network with just a `LinearLayer` followed by an `ActivationLayer` with the ReLu activation function (so we create a [Percpetron](https://en.wikipedia.org/wiki/Perceptron)), we use the following code. The includes should be the same as in [main.cpp](main.cpp) and are omitted for clarity:
 
 ```C++
 int inputSize = 20; // number of columns of the matrix in the LinearLayer
@@ -38,7 +38,7 @@ int epochs=1000; // number of epochs in the training
 sdg.Train(snn, trainSamples, trainLabels, epochs);
 ```
 
-That's it! Now we can apply our `snn` to some test data and evaluate it. This is not yet fully implemented since one might have to encode the original data labels (e.g. via one-hot-encoding) first. However, we provide an evaluation in [main.cpp](../main.cpp) for MNIST.
+That's it! Now we can apply our `snn` to some test data and evaluate it. This is not yet fully implemented since one might have to encode the original data labels (e.g. via one-hot-encoding) first. However, we provide an evaluation in [main.cpp](main.cpp) for MNIST.
 
 ## Compilation
 With `CMake` we can simply build `main.cpp` via 
@@ -64,10 +64,11 @@ The source code is contained in the `src` directory. Typically, each `.h/.cpp` f
 ## Relation between classes
 For more information on the classes, please see the corresponding header files.
 
-+ `Transformation` class: abstract class with `LinearTransformation` and `ActivationTransformation` as concrete derived classes. The latter uses the `Function` class.
-+ `Layer` class: abstract class with `LinearLayer` and `ActivationLayer` as concrete derived classes. Built from `LinearTransformation` and `ActivationTransformation` respectively as well as the `LayerCache` class.
-+ `SequentialNN` class: built from a vector `Layer` classes.
-+ `Optimizer` class: smart pointer to `LossFunction` object as member variable. 
++ `Transformation`: abstract class with `LinearTransformation` and `ActivationTransformation` as concrete derived classes. The latter uses the `Function` class and both use the `Eigen::Matrix` class.
++ `Layer`: abstract class with `LinearLayer` and `ActivationLayer` as concrete derived classes. Built from `LinearTransformation` and `ActivationTransformation` respectively as well as the `LayerCache` class.
++ `SequentialNN`: built from a vector `Layer` classes.
++ `Optimizer`: smart pointer to `LossFunction` object as member variable. 
++ `DataParser`: uses the `Eigen::Matrix` class.
 
 
 # Project requirements
@@ -75,34 +76,34 @@ The project needs to fulfill several requirements to successfully pass the Capst
 
 ## Loops, Functions, I/O
 + *Demonstrate understanding of C++ functions and control structures*: 
-  For example see [src/layer.cpp](../src/layer.cpp) in the function `Layer::Forward()` (line 34 ff.) where conditionals are used to handle an exception.
+  For example see [src/layer.cpp](src/layer.cpp) in the function `Layer::Forward()` (line 34 ff.) where conditionals are used to handle an exception.
 + *Reading data from a file and processing it*: 
-  This is fulfilled in [src/data_parser.h](../src/data_parser.h) in the function `LoadCSV` (see line 30 ff.) which reads data from a `.csv`-file and saes it in an `Eigen::Matrix` object.
+  This is fulfilled in [src/data_parser.h](src/data_parser.h) in the function `LoadCSV` (see line 30 ff.) which reads data from a `.csv`-file and saes it in an `Eigen::Matrix` object.
 
 ## Object Oriented Programming (OOP)
 + *Using OOP techniques*: 
-  The design of the sequential neural network API relies heavily on OOP methods. As an example, see the class `SequentialNN` in [src/sequential_nn.h](../src/sequential_nn.h), line 55 ff., which has several member variables and functions.
+  The design of the sequential neural network API relies heavily on OOP methods. As an example, see the class `SequentialNN` in [src/sequential_nn.h](src/sequential_nn.h), line 55 ff., which has several member variables and functions.
 + *Class access specifiers for class members*:
-  Used several times, for example in [src/transformation.h](../src/transformation.h), lines 49 - 94. There we use `protected` to facilitate the access to member variables for derived classes.
+  Used several times, for example in [src/transformation.h](src/transformation.h), lines 49 - 94. There we use `protected` to facilitate the access to member variables for derived classes.
 + *Class constructors utilize member initialization lists*: 
-  Applied to several constructors (where appropriate), e.g. in [src/layer.h](../src/layer.h), lines 125 - 134.
+  Applied to several constructors (where appropriate), e.g. in [src/layer.h](src/layer.h), lines 125 - 134.
 + *Classes follow an appropriate inheritance hierarchy*:
-  Multiple classes inherit from virtual base classes, for example the `LinearTransformation` class from `Transformation` in [src/transformation.h](../src/transformation.h), line 101 ff. Moreover, composition is used (albeit via smart pointers) e.g. in the `Layer` class, see [src/layer.h](../src/layer.h), line 47 ff.
+  Multiple classes inherit from virtual base classes, for example the `LinearTransformation` class from `Transformation` in [src/transformation.h](src/transformation.h), line 101 ff. Moreover, composition is used (albeit via smart pointers) e.g. in the `Layer` class, see [src/layer.h](src/layer.h), line 47 ff.
 + *Derived class functions override virtual base class functions*: 
-  This is done, for example, in the function `ZeroDeltaWeights` of the `LinearLayer` class, see [src/layer.h](../src/layer.h), line 120.
+  This is done, for example, in the function `ZeroDeltaWeights` of the `LinearLayer` class, see [src/layer.h](src/layer.h), line 120.
 + *Templates generalize functions*:
-  See the function `LoadCSV` in [src/data_parser.h](../src/data_parser.h), line 31.
+  See the function `LoadCSV` in [src/data_parser.h](src/data_parser.h), line 31.
 
 ## Memory Mangement
 + *Rule of 5*: 
-  See [src/layer_cache.cpp](../src/layer_cache.cpp), line 56 ff., even though we use the default move constructors/assignment operator (which seems to be ok because `LayerCache` is composed of member variables which admit move semantics).
+  See [src/layer_cache.cpp](src/layer_cache.cpp), line 56 ff., even though we use the default move constructors/assignment operator (which seems to be ok because `LayerCache` is composed of member variables which admit move semantics).
 + *Using move semantics*: 
-  Applied in `LayerCache::SetForwardInput` in [src/layer_cache.cpp](../src/layer_cache.cpp), line 13.
+  Applied in `LayerCache::SetForwardInput` in [src/layer_cache.cpp](src/layer_cache.cpp), line 13.
 + *Use of smart pointers*: 
-  For example in the `Layer` class, see [src/layer.h](../src/layer.h), line 50 and 53.
+  For example in the `Layer` class, see [src/layer.h](src/layer.h), line 50 and 53.
 
 
 [^1]: This terminology might be unconvential but comes from `Sequential` models of `Keras`. 
 [^2]: The nice thing about Udacity Nanodegrees is that the final (Capstone) projects are entirely up to the student. 
 [^3]: There might be an issue with vanishing gradients of the softmax activation function. Or even some tricky mistake in the implementation of the backpropagation algorithm.
-[^4]: See [main.cpp](../main.cpp) for a simple function which does this splitting in the special case of MNIST.
+[^4]: See [main.cpp](main.cpp) for a simple function which does this splitting in the special case of MNIST.

@@ -48,7 +48,7 @@ cmake --build /Users/fbeck/Documents/Rise/C++/udacity/CapstoneProject/CppND-Caps
 ```
 
 ## Tests
-For several tests, see the `tests` folder. These are quite primitive tests, so-called 'smoke tests', and do not use any test suite. In case, one is interested, one can easily build each of them via
+For several tests, see the `tests` folder. These are quite primitive tests, so-called 'smoke tests', and do not use any test suite. In case one is interested, one can easily build each of them via
 
 ```bash
 cmake --build /Users/fbeck/Documents/Rise/C++/udacity/CapstoneProject/CppND-Capstone-Hello-World/build --config Debug --target TestName
@@ -57,10 +57,21 @@ cmake --build /Users/fbeck/Documents/Rise/C++/udacity/CapstoneProject/CppND-Caps
 Here `TestName` is either `TestLossFunction`, `TestLayer` etc. `TestOptimizer` might be the most interesting because it contains a simple example (1-dimensional linear regression in the function `test_OptimizeLinearRegression1D()`) where this API does perform quite well.
 
 
+# Project file and class structure
+## File structure
+The source code is contained in the `src` directory. Typically, each `.h/.cpp` file pair declares/defines one class, e.g. the `Layer` class is declared/defined in `layer.h` and `layer.cpp`. All tests are contained in the `tests` directory, e.g. `tests/test_layer.cpp` contains tests for the `Layer` class. Finally, the `Eigen` library is in the `eigen` directory.
+
+## Relation between classes
+For more information on the classes, please see the corresponding header files.
+
++ `Transformation` class: abstract class with `LinearTransformation` and `ActivationTransformation` as concrete derived classes. The latter uses the `Function` class.
++ `Layer` class: abstract class with `LinearLayer` and `ActivationLayer` as concrete derived classes. Built from `LinearTransformation` and `ActivationTransformation` respectively as well as the `LayerCache` class.
++ `SequentialNN` class: built from a vector `Layer` classes.
++ `Optimizer` class: smart pointer to `LossFunction` object as member variable. 
+
+
 # Project requirements
 The project needs to fulfill several requirements to successfully pass the Capstone review process. Here we give the positions in our code where the respective requirement is satisfied. 
-
-+ file and class structure?
 
 ## Loops, Functions, I/O
 + *Demonstrate understanding of C++ functions and control structures*: 

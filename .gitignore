@@ -5,6 +5,5 @@ src/.vscode/
 src/a.out.dSYM/
 tests/a.out.dSYM/
 build/
-eigen/
 .vscode/
 

@@ -98,7 +98,7 @@ void SDG::Train(SequentialNN& snn, const Eigen::MatrixXd& X, const Eigen::Matrix
             std::cout << "=========== Epoch " << i+1 << " ===========" << std::endl;
             // TODO: add option to log to a file
             std::cout << "Loss: " << (*_lossFct)(snn.Output(), batchLabel) << std::endl;
-            std::cout << snn.Summary() << std::endl;
+            //std::cout << snn.Summary() << std::endl;
             //std::cout << "SNN backward output: " << snn.BackwardOutput() << std::endl; 
             //std::cout << "SNN output: \n" << snn.Output() << std::endl;
         }

@@ -45,20 +45,35 @@ As noted above, the only dependency `eigen` is contained as a git submodule. Hen
 ```bash
 git clone --recurse-submodules https://github.com/flrnbc/Sequential-Neural-Networks
 ```
-Then we can simply build `main.cpp` via 
-
+Next we change to the project root directory, initialize `cmake` and create a `build` directory via
 ```bash
-cmake 
+cd Sequential-Neural-Networks
+cmake .
+mkdir build/
 ```
-
-## Tests
-For several tests, see the `tests` folder. These are quite primitive tests, so-called 'smoke tests', and do not use any test suite. In case one is interested, one can easily build each of them via
-
+Now we build `main.cpp` via 
 ```bash
-cmake --build /Users/fbeck/Documents/Rise/C++/udacity/CapstoneProject/CppND-Capstone-Hello-World/build --config Debug --target TestName
+cd build
+cmake --build .. --target Main
 ```
+It is executed via 
+```bash
+cd ..
+./Main
+```
+(TODO: changing back to the project root is still necessary at the moment but will be fixed.)
 
-Here `TestName` is either `TestLossFunction`, `TestLayer` etc. `TestOptimizer` might be the most interesting because it contains a simple example (1-dimensional linear regression in the function `test_OptimizeLinearRegression1D()`) where this API does perform quite well.
+
+### Building tests
+The `cpp`-files in `tests` contain all the (mainly smoke) tests for each class. Please take a look at these files to activate the test functions you are interested in. Then a test is built and run via 
+```bash
+cd build/
+cmake --build .. --target TestName // where Name is either DataParser, Function, LayerCache, Layer, LossFct, Optimizer, SequentialNN or Transformation
+cd ..
+./TestName // again replace Name correspondingly
+```
+We recommend trying `TestOptimizer` first (with the function `test_OptimizeLinearRegression1D`) since it showcases the training of the simplest neural network possible.
+
 
 
 # Project file and class structure

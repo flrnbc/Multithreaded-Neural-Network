@@ -2,7 +2,7 @@
 
 The aim of this project is to implement a basic but flexible API in modern `C++` to build and train sequential neural networks[^1], i.e. neural networks whose hidden layers have exactly one input and one output layer. It is my submission for the Capstone project[^2] in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). To showcase the API, we train a neural network with the MNIST dataset (handwritten digits between 0 and 9, e.g. see [this link](http://yann.lecun.com/exdb/mnist/)). Unfortunately, the performance is very poor at this point[^3]. However, the main point of this project is *not* to create a competitor of the well established neural network APIs (e.g. `tensorflow` or `keras`). Instead the purpose is to apply techniques from (modern) `C++` like smart pointers, move semantics, templates, libraries and abstract classes. The latter allows the user to easily add new types of Layers etc.
 
-At the beginning, I tried to do everything from scratch but then quickly realized that would be too much. For example, it would have required the implementation of a fully functioning matrix class (with matrix multiplication etc.). Hence the only external dependency is the excellent [Eigen library](https://eigen.tuxfamily.org/) which deals with the necessary matrix calculus. 
+At the beginning, I tried to do everything from scratch but then quickly realized that would be too much. For example, it would have required the implementation of a fully functioning matrix class (with matrix multiplication etc.). Hence the only external dependency is the excellent [Eigen library](https://eigen.tuxfamily.org/) which deals with the necessary matrix calculus. It is contained in this repository as a [git submodule][https://git-scm.com/book/en/v2/Git-Tools-Submodules].
 
 ## Instantiating a (sequential) neural network
 We provide two types of layers, a `LinearLayer` and an `ActivationLayer`. They just encapsulate an affine-linear transformation and activation function respectively. To instantiate a sequential neural network with just a `LinearLayer` followed by an `ActivationLayer` with the ReLu activation function (so we create a [Percpetron](https://en.wikipedia.org/wiki/Perceptron)), we use the following code. The includes should be the same as in [main.cpp](main.cpp) and are omitted for clarity:
@@ -40,11 +40,15 @@ sdg.Train(snn, trainSamples, trainLabels, epochs);
 
 That's it! Now we can apply our `snn` to some test data and evaluate it. This is not yet fully implemented since one might have to encode the original data labels (e.g. via one-hot-encoding) first. However, we provide an evaluation in [main.cpp](main.cpp) for MNIST.
 
-## Compilation
-With `CMake` we can simply build `main.cpp` via 
+## Installation/Compilation
+As noted above, the only dependency `eigen` is contained as a git submodule. Hence clone this repository with this submodule via
+```bash
+git clone --recurse-submodules https://github.com/flrnbc/Sequential-Neural-Networks
+```
+Then we can simply build `main.cpp` via 
 
 ```bash
-cmake --build /Users/fbeck/Documents/Rise/C++/udacity/CapstoneProject/CppND-Capstone-Hello-World/build --config Debug --target Main
+cmake 
 ```
 
 ## Tests

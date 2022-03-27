@@ -208,8 +208,8 @@ void test_Softmax() {
 
 int main() {
     //test_OptimizeLinearRegression2D();
-    //test_OptimizeLinearRegression1D();
+    test_OptimizeLinearRegression1D();
     //test_Step();
-    test_Softmax();
+    //test_Softmax();
     return 0;
 }

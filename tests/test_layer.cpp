@@ -42,20 +42,20 @@ void test_LinearLayer() {
 void test_LinearLayer2() {
     LinearLayer ll(1, 1);
     auto mse = LossFunction("mse");
-    mse.SetCols(1);
+    //mse.SetCols(1);
 
     ll.GetTransformation()->Initialize("Xavier");
     std::cout << ll.Summary() << std::endl;
 
     // training test
-    Eigen::VectorXd x{{3}};
-    Eigen::VectorXd yLabel{{2}};
+    Eigen::MatrixXd x{{3}};
+    Eigen::MatrixXd yLabel{{2}};
 
     ll.Input(x);
     ll.Forward();
     //ll.Derivative();
 
-    Eigen::VectorXd y = ll.Output();
+    Eigen::MatrixXd y = ll.Output();
     std::cout << "Output: " << y << std::endl;
     std::cout << "Loss: " << mse(y, yLabel) << std::endl;
 

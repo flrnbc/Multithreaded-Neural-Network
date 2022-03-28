@@ -39,13 +39,14 @@ void test_LinearTransform() {
 
     // update delta
     Eigen::RowVectorXd w{{1, 0, 0}};
-    std::cout << "Update Delta:" << t.BackwardTransform(w) << std::endl;
+    Eigen::VectorXd v{{1, 2, 5}};
+    std::cout << "Update Delta:" << t.BackwardTransform(v, w) << std::endl;
 }
 
 // tests for ActivationTransformation
 // TODO: use reference because copy constructor implicitly deleted (might have to change that)
-void test_UpdateDelta(ActivationTransformation& t, Eigen::RowVectorXd delta) {
-    std::cout << "Updated Delta: \n" << t.BackwardTransform(delta) << std::endl;
+void test_UpdateDelta(ActivationTransformation& t, Eigen::VectorXd point, Eigen::RowVectorXd delta) {
+    std::cout << "Updated Delta: \n" << t.BackwardTransform(point, delta) << std::endl;
 }
 
 void test_ActivationTransformation(ActivationTransformation& a, Eigen::VectorXd vector, Eigen::RowVectorXd delta) {
@@ -58,7 +59,7 @@ void test_ActivationTransformation(ActivationTransformation& a, Eigen::VectorXd 
     std::cout << "After updating derivative \n" << a.Summary() << std::endl;
 
     // update delta
-    test_UpdateDelta(a, delta);
+    test_UpdateDelta(a, vector, delta);
 }
 
 void test_ActivationTransforms() {

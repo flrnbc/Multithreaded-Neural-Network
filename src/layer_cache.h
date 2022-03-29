@@ -81,18 +81,26 @@ class LayerCache {
         // move assignment operator
         LayerCache &operator=(LayerCache &&source) = default;
 
-        // setters/getters 
+        // setters/getters
         // forward
-        void SetForwardInput(std::shared_ptr<Eigen::MatrixXd> input_ptr); 
-        void SetForwardOutput(std::shared_ptr<Eigen::MatrixXd> output_ptr);
-        std::shared_ptr<Eigen::MatrixXd > GetForwardOutput();
-        std::shared_ptr<Eigen::MatrixXd > GetForwardInput();
+        void SetForwardInput(std::shared_ptr<Eigen::MatrixXd> input_ptr) {
+    		_forward_input = std::move(input_ptr);
+		}
+		void SetForwardOutput(std::shared_ptr<Eigen::MatrixXd> output_ptr) {
+    		_forward_output = std::move(output_ptr);
+		}
+        std::shared_ptr<Eigen::MatrixXd > GetForwardOutput() { return _forward_output; }
+        std::shared_ptr<Eigen::MatrixXd > GetForwardInput() { return _forward_input; }
 
         // backward
-        void SetBackwardInput(std::shared_ptr<Eigen::MatrixXd> backward_input_ptr);
-        void SetBackwardOutput(std::shared_ptr<Eigen::MatrixXd> output_ptr);
-        std::shared_ptr<Eigen::MatrixXd> GetBackwardOutput();
-        std::shared_ptr<Eigen::MatrixXd> GetBackwardInput();
+  		void SetBackwardInput(std::shared_ptr<Eigen::MatrixXd> backward_input_ptr) {
+    		_backward_input = std::move(backward_input_ptr);
+		}
+		void SetBackwardOutput(std::shared_ptr<Eigen::MatrixXd> backward_output_ptr) {
+    		_backward_output = std::move(backward_output_ptr);
+        }
+        std::shared_ptr<Eigen::MatrixXd> GetBackwardOutput() { return _backward_output; }
+        std::shared_ptr<Eigen::MatrixXd> GetBackwardInput() { return _backward_input; }
 
         // set (mini-)batch size (number of columns in the forward cache or rows in the backward cache)
         // NOTE: sets values to zero if the batch size is actually changed 

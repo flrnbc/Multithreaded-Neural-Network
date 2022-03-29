@@ -8,37 +8,6 @@
 
 // TODO: would it be better to give other options to set the corresponding vectors?
 
-// setters/getters
-// foward 
-void LayerCache::SetForwardInput(std::shared_ptr<Eigen::MatrixXd> input_ptr) {
-    _forward_input = std::move(input_ptr);
-}
-void LayerCache::SetForwardOutput(std::shared_ptr<Eigen::MatrixXd> output_ptr) {
-    _forward_output = std::move(output_ptr);
-}
-
-std::shared_ptr<Eigen::MatrixXd> LayerCache::GetForwardOutput() {
-    return _forward_output;
-}
-std::shared_ptr<Eigen::MatrixXd> LayerCache::GetForwardInput() {
-    return _forward_input;
-}
-
-// backward
-void LayerCache::SetBackwardInput(std::shared_ptr<Eigen::MatrixXd> backward_input_ptr) {
-    _backward_input = std::move(backward_input_ptr);
-}
-void LayerCache::SetBackwardOutput(std::shared_ptr<Eigen::MatrixXd> backward_output_ptr) {
-    _backward_output = std::move(backward_output_ptr);
-}
-
-std::shared_ptr<Eigen::MatrixXd> LayerCache::GetBackwardInput() { 
-    return _backward_input;
-}
-std::shared_ptr<Eigen::MatrixXd> LayerCache::GetBackwardOutput() { 
-    return _backward_output;
-}
-
 /** Change batch size and reset to the zero matrix of the corresponding size.
     If rows=true, resize the rows to number_samples.
     If rows=false, resize the cols to number_samples.

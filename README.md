@@ -48,13 +48,13 @@ git clone --recurse-submodules https://github.com/flrnbc/Sequential-Neural-Netwo
 Next we change to the project root directory, initialize `cmake` and create a `build` directory via
 ```bash
 cd Sequential-Neural-Networks
-cmake .
 mkdir build/
 ```
 Now we build `main.cpp` via 
 ```bash
 cd build
-cmake --build .. --target Main
+cmake .. 
+cmake --build . --target Main
 ```
 It is executed via 
 ```bash

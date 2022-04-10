@@ -38,3 +38,9 @@ target_include_directories(LibDataParser PUBLIC
                             "${PROJECT_BINARY_DIR}"
                             "${PROJECT_SOURCE_DIR}/eigen"
 )       
+
+target_link_libraries(LibLossFunction PUBLIC LibFunction)
+target_link_libraries(LibTransformation PUBLIC LibFunction LibLossFunction)
+target_link_libraries(LibLayer PUBLIC LibFunction LibLossFunction LibTransformation LibLayerCache)
+target_link_libraries(LibSequentialNN PUBLIC LibLossFunction LibTransformation LibLayer LibLayerCache)
+target_link_libraries(LibOptimizer PUBLIC LibFunction LibLossFunction LibTransformation LibLayer LibLayerCache LibSequentialNN)

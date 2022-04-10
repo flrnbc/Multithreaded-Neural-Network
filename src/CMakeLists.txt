@@ -1,13 +1,13 @@
 # libraries
 # need STATIC, SHARED...?
-add_library(LibFunction function.cpp)
-add_library(LibLossFunction loss_function.cpp)
-add_library(LibTransformation transformation.cpp)
-add_library(LibLayerCache layer_cache.cpp)
-add_library(LibLayer layer.cpp)
-add_library(LibSequentialNN sequential_nn.cpp)
-add_library(LibOptimizer optimizer.cpp)
-add_library(LibDataParser data_parser.cpp)
+add_library(LibFunction function.cpp function.h)
+add_library(LibLossFunction loss_function.cpp loss_function.h)
+add_library(LibTransformation transformation.cpp transformation.h)
+add_library(LibLayerCache layer_cache.cpp layer_cache.h)
+add_library(LibLayer layer.cpp layer.h)
+add_library(LibSequentialNN sequential_nn.cpp sequential_nn.h)
+add_library(LibOptimizer optimizer.cpp optimizer.h)
+add_library(LibDataParser data_parser.cpp data_parser.h)
 
 # include paths TODO: how to streamline?
 target_include_directories(LibLossFunction PUBLIC

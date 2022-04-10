@@ -1,11 +1,14 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.0)
 
 # set project for tests
-project (TEST)
+project (SequentialNN VERSION 3.13)
 
 # set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+include_directories(src)
+link_directories(${CMAKE_CURRENT_LIST_DIR})
 
 # source subdirectory 
 # TODO: Definitely needed but why? Difference to target_include_directories?

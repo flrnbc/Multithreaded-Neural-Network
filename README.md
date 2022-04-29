@@ -68,11 +68,11 @@ build/Main
 The `cpp`-files in `tests` contain all the (mainly smoke) tests for each class. Please take a look at these files to activate the test functions you are interested in. Then a test is built and run via (after `cmake` has already been run as above)
 ```bash
 cd build/
-cmake --build .. --target TestName // where Name is either DataParser, Function, LayerCache, Layer, LossFct, Optimizer, SequentialNN or Transformation
+cmake --build . --target TestName // where Name in TestName is either DataParser, Function, LayerCache, Layer, LossFunction, Optimizer, SequentialNN or Transformation
 cd ..
-build/TestName // again replace Name correspondingly
+build/TestName // again replace Name in TestName correspondingly
 ```
-We recommend trying `TestOptimizer` first (with the function `test_OptimizeLinearRegression1D`) since it showcases the training of the simplest neural network possible.
+We recommend trying `TestOptimizer` as `TestName` first (with the function `test_OptimizeLinearRegression1D` not commmented out) since it showcases the training of the simplest neural network possible.
 
 
 # Project file and class structure
